@@ -248,7 +248,7 @@ Then run this, and only this:
 turn every dial through every possible combination:
     1. read one number from each input, at its letters' current dial settings
     2. multiply those numbers together
-    3. drop the result in whatever box the output dials point at
+    3. drop the result in the box addressed by the output dials, READ IN THE ORDER WRITTEN
 ```
 
 **The one underlying rule: the same letter is the same dial.**
@@ -284,6 +284,46 @@ Run 2 reads `X[0,0] x Y[0,0]` — the same cell, because both inputs carry the s
 "lockstep" ever meant.
 
 And the cost is literally the number of rows in that trace: 8 vs 4. Three dials vs two.
+
+### Why `-> i j` and `-> j i` differ (addressing vs execution)
+
+The output letters are a **filing rule**, not a computation instruction. They say how to assemble the address
+tuple from the current dial readings:
+
+```
+-> i j   address = (dial_i, dial_j)
+-> j i   address = (dial_j, dial_i)
+```
+
+Every product and every pile-up is identical either way — only the slot changes, which is why the two results
+are transposes rather than different numbers:
+
+```
+i=0 j=1 d=0   X[0,0]*C[1,0]= 7    -> i j files at [0][1]    -> j i files at [1][0]
+i=0 j=1 d=1   X[0,1]*C[1,1]=16      (both accumulate to 23, in different slots)
+```
+
+Pure relabeling, no arithmetic at all, is visible with one operand: `einsum('i j -> j i', X) == X.T`.
+
+**Spreadsheet analogy.** The sequence you fill cells in (execution order) does not change the finished sheet.
+Deciding *stores are rows, currencies are columns* (addressing order) does. Both are "orders"; only the second
+is a decision.
+
+### What NumPy actually does
+
+```
+'i j -> j i'   strides (24,8) -> (8,24)   shares memory with X: True
+'i i -> i'     stride 32 = 24 + 8         shares memory with Y: True
+```
+
+- A transpose is a **stride swap** — a view of the same buffer, no numbers moved.
+- A diagonal is a **stride sum** — add the two axes' strides and you step down the diagonal. "Same letter twice
+  = diagonal" is not a rule being checked; it is what happens when one dial advances two axes at once.
+
+Pipeline: parse and validate repeated-letter sizes -> build a strided view per operand (repeated letter
+collapses two axes by adding strides) -> broadcast over the union of letters -> sum-of-products over axes
+absent from the output -> lay out the result in the order the output letters were written. With
+`optimize=True` and 3+ operands it first picks a pairwise contraction path and often dispatches to BLAS.
 
 ### The three "orders" — only one is a choice
 
