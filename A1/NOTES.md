@@ -285,6 +285,50 @@ Run 2 reads `X[0,0] x Y[0,0]` — the same cell, because both inputs carry the s
 
 And the cost is literally the number of rows in that trace: 8 vs 4. Three dials vs two.
 
+### The three "orders" — only one is a choice
+
+**1. The order the dials are turned — not a thing you control.** Addition does not care what order products
+land in a box, so any loop order gives the same answer. NumPy picks one for memory speed.
+
+```
+dial order (i,j,d) -> {(0,0):17, (0,1):23, (1,0):39, (1,1):53}
+dial order (d,j,i) -> identical
+```
+
+**2. The order of letters AFTER the arrow — your choice, sets the layout.**
+
+```
+'i d, j d -> i j' -> [[17,23],      'i d, j d -> j i' -> [[17,39],
+                      [39,53]]                            [23,53]]     transposes
+```
+
+**3. The order of letters INSIDE each input label — dictated by the array.** Two halves:
+
+*Names are arbitrary* — renaming changes nothing:
+
+```
+'n d, n d -> d' -> [17,29,45]
+'a b, a b -> b' -> [17,29,45]    identical
+```
+
+*Positions bind to axes* — position 1 -> axis 0, position 2 -> axis 1. Swapping them changes the answer:
+
+```
+Y = [[1,2,3],    'n d, n d -> d' -> [17,29,45]   kept position 2 -> COLUMN norms
+     [4,5,6]]    'd n, d n -> d' -> [14,77]      kept position 1 -> ROW norms
+```
+
+**Slots are fixed by the array; names are free.** In `'i d, j d'` you did not choose to put `d` second in
+both — X's shape forced it. The only decision was to *reuse* the letter `d` there instead of inventing a new
+one, and that reuse is what makes the two arrays meet on their column axis.
+
+So writing a string is exactly two decisions:
+
+1. **Which letters do I reuse?** -> what lines up, and what gets totaled away
+2. **What order do I write the survivors?** -> the layout of the answer
+
+Everything else is forced by the data or irrelevant.
+
 ### Reading any string in 10 seconds
 
 1. **Count the distinct letters** -> number of dials -> the complexity.
