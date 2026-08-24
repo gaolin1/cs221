@@ -301,6 +301,56 @@ is alignment, not a diagonal. What happens next depends on the output:
                ^ ^    n: twice in the SAME list (output)  -> DIAGONAL          ILLEGAL
 ```
 
+
+### The pattern family (one array pair, four outputs)
+
+All four come from choosing (a) which axis to contract and (b) whether the two surviving axes are
+**independent** (different letters) or **locked** (same letter).
+
+```
+'i d, j d -> i j'   (n,n)   XX^T           contract features, two INDEPENDENT row axes
+'i d, i d -> i'     (n,)    row sq norms   contract features, row axes LOCKED -> diagonal
+'n d, n e -> d e'   (d,d)   X^T C          contract rows,     two INDEPENDENT feature axes
+'n d, n d -> d'     (d,)    diag(X^T C)    contract rows,     feature axes LOCKED -> diagonal
+```
+
+**One letter is the whole difference** between a matrix and its diagonal:
+
+```
+X = [[1,2],   C = [[1,0],     'n d, n e -> d e' = [[11,13],    full (2,2)
+     [3,4],        [0,1],                          [14,16]]
+     [5,6]]        [2,2]]     'n d, n d -> d'   =  [11,   16]  diagonal (2,)
+```
+
+| String | Distinct letters | Cost |
+|---|---|---|
+| `'n d, n e -> d e'` | 3 | $O(nd^2)$ |
+| `'n d, n d -> d'` | 2 | $O(nd)$ |
+
+So the "repeated letter = diagonal" rule is not an obstacle — it is the **mechanism** that makes (iii) cheap.
+Reusing the letter locks the two axes onto the diagonal and skips the off-diagonal work entirely
+(measured: 105ms -> 3.4ms, 31x, at n=2000 d=1500).
+
+### "Absent letter is summed" is universal — nothing is ever discarded
+
+A letter missing from the output is **always summed over**, in every string, with no exceptions:
+
+```
+'m n, n p -> m p'   out[m,p] = 1*5 + 2*7        n summed (2 terms)
+'n d, n d -> d'     out[d]   = 1*1 + 3*3 + 5*5  n summed (3 terms)
+```
+
+The word *discard* applies only to the **non-einsum** route `np.diag(X.T @ X)`, which materializes all $d^2$
+entries and throws away $d^2-d$ of them. einsum discards nothing; every input element feeds some sum.
+
+### Complexity = count of distinct letters
+
+```
+'m n, n p -> m p'   3 letters -> 3 loops -> O(mnp)    <- matches 1b
+'i d, j d -> i j'   3 letters -> 3 loops -> O(n^2 d)
+'n d, n d -> d'     2 letters -> 2 loops -> O(nd)
+```
+
 ### Checklist before submitting any einsum string
 
 1. Does each operand's label have exactly as many letters as that array has axes?
