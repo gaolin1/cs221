@@ -253,6 +253,59 @@ turn every dial through every possible combination:
 
 **The one underlying rule: the same letter is the same dial.**
 
+### The same thing stated as a formula (the "big array" view)
+
+Equivalent to the dial machine, and often easier to reason about:
+
+1. **Build the big array** `P`, indexed by **every distinct letter** in the string. Each entry is the product of
+   one element from each input, read at its own letters.
+2. **Sum `P` over every letter NOT in the output.**
+3. **Arrange the surviving axes** in the order written after the arrow.
+
+Careful with the wording: the output names the axes that **survive**; you collapse everything else.
+
+```
+X = [[1,2],[3,4]]
+
+'i k, k j -> i j'   letters i,k,j   P is (2,2,2)   collapse k -> [[7,10],[15,22]]
+      out[0,0] <- k-slice [1, 6]  = 7        the untotaled products ARE the big array
+      out[0,1] <- k-slice [2, 8]  = 10
+      out[1,0] <- k-slice [3,12]  = 15
+      out[1,1] <- k-slice [6,16]  = 22
+
+'i d, j d -> i j'   letters i,j,d   P is (2,2,2)   collapse d -> [[5,11],[11,25]]
+'n d, n d -> d'     letters n,d     P is (2,2)     collapse n -> [10,20]
+```
+
+**The big array has exactly one entry per dial combination** — the dials are its indices. Same model, two views.
+
+**Its size is the complexity.** Counting distinct letters was always counting the big array's dimensions; its
+entry count is the product of all letter sizes, one multiply each. 3 letters -> `2*2*2 = 8`; 2 letters ->
+`2*2 = 4`.
+
+### Two different things get called "intermediate"
+
+| | What it is | Materialized? |
+|---|---|---|
+| the big array `P` | conceptual product-of-everything, indexed by all letters | **never** — NumPy accumulates into the output as it goes |
+| `X.T @ X` in `np.diag(X.T @ X)` | a real `(d,d)` array in memory | **yes** — 18 MB at n=2000, d=1500 |
+
+This explains the 31x benchmark in one line — compare the *big arrays*:
+
+```
+einsum('n d, n d -> d')          letters n,d     -> n*d   entries
+np.diag(X.T @ X)
+   step 1 is 'n d, n e -> d e'   letters n,d,e   -> n*d^2 entries   <- an extra letter
+   step 2 discards all but d of them
+```
+
+Same three steps both routes; one just has a bigger big array.
+
+### One-sentence summary
+
+> Multiply everything against everything into one array indexed by all the letters. Sum away the letters you
+> did not name. Lay out what is left in the order you wrote it.
+
 ### Everything else falls out of step 3
 
 | What it looks like | What is actually happening |
