@@ -154,8 +154,108 @@ displays the $O(mnp)$ cost.
 **Task:** given $X \in \mathbb{R}^{n \times d}$ and $w \in \mathbb{R}^d$, write einsum strings for
 (i) $Xw$, (ii) $XX^\top$, (iii) $\operatorname{diag}(X^\top X)$, with brief justification for each.
 
-- [ ] (i) $Xw$ — shapes `(n,d), (d,) -> (n,)`
-- [ ] (ii) $XX^\top$ — shapes `(n,d), (n,d) -> (n,n)`
-- [ ] (iii) $\operatorname{diag}(X^\top X)$ — shapes `(n,d), (n,d) -> (d,)`
+### (i) $Xw$ — `(n,d), (d,) -> (n,)` ✅
 
-_(working through these interactively — answers to be filled in)_
+```python
+einsum(X, w, 'n d, d -> n')
+```
+
+**Justification:** $w$'s single axis is labeled `d` so it aligns with $X$'s column axis. `d` is absent from the
+output, so it is summed over — giving $(Xw)_i = \sum_d X_{id} w_d$. `n` is carried through, so the result has
+one entry per row of $X$.
+
+### (ii) $XX^\top$ — `(n,d), (n,d) -> (n,n)` ✅
+
+```python
+einsum(X, X, 'i d, j d -> i j')
+```
+
+**Justification:** Entry $[i,j]$ is the dot product of row $i$ with row $j$:
+$(XX^\top)_{ij} = \sum_d X_{id} X_{jd}$. The two row axes are *different* rows, so they get **different**
+letters `i` and `j`, both kept in the output. The feature axis `d` is shared by both operands and dropped from
+the output, so it is contracted. No explicit transpose is needed — the transpose is expressed by *which letters
+line up*, not by flipping an array.
+
+### (iii) $\operatorname{diag}(X^\top X)$ — `(n,d), (n,d) -> (d,)`
+
+- [ ] TODO
+
+---
+
+## einsum: the letter rules (worked out from mistakes)
+
+**Mental model: each letter is a `for` loop variable.**
+
+```python
+# 'i d, j d -> i j'
+for i in range(n):
+    for j in range(n):
+        total = 0
+        for d in range(D):        # d not in output => it is the summed loop
+            total += X[i, d] * X[j, d]
+        out[i, j] = total
+```
+
+Three distinct letters ⇒ three distinct loop variables. Everything else follows.
+
+### Rule 1 — a letter is an *index*, not an axis name
+
+Same letter = same index value at the same moment. `n` does not mean "the row axis," it means "row number `n`."
+
+### Rule 2 — labels describe the array you actually pass in
+
+`einsum(X, X, 'n d, d n -> ...')` with `X` of shape `(n,d)` **asserts the second operand is `(d,n)`**. It isn't.
+
+```
+operands could not be broadcast together with remapped shapes
+(4,3)->(4,3)  (4,3)->(3,4)
+```
+
+Dangerous: if $X$ were square this would not error, it would silently compute the wrong thing.
+
+### Rule 3 — repeated letter *within one* index list = diagonal
+
+Each comma-separated group (and the output) is **one tensor's index list**. Repeating a letter inside a single
+list means both indices are forced equal, so you only visit the diagonal:
+
+```python
+Y = [[0,1,2],[3,4,5],[6,7,8]]
+np.einsum('nn->n', Y)   # [0, 4, 8]   the diagonal
+np.einsum('nn->',  Y)   # 12          the trace
+```
+
+So `-> n n` is not a request for an $n \times n$ matrix. With only one loop variable `n` you can only write
+`out[n, n]` — the diagonal. NumPy rejects it outright in the output position:
+
+```
+ValueError: einstein sum subscripts string includes output subscript 'n' multiple times
+```
+
+**Two different axes need two different letters, even when they have the same length.**
+
+### Rule 4 — repeated letter *across* index lists is the whole point
+
+That is how axes get matched up. `d` in `'i d, j d'` appears **once per operand**, in two different lists — that
+is alignment, not a diagonal. What happens next depends on the output:
+
+| Letter appears in | Meaning |
+|---|---|
+| inputs only (not output) | **contracted** — summed over |
+| inputs **and** output | **kept** — aligned elementwise / batched |
+| one input and output | kept — carried straight through |
+
+### The contrast that caused the confusion
+
+```
+'i d, j d -> i j'
+     ^     ^          d: once in list 1, once in list 2   -> ALIGN, then sum   OK
+'n d, d n -> n n'
+               ^ ^    n: twice in the SAME list (output)  -> DIAGONAL          ILLEGAL
+```
+
+### Checklist before submitting any einsum string
+
+1. Does each operand's label have exactly as many letters as that array has axes?
+2. Do the letters match the array's **real** shape, in order? (No mental transposes.)
+3. Within any single list, is every letter distinct? (Unless you *want* a diagonal.)
+4. Are the letters you want summed absent from the output?
