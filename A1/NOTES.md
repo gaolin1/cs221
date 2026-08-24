@@ -14,11 +14,11 @@ Working notes and progress log. Due Sunday, Aug 30, 11:59pm PT.
 | 1b  Matmul complexity           | Written | 2 | ☑ **done** — `O(mnp)` |
 | 1c  einsum AI-tutor session     | Written | 1 | ☐ not started |
 | 1d  Einstein summation strings  | Written | 2 | ☑ **done** — verified vs NumPy |
-| 1e  `linear_project`            | Coding  | 3 | ☐ |
-| 1f  `split_last_dim_pattern`    | Coding  | 3 | ☐ |
-| 1g  `normalized_inner_products` | Coding  | 3 | ☐ |
-| 1h  `mask_strictly_upper`       | Coding  | 3 | ☐ |
-| 1i  `prob_weighted_sum_einsum`  | Coding  | 3 | ☐ |
+| 1e  `linear_project`            | Coding  | 3 | ☑ **done** — 1e-0-basic passes |
+| 1f  `split_last_dim_pattern`    | Coding  | 3 | ☑ **done** — 1f-0-basic passes |
+| 1g  `normalized_inner_products` | Coding  | 3 | ☑ **done** — 1g-0-basic passes |
+| 1h  `mask_strictly_upper`       | Coding  | 3 | ☑ **done** — 1h-0-basic passes |
+| 1i  `prob_weighted_sum_einsum`  | Coding  | 3 | ☑ **done** — 1i-0-basic passes |
 | 2a  Gradient warmup             | Written | 2 | ☐ |
 | 2b  `gradient_warmup`           | Coding  | 3 | ☐ |
 | 2c  Matmul gradient by hand     | Written | 3 | ☐ |
@@ -28,12 +28,21 @@ Working notes and progress log. Due Sunday, Aug 30, 11:59pm PT.
 | 3b  Gradient descent tutor session | Written | 1 | ☐ |
 | 3c  `gradient_descent_quadratic`| Coding  | 3 | ☐ |
 | 4a–4d  Ethical issue spotting   | Written | 4 | ☐ |
-| 5a–5b  Product ethics basics    | Written | 2 | ☐ |
+| 5a–5d  Product ethics basics    | Written | 4 | ☐ |
+
+**Total 50 pts = 27 coding + 23 written.** Every coding part is two tests: `X-0-basic` (1.5, local) + `X-1-hidden` (1.5, remote only — stripped from your `grader.py`, see the empty `BEGIN_HIDE`/`END_HIDE` blocks). So a local **13.5/13.5 is only half** the coding marks; the hidden half rewards code that generalises past the one visible case.
 
 ### Blockers
-- [ ] **Starter code missing.** `A1/submission.py` in this repo is 7 bytes containing `{\rtf1}`. Need the real
-  handout: `src/submission.py`, `src/grader.py`, `src/environment.yml`. Autograder is run with
-  `python grader.py` from inside `src/`.
+- ~~Starter code missing.~~ **Resolved.** Real handout is cloned at `XCS221-A1/`. Work in
+  `XCS221-A1/src/submission.py`; run the autograder from inside `XCS221-A1/src/`:
+
+  ```
+  python grader.py              # all nine coding tests
+  python grader.py 1e-0-basic   # one test — needs the FULL three-part id, not `1e-0`
+  ```
+
+  The `(medora_chat_build)` env already has numpy 2.1.3 + einops 0.8.1, so no conda setup needed.
+  (`A1/submission.py` is a leftover empty stub — delete it so there is only one submission file.)
 
 ---
 
@@ -515,3 +524,419 @@ out gets totaled away.** It is a pivot table: output letters = group by, dropped
 2. Do the letters match the array's **real** shape, in order? (No mental transposes.)
 3. Within any single list, is every letter distinct? (Unless you *want* a diagonal.)
 4. Are the letters you want summed absent from the output?
+
+---
+
+## 1e — Batch linear projection ✅
+
+**Task:** `x:(B,D_in)`, `W:(D_in,D_out)`, `b:(D_out,)` → `y:(B,D_out)` with `y[i] = x[i] W + b`.
+einops `einsum` for the matmul, broadcasting for the bias, no loops, no `@`.
+
+```python
+x_with_weights = einsum(x, W, 'batch d_in, d_in d_out -> batch d_out')
+return x_with_weights + b
+```
+
+**Deriving the pattern.** Same read-off-the-letters procedure as 1d. For each axis ask only one question:
+does it survive to the output?
+
+| Axis | Appears in | In output? | Role |
+|---|---|---|---|
+| `batch` | `x` only | yes | carried — one output row per input row |
+| `d_in` | `x` **and** `W` | no | **contracted** — summed over |
+| `d_out` | `W` only | yes | carried — one output column per weight column |
+
+Shared by both operands **and** absent from the output ⇒ summed. That gives
+$\sum_{d_{in}} x[b,d_{in}]\,W[d_{in},d_{out}]$, the definition of matmul. The table *is* the string.
+
+Complexity check (ties back to 1b): 3 distinct letters → 3 loops → $O(B \cdot D_{in} \cdot D_{out})$. ✓
+
+**Use full words for axis names.** einops accepts any valid identifier, so
+`'batch d_in, d_in d_out -> batch d_out'` reads like the docstring. `'b i, i o -> b o'` is the same
+computation but has to be decoded.
+
+### Two gotchas
+
+**1. einops argument order is the reverse of NumPy's.**
+
+```python
+np.einsum('n d, d -> n', X, w)      # string FIRST
+einsum(X, w, 'n d, d -> n')         # einops: tensors first, string LAST
+```
+
+**2. The bias needs no reshape.** NumPy right-aligns shapes when broadcasting:
+
+```
+y      (B, D_out)
+b         (D_out,)   -> read as (1, D_out), stretched down all B rows
+           ^^^^^^^  trailing axes match, so it is legal
+```
+
+Plain `+ b` works — no `b[None, :]`, no `reshape`. It broadcasts precisely *because* the axis that fails to
+line up (`batch`) is the one `b` is missing entirely, so NumPy fills it in.
+
+**Do not reach for `np.array` here.** It is a *constructor* (build an array from a list, or copy an existing
+one), not an addition operator. `einsum` already returns an ndarray, and `+` on two ndarrays is already
+elementwise addition with broadcasting. General rule: in NumPy you rarely build arrays in order to combine
+arrays — if you are reaching for `np.array` mid-computation, the operation you want probably already exists as
+an operator or ufunc. `np.array` is for *getting into* NumPy from Python lists; once there you stay there with
+`+`, `*`, `@`, `einsum`.
+
+**Verified** beyond the single grader case: shapes `(B,Din,Dout)` = `(7,5,3)`, `(1,4,4)`, `(20,1,6)`, `(3,8,1)`
+all match `x @ W + b`, including the degenerate `Din=1` and `Dout=1` edges.
+
+---
+
+## 1f — Split last dimension ✅
+
+**Task:** return the `einops.rearrange` **pattern string** taking `(B, D)` → `(B, G, D/G)`. Return the string
+only; the grader applies it with `g=num_groups`. Assume `D % G == 0`.
+
+```python
+return 'b (g d) -> b g d'
+```
+
+**The handout's `'b d -> b g (d/g)'` is not valid einops.** It is written as an "e.g." and only gestures at the
+shape — einops patterns have **no division operator**. Do not type it.
+
+### Parentheses = one composite axis
+
+A parenthesized group is several logical axes packed into one physical axis. Which side of the `->` it sits on
+sets the direction:
+
+| Parens on the… | Meaning |
+|---|---|
+| **left** (input) | that one axis *is* `a*b` — **split** it apart |
+| **right** (output) | **merge** those axes into one |
+
+Here two axes become three, so the composite is on the **input** side: `D` secretly is `G × (D/G)`.
+einops cannot infer both factors from `D` alone — hence the grader passing `g=num_groups` to pin one; `D/g`
+follows automatically.
+
+### The odometer rule — the whole problem
+
+**Inside a parenthesis, the leftmost axis ticks slowest** (like odometer digits, like C-order `reshape`).
+
+| `(g d)` ✅ | `(d g)` ❌ |
+|---|---|
+| flat index = `g*(D/G) + d` | flat index = `d*G + g` |
+| `d` is the fast digit | `g` is the fast digit |
+| group 0 owns the first **contiguous chunk** | group 0 takes every `G`-th element |
+
+Same `x = arange(12).reshape(2,6)`, row 0 = `[0 1 2 3 4 5]`:
+
+```
+g=2:   (g d) -> [[0,1,2],[3,4,5]]      (d g) -> [[0,2,4],[1,3,5]]      both shape (2,2,3)
+g=3:   (g d) -> [[0,1],[2,3],[4,5]]    (d g) -> [[0,3],[1,4],[2,5]]    both shape (2,3,2)
+```
+
+### ⚠ The trap I fell into
+
+I first wrote `'b (d g) -> b g d'`. It produced **exactly the right shape** and silently wrong contents.
+
+The mistake was reading the output side `b g d` as "g groups of size d" and assuming the left side just had to
+*mention* both names. But **the right side only sets axis order; the parenthesis on the left sets memory
+layout.** The two sides are independent, which is why a wrong left side still yields a plausible right-hand shape.
+
+> **A matching shape is not evidence of a correct rearrange. Always check a value.**
+
+`(d g)` is not nonsense in general — it is what you want for genuinely *interleaved* layouts. It is just not
+this problem.
+
+### Output shape, read left to right
+
+```
+(2,   2,   3)  <- x:(2,6) with g=2
+ ^    ^    ^
+ B    G   D/G
+```
+
+Confusing in the g=2 test only because `B` and `G` are both 2. The middle slot always tracks `g` exactly:
+
+| `x.shape` | `g` | result |
+|---|---|---|
+| `(2,6)` | 2 | `(2, 2, 3)` |
+| `(2,6)` | 3 | `(2, 3, 2)` |
+| `(2,6)` | 6 | `(2, 6, 1)` |
+| `(2,6)` | 1 | `(2, 1, 6)` |
+
+The pattern string never changes across those rows — that is the payoff of returning a *pattern* instead of
+doing the reshape.
+
+### Duplicate axis names are a hard error
+
+`'d (g d) -> d g d'` (reusing `d` for batch and for the inner axis) fails loudly:
+
+```
+EinopsError: Indexing expression contains duplicate dimension "d"
+```
+
+Names are how einops matches positions across the `->`, so a repeat is genuinely ambiguous. Note the contrast:
+this one **errors**, while `(d g)` vs `(g d)` stays **silent** — the silent class is the dangerous one.
+
+---
+
+## 1g — Normalized inner products ✅
+
+**Task:** `A:(B,M,D)`, `C:(B,N,D)` → `S:(B,M,N)` with `S[b,i,j] = <A[b,i,:], C[b,j,:]>`; divide by `sqrt(D)`
+when `normalize=True`. This is 1d(ii) with a batch axis added — it is literally an attention score matrix.
+
+```python
+a_inner_c = einsum(A, C, '... m d, ... n d -> ... m n')
+if normalize:
+    a_inner_c = a_inner_c / np.sqrt(A.shape[-1])
+return a_inner_c
+```
+
+**`...` (ellipsis) beats naming the batch axis.** It matches *any* number of leading axes, so the same string
+handles `(B,M,D)` and `(B1,B2,M,D)`. An explicit `b` only handles one. Worth preferring for the hidden test.
+
+### The third axis role — the one 1e did not have
+
+| In both operands? | In output? | einsum does |
+|---|---|---|
+| no (one operand only) | yes | carry through |
+| **yes** | **no** | **sum over it** (1e's `d_in`, here `d`) |
+| **yes** | **yes** | **align elementwise, no sum** ← the batch case |
+
+That last row *is* the batch loop. Naming an axis identically in both operands **and** the output means "match
+these up, do not contract" — no `for b in range(B)` needed. Already used in 1d(iii)'s `'n d, n d -> d'`.
+
+**`m` and `n` must get different names.** Same lesson as 1d(ii): they are different rows, you want *all pairs*,
+so both indices range independently and both survive. Reusing one name asks for a diagonal instead.
+
+4 distinct letters, 3 in the output ⇒ exactly one contracted (`d`). Cost O(B·M·N·D).
+
+### ⚠ The trap I fell into: `1/np.sqrt(S)`
+
+I wrote `1/np.sqrt(a_inner_c)` — sqrt of the **scores**, then reciprocal. Wrong on three counts:
+
+1. The sqrt applies to **`D`, an integer** (`A.shape[-1]`), not to the array.
+2. `S` belongs in the **numerator**: `S / sqrt(D)`, not `1 / sqrt(S)`.
+3. Dot products **go negative** ⇒ `np.sqrt` of them yields `nan` (and `sqrt(0)` → `1/0` → `inf`).
+
+```
+raw S               = [[-0.961, 0.458, -0.147], ...]
+1/np.sqrt(S)  WRONG = [[nan,    1.477, nan   ], ...]
+S/np.sqrt(D)  RIGHT = [[-0.392, 0.187, -0.060], ...]     D=6, sqrt(D)=2.4495
+```
+
+**Tell:** `D` appeared nowhere in my expression, though the problem statement names it explicitly. If a quantity
+the problem mentions never shows up in the code, something is wrong.
+
+**Two different things both called "normalize":**
+
+| | divisor depends on | per-element? |
+|---|---|---|
+| **this problem** | only the **shape** (`D`) | no — one constant for the whole matrix |
+| `x/norm(x)`, z-scoring | the **values** | yes — differs per row |
+
+Rescaling by one constant preserves the relative pattern (biggest stays biggest, signs intact). A per-element
+`sqrt` is a nonlinear distortion — a completely different operation.
+
+**Why sqrt(D) and not D:** a dot product sums `D` random-ish terms, so its *standard deviation* grows like
+sqrt(D). Dividing it out keeps the spread of `S` roughly constant as `D` changes. This is exactly attention's
+1/sqrt(d_k).
+
+**Style:** write `S = S / ...`, not a bare `S / ...` — the latter computes and discards.
+
+---
+
+## 1h — Mask strictly upper triangle ✅
+
+**Task:** set entries with column > row to `-inf` in `scores:(B,L,L)`. Broadcasting, no loops, float output.
+
+```python
+positions = np.arange(scores.shape[-1])
+masked_scores = np.where(positions[:, None] >= positions, scores, -np.inf)
+return masked_scores
+```
+
+### Why `tril`/`triu` cannot do it
+
+They have **no fill-value parameter** — the signature is `np.triu(m, k=0)`, where `k` is the *diagonal offset*.
+Zero is baked into what they are. Not a doc-reading failure; the feature does not exist. (`-np.inf * 0` is
+`nan`, so no arithmetic trick either.)
+
+Two distinct uses, only one of which is a dead end:
+
+| | verdict |
+|---|---|
+| `np.tril(scores)` — on the **data** | ✗ masked cells become `0`, indistinguishable from *real* zeros already in the data. Information destroyed. |
+| `np.tril(np.ones((L,L), bool))` — on a **ones array** | ✓ genuinely works, gives a real mask (`np.tri(L, dtype=bool)` is the one-call version) |
+
+The second **would pass the grader**. Index grids are worth writing anyway: the problem asks for them, and they
+generalise where triangles do not — `np.abs(i-j) <= 2` (band), `i-j > k` (sliding-window attention) have no
+triangle function at all. The real lesson is *build indices, compare them, `np.where` the result*.
+
+### The rule that unlocked it
+
+> **A positional mask depends only on *where* a cell is, never on *what is in it*.**
+> ⇒ `scores` appears **only** as a value argument to `np.where` — **never inside the condition**.
+
+I broke this twice: `np.where(scores < positions, ...)` then `np.where(scores[None,:] < positions, ...)`. Both
+compare **data against indices**, which is meaningless. The first produced an all-`False` mask, so *everything*
+became `-inf` — that was the giveaway.
+
+### Only ONE `None` is needed
+
+Automatic broadcast padding adds axes **on the left only**. So `(L,)` auto-pads to `(1,L)` — the *column*
+orientation, free. There is **no** automatic route to `(L,1)`; that one must be explicit.
+
+| | shape | role |
+|---|---|---|
+| `positions` | `(L,)` → auto `(1,L)` | column index `j` |
+| `positions[:, None]` | `(L,1)` | row index `i` |
+
+**A scalar has no orientation to get wrong; a vector does.** That is why 1g's `np.sqrt(D)` needed nothing —
+shape `()` pads to all-1s and stretches every direction at once.
+
+### Choosing the comparison
+
+`np.where(cond, value_if_true, value_if_false)` — condition and argument order must agree:
+
+```
+np.where(<keep condition>, scores, -np.inf)     # true on survivors   <- what I used
+np.where(<mask condition>, -np.inf, scores)     # true on victims
+```
+
+*Strictly* upper ⇒ the diagonal **survives**. Keep-set is the lower triangle **including** the diagonal ⇒
+`i >= j`. Print the four candidates on `L=4` and eyeball which has the diagonal on the right side:
+
+```
+i >  j         i >= j  ✅      j >  i         j >= i
+[0 0 0 0]     [1 0 0 0]     [0 1 1 1]      [1 1 1 1]
+[1 0 0 0]     [1 1 0 0]     [0 0 1 1]      [0 1 1 1]
+[1 1 0 0]     [1 1 1 0]     [0 0 0 1]      [0 0 1 1]
+[1 1 1 0]     [1 1 1 1]     [0 0 0 0]      [0 0 0 1]
+```
+
+### The batch axis handles itself
+
+```
+scores  (B, L, L)
+mask       (L, L)   -> pads to (1, L, L)
+result  (B, L, L)   same mask, every batch element
+```
+
+No slicing, no loop over `b`.
+
+### `np.where` broadcasts all THREE arguments
+
+`cond (L,L)`, `scores (B,L,L)`, `-np.inf ()` → common shape `(B,L,L)`, then elementwise **selection**.
+
+**It selects; it does not apply a function — and it does NOT short-circuit.** Both branches are fully evaluated
+before the selection happens:
+
+```python
+np.where(x != 0, 1/x, 0)   # 1/x computed for ALL x including zeros -> divide-by-zero warning anyway
+```
+
+### `-inf` spellings, and why it must be `-inf`
+
+`-np.inf` == `float('-inf')` == `-math.inf`. `np.where` **auto-promotes** an int array to float when a branch is
+`-np.inf`, satisfying the docstring float requirement for free (in-place `scores[mask] = -np.inf` on an int
+array would *not*). Why not a big negative sentinel: `np.exp(-inf)` is **exactly** `0.0`, so masked entries get
+exactly zero softmax probability; `-1e9` is only close, and misbehaves in float32.
+
+### `np.arange` refresher
+
+NumPy's `range` ("array range"). Stop is exclusive, so `np.arange(L)` = `0..L-1` — exactly the valid indices of
+a length-`L` axis. Unlike `range` it is a **real array**: has `.shape`, does arithmetic, accepts `[:, None]`,
+and allows floats.
+
+### `[:, None]` refresher — axis, not data
+
+The comma separates **axes**; one slot per axis. `:` = keep this whole axis; `None` (= `np.newaxis`) = insert a
+new length-1 axis here.
+
+**Adding an axis is not adding a row.** `.size` is the tell:
+
+| | shape | size | data |
+|---|---|---|---|
+| `s[None, :]` — new **axis** | `(2,3)`→`(1,2,3)` | 6 → **6** | unchanged, *shares memory* |
+| `np.vstack` — new **row** | `(2,3)`→`(3,3)` | 6 → **9** | 3 genuinely new numbers |
+
+Same numbers, one extra `[` wrapped around the outside. Also spelled `p.reshape(-1, 1)`.
+
+---
+
+## 1i — Probability-weighted sum ✅
+
+**Task:** return the einsum **string** for `P:(B,N)`, `V:(B,N,D)` → `out:(B,D)` with
+`out[b,:] = sum_j P[b,j] * V[b,j,:]`.
+
+```python
+return 'batch weights, batch weights data -> batch data'
+```
+
+Same three-way classification as 1g:
+
+| Axis | In `P` | In `V` | In output | Role |
+|---|---|---|---|---|
+| `batch` | ✓ | ✓ | ✓ | aligned — the batch |
+| `weights` (`N`) | ✓ | ✓ | ✗ | **contracted** — this *is* the sum over j |
+| `data` (`D`) | ✗ | ✓ | ✓ | carried |
+
+The `weights` row is the whole problem: the `sum_j` in the formula *is* "shared by both operands, absent from
+the output." Nothing else to decide. Descriptive names make the contraction self-evident — `weights` appears
+twice on the left and never on the right, so it is visibly the axis being summed away.
+
+### ⚠ Handout error: it says "numpy.einsum", the grader uses einops
+
+The LaTeX says *"provide only the `numpy.einsum` string"*, but `grader.py` calls `einsum(P, V, pattern)` from
+**einops**. The `submission.py` docstring is the correct one. The dialects are **not** interchangeable:
+
+| | separator | `'bn'` means |
+|---|---|---|
+| **einops** | whitespace-separated names | ONE axis literally named `bn` |
+| **numpy** | one char per axis, no spaces | axis `b` then axis `n` |
+
+```
+einsum(P, V, 'bn,bnd->bd')     -> EinopsError: Unknown axis bd on right side
+np.einsum('bn,bnd->bd', P, V)  -> works
+```
+
+Always write these einops-style with spaces, as in 1e and 1g.
+
+### The arc
+
+1g gives attention **scores**, a softmax over them gives `P`, and 1i is the **weighted sum of values** by `P`.
+Problems 1g + 1h + 1i are the whole attention mechanism.
+
+---
+
+## Local test harness — `src/my_tests.py`
+
+Written because **the hidden half of every coding part is stripped from the local grader** (nine empty
+`BEGIN_HIDE`/`END_HIDE` pairs; the `Makefile` shows the `sed` that deletes them). There is nothing to recover
+locally, and hunting for leaked copies is an honor-code problem — so the substitute is to write the
+generalisation tests myself.
+
+```
+python my_tests.py          # everything
+python my_tests.py 1g       # one part
+```
+
+**Principle: compare against an *independent reference* on randomised shapes.** Every reference is computed a
+*different way* than the submission computes it — `@`, `np.einsum`, `np.triu_indices`, numerical
+differentiation, `np.linalg.lstsq` — so a shared misconception cannot make both sides agree.
+
+Coverage the shipped grader does not have:
+
+| Part | Extra |
+|---|---|
+| 1e | six shape combos incl. `Din=1`, `Dout=1`, `1x1x1`; bias isolated via `W=0` |
+| 1f | `g` in {1,2,3,6}, `D` in {6,8,12}; explicit **contiguous-not-strided** value check |
+| 1g | `M != N`, `D=1`, the `normalize` default, **negative dot products stay finite** |
+| 1h | `L=1`, `L=2`; **diagonal survives**; int→float promotion; **input not mutated** |
+| 1i | one-hot `P` must select exactly one value vector |
+| 2b, 2d, 2e | cross-checked against **finite differences** — independent of the analytic formula |
+| 2e | gradient must vanish at the true least-squares minimiser |
+| 3c | `num_steps=0`; the minimiser is a fixed point; one hand-computed step |
+
+Unimplemented parts report `skip`, so the file is usable from the start and the skips flip to passes as work
+lands. It lives in `src/` but is **not** submitted — only `submission.py` is uploaded.
+
+> The 1f bug is the argument for this file: `'b (d g) -> b g d'` produced the **right shape** and the **wrong
+> values**, and the single shipped test would have caught it only by luck.

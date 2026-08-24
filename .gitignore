@@ -1,0 +1,6 @@
+# The assignment handout is its own clone (remote: scpd-proed/XCS221-A1).
+# Tracked there, not here.
+XCS221-A1/
+
+__pycache__/
+*.py[cod]
