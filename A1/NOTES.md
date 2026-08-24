@@ -283,6 +283,48 @@ X = [[1,2],[3,4]]
 entry count is the product of all letter sizes, one multiply each. 3 letters -> `2*2*2 = 8`; 2 letters ->
 `2*2 = 4`.
 
+### Careful: "diagonal" happens on the BIG ARRAY, not on the output
+
+Writing `d` in both operands does **not** extract a diagonal from the answer. It restricts **which points exist
+in the big array**, before any summing.
+
+```
+'n d, n e -> d e'   letters n,d,e   8 points   of which 4 have d==e:  5, 12, 21, 32
+'n d, n d -> d'     letters n,d     4 points   exactly those:         5, 12, 21, 32
+```
+
+The 2-letter big array *is* the `d==e` slice of the 3-letter one.
+
+**Two different letters, two independent facts** — they do not compete:
+
+| Letter | Placement | Effect |
+|---|---|---|
+| `d` | in both inputs **and** the output | keep only points where both inputs' `d` agree -> diagonal slice |
+| `n` | absent from the output | those points pile up -> summed |
+
+So the result is *the diagonal slice, then summed along n*. "It sums over the rows" and "it is a diagonal" are
+both true, about different letters.
+
+**Why it equals `diag(X^T C)`** — slicing on `(d,e)` and summing on `n` touch different axes, so they commute:
+
+```
+sum over n THEN diagonal:  M = [[26,30],[38,44]] -> diag = [26,44]
+diagonal THEN sum over n:  [5,12,21,32]          -> sums = [26,44]
+```
+
+Same answer, but route 2 visits 4 points instead of 8. **That is the whole saving** — off-diagonal points are
+excluded before being paid for, not computed and discarded.
+
+### Two distinct diagonal mechanisms — do not conflate
+
+| String | Mechanism | Diagonal of what |
+|---|---|---|
+| `'i i -> i'` | one letter twice in **one** operand; reads `Y[i][i]` via a stride sum | **that array** |
+| `'n d, n d -> d'` | one letter shared across **two** operands, kept in the output | the **joint big array** — neither `X` nor `C` has a diagonal taken |
+
+In part (iii) it is the second. Nothing diagonal happens to `X` itself. The output is a length-`d` vector that
+*equals* the diagonal of a matrix never built, because the off-diagonal points were excluded up front.
+
 ### Two different things get called "intermediate"
 
 | | What it is | Materialized? |
