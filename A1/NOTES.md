@@ -13,7 +13,7 @@ Working notes and progress log. Due Sunday, Aug 30, 11:59pm PT.
 | 1a  Numpy AI-tutor session      | Written | 1 | ☐ not started |
 | 1b  Matmul complexity           | Written | 2 | ☑ **done** — `O(mnp)` |
 | 1c  einsum AI-tutor session     | Written | 1 | ☐ not started |
-| 1d  Einstein summation strings  | Written | 2 | ◐ **in progress** |
+| 1d  Einstein summation strings  | Written | 2 | ☑ **done** — verified vs NumPy |
 | 1e  `linear_project`            | Coding  | 3 | ☐ |
 | 1f  `split_last_dim_pattern`    | Coding  | 3 | ☐ |
 | 1g  `normalized_inner_products` | Coding  | 3 | ☐ |
@@ -176,9 +176,33 @@ letters `i` and `j`, both kept in the output. The feature axis `d` is shared by 
 the output, so it is contracted. No explicit transpose is needed — the transpose is expressed by *which letters
 line up*, not by flipping an array.
 
-### (iii) $\operatorname{diag}(X^\top X)$ — `(n,d), (n,d) -> (d,)`
+### (iii) $\operatorname{diag}(X^\top X)$ — `(n,d), (n,d) -> (d,)` ✅
 
-- [ ] TODO
+```python
+einsum(X, X, 'n d, n d -> d')
+```
+
+**Justification:** The $k$-th diagonal entry of $X^\top X$ is the squared norm of column $k$:
+$\operatorname{diag}(X^\top X)_d = \sum_n X_{nd}X_{nd} = \sum_n X_{nd}^2$. Both operands are the plain array
+$X$, so both are labeled `n d`. The row axis `n` is absent from the output, so it is summed; the feature axis `d`
+appears in both inputs **and** the output, so it is kept and aligned elementwise. Net effect: square $X$
+elementwise, then sum down the rows.
+
+Note the contrast with (ii) — same two arrays, opposite axis roles:
+
+```
+'i d, j d -> i j'    sum over d, keep rows     -> (n,n)  pairwise row dot products
+'n d, n d -> d'      sum over n, keep columns  -> (d,)   column squared norms
+```
+
+### Verification
+
+```python
+X = rng.normal(size=(5,3)); w = rng.normal(size=3)
+np.allclose(np.einsum('nd,d->n',   X, w), X @ w)              # True
+np.allclose(np.einsum('id,jd->ij', X, X), X @ X.T)            # True
+np.allclose(np.einsum('nd,nd->d',  X, X), np.diag(X.T @ X))   # True
+```
 
 ---
 
@@ -238,11 +262,12 @@ ValueError: einstein sum subscripts string includes output subscript 'n' multipl
 That is how axes get matched up. `d` in `'i d, j d'` appears **once per operand**, in two different lists — that
 is alignment, not a diagonal. What happens next depends on the output:
 
-| Letter appears in | Meaning |
-|---|---|
-| inputs only (not output) | **contracted** — summed over |
-| inputs **and** output | **kept** — aligned elementwise / batched |
-| one input and output | kept — carried straight through |
+| Letter appears in | Where | Meaning |
+|---|---|---|
+| inputs only (not output) | across lists | **contracted** — summed over |
+| inputs **and** output | across lists | **kept** — aligned elementwise / batched |
+| one input and output | across lists | kept — carried straight through |
+| twice in the **same** list | within a list | **diagonal** (illegal in the output position) |
 
 ### The contrast that caused the confusion
 
