@@ -229,127 +229,91 @@ np.allclose(np.einsum('nd,nd->d',  X, X), np.diag(X.T @ X))   # True
 
 ---
 
-## einsum: the letter rules (worked out from mistakes)
+## einsum: the one mechanism
 
-**Mental model: each letter is a `for` loop variable.**
+Everything else in this file is a **consequence** of this. There are no cases and no special modes.
 
-```python
-# 'i d, j d -> i j'
-for i in range(n):
-    for j in range(n):
-        total = 0
-        for d in range(D):        # d not in output => it is the summed loop
-            total += X[i, d] * X[j, d]
-        out[i, j] = total
-```
+### The machine
 
-Three distinct letters ⇒ three distinct loop variables. Everything else follows.
+Picture a control panel:
 
-### Rule 1 — a letter is an *index*, not an axis name
+- **A row of dials** — one per distinct letter in the string. Each counts `0,1,2,...` up to that letter's size.
+- **A grid of boxes** — the output. The **output letters** are wired to the box selector: they decide which box
+  you are pointing at right now.
+- **The inputs** are lookup tables. Each reads itself using *its own* letters' current dial settings.
 
-Same letter = same index value at the same moment. `n` does not mean "the row axis," it means "row number `n`."
-
-### Rule 2 — labels describe the array you actually pass in
-
-`einsum(X, X, 'n d, d n -> ...')` with `X` of shape `(n,d)` **asserts the second operand is `(d,n)`**. It isn't.
+Then run this, and only this:
 
 ```
-operands could not be broadcast together with remapped shapes
-(4,3)->(4,3)  (4,3)->(3,4)
+turn every dial through every possible combination:
+    1. read one number from each input, at its letters' current dial settings
+    2. multiply those numbers together
+    3. drop the result in whatever box the output dials point at
 ```
 
-Dangerous: if $X$ were square this would not error, it would silently compute the wrong thing.
+**The one underlying rule: the same letter is the same dial.**
 
-### Rule 3 — repeated letter *within one* index list = diagonal
+### Everything else falls out of step 3
 
-Each comma-separated group (and the output) is **one tensor's index list**. Repeating a letter inside a single
-list means both indices are forced equal, so you only visit the diagonal:
+| What it looks like | What is actually happening |
+|---|---|
+| "the missing letter gets summed" | that dial is not wired to the box, so turning it does not move the box — every product it makes lands in the **same box** and piles up. Piling up in one box *is* addition. Nothing decided to sum. |
+| "shared letters move in lockstep" | they **are** one dial. It cannot point at two values. |
+| "different letters give all combinations" | separate dials, turned independently |
+| "a repeated letter in one input = diagonal" | that input reads position `[dial][dial]` — same dial twice, so only the diagonal is reachable |
+| the cost | = how many dial combinations exist = product of the letter sizes |
 
-```python
-Y = [[0,1,2],[3,4,5],[6,7,8]]
-np.einsum('nn->n', Y)   # [0, 4, 8]   the diagonal
-np.einsum('nn->',  Y)   # 12          the trace
-```
-
-So `-> n n` is not a request for an $n \times n$ matrix. With only one loop variable `n` you can only write
-`out[n, n]` — the diagonal. NumPy rejects it outright in the output position:
+### Proof: one machine, two strings, X = [[1,2],[3,4]]
 
 ```
-ValueError: einstein sum subscripts string includes output subscript 'n' multiple times
+'i d, j d -> i j'   3 dials -> 8 turns, boxes addressed by [i,j]
+   d=0 i=0 j=0   X[0,0]=1 x Y[0,0]=1  ->  1  -> box [0,0]
+   d=1 i=0 j=0   X[0,1]=2 x Y[0,1]=2  ->  4  -> box [0,0]     box[0,0] = 1+4 = 5
+   ...                                                        d not in address -> pile up
+
+'n d, n d -> d'     2 dials -> 4 turns, boxes addressed by [d]
+   d=0 n=0       X[0,0]=1 x Y[0,0]=1  ->  1  -> box [0]
+   d=0 n=1       X[1,0]=3 x Y[1,0]=3  ->  9  -> box [0]       box[0]   = 1+9 = 10
+                                                              n not in address -> pile up
 ```
 
-**Two different axes need two different letters, even when they have the same length.**
+Same procedure both times. The **only** difference is how many dials exist and which are wired to the box.
 
-### Rule 4 — repeated letter *across* index lists is the whole point
+Note what gets *read*: run 1 reads `X[0,0] x Y[1,0]` — different cells, because `i` and `j` are separate dials.
+Run 2 reads `X[0,0] x Y[0,0]` — the same cell, because both inputs carry the same letters. That is all
+"lockstep" ever meant.
 
-That is how axes get matched up. `d` in `'i d, j d'` appears **once per operand**, in two different lists — that
-is alignment, not a diagonal. What happens next depends on the output:
+And the cost is literally the number of rows in that trace: 8 vs 4. Three dials vs two.
 
-| Letter appears in | Where | Meaning |
-|---|---|---|
-| inputs only (not output) | across lists | **contracted** — summed over |
-| inputs **and** output | across lists | **kept** — aligned elementwise / batched |
-| one input and output | across lists | kept — carried straight through |
-| twice in the **same** list | within a list | **diagonal** (illegal in the output position) |
+### Reading any string in 10 seconds
 
-### The contrast that caused the confusion
+1. **Count the distinct letters** -> number of dials -> the complexity.
+2. **Output letters** -> the shape of the box grid.
+3. **Letters missing from the output** -> their products pile into one box, so they are totaled away.
 
-```
-'i d, j d -> i j'
-     ^     ^          d: once in list 1, once in list 2   -> ALIGN, then sum   OK
-'n d, d n -> n n'
-               ^ ^    n: twice in the SAME list (output)  -> DIAGONAL          ILLEGAL
-```
+### Writing one — the same three questions, inverted
 
+1. *What do I want one number for?* -> those are the output letters
+2. *What do I want totaled away?* -> leave those letters out of the output
+3. *What must line up between the inputs?* -> give those the same letter
 
-### The pattern family (one array pair, four outputs)
+### Plain-English version (the spreadsheet story)
 
-All four come from choosing (a) which axis to contract and (b) whether the two surviving axes are
-**independent** (different letters) or **locked** (same letter).
+Two ordinary spreadsheets: units sold by **store x product**, and price by **product x currency**. Want money
+by **store x currency**.
 
 ```
-'i d, j d -> i j'   (n,n)   XX^T           contract features, two INDEPENDENT row axes
-'i d, i d -> i'     (n,)    row sq norms   contract features, row axes LOCKED -> diagonal
-'n d, n e -> d e'   (d,d)   X^T C          contract rows,     two INDEPENDENT feature axes
-'n d, n d -> d'     (d,)    diag(X^T C)    contract rows,     feature axes LOCKED -> diagonal
+store product, product currency -> store currency
 ```
 
-**One letter is the whole difference** between a matrix and its diagonal:
+- `product` is written in **both** sheets -> apple-units must meet apple-price. You cannot pair apple-units
+  with banana-price.
+- `product` is **missing** from the answer -> you walk every product and total it up. It gets used up.
+- `store` and `currency` are **in** the answer -> a number for each combination.
 
-```
-X = [[1,2],   C = [[1,0],     'n d, n e -> d e' = [[11,13],    full (2,2)
-     [3,4],        [0,1],                          [14,16]]
-     [5,6]]        [2,2]]     'n d, n d -> d'   =  [11,   16]  diagonal (2,)
-```
-
-| String | Distinct letters | Cost |
-|---|---|---|
-| `'n d, n e -> d e'` | 3 | $O(nd^2)$ |
-| `'n d, n d -> d'` | 2 | $O(nd)$ |
-
-So the "repeated letter = diagonal" rule is not an obstacle — it is the **mechanism** that makes (iii) cheap.
-Reusing the letter locks the two axes onto the diagonal and skips the off-diagonal work entirely
-(measured: 105ms -> 3.4ms, 31x, at n=2000 d=1500).
-
-### "Absent letter is summed" is universal — nothing is ever discarded
-
-A letter missing from the output is **always summed over**, in every string, with no exceptions:
-
-```
-'m n, n p -> m p'   out[m,p] = 1*5 + 2*7        n summed (2 terms)
-'n d, n d -> d'     out[d]   = 1*1 + 3*3 + 5*5  n summed (3 terms)
-```
-
-The word *discard* applies only to the **non-einsum** route `np.diag(X.T @ X)`, which materializes all $d^2$
-entries and throws away $d^2-d$ of them. einsum discards nothing; every input element feeds some sum.
-
-### Complexity = count of distinct letters
-
-```
-'m n, n p -> m p'   3 letters -> 3 loops -> O(mnp)    <- matches 1b
-'i d, j d -> i j'   3 letters -> 3 loops -> O(n^2 d)
-'n d, n d -> d'     2 letters -> 2 loops -> O(nd)
-```
+Want the per-product breakdown instead? Keep the letter: `store product, product currency -> store product
+currency` — now nothing is totaled. **The letters you keep are the level of detail you want; anything you leave
+out gets totaled away.** It is a pivot table: output letters = group by, dropped letters = sum.
 
 ### Checklist before submitting any einsum string
 
