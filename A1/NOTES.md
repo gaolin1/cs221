@@ -229,6 +229,21 @@ np.allclose(np.einsum('nd,nd->d',  X, X), np.diag(X.T @ X))   # True
 
 ---
 
+## einsum in one paragraph
+
+> Every axis of every input must be labelled, and each label's size is pinned by the array it sits on. **The way
+> you label is what builds the intermediate ("big") array**: a fresh name adds an axis, a reused name merges two
+> axes into one so they line up. Then **omitting a letter from the output is the signal to sum over it.**
+
+The lever is **name reuse** — it is how you shrink the big array, and the big array's size is the cost. That is
+the whole difference between `'n d, n e -> d e'` at $O(nd^2)$ and `'n d, n d -> d'` at $O(nd)$: a smaller block,
+chosen by reusing a name.
+
+| | Forced | Your choice |
+|---|---|---|
+| labels | every axis gets one; its size comes from the array | **which names you reuse** -> builds the big array |
+| output | — | **what survives** -> the rest is summed; **the order** -> the layout |
+
 ## einsum: the one mechanism
 
 Everything else in this file is a **consequence** of this. There are no cases and no special modes.
