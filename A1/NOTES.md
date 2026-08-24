@@ -188,6 +188,29 @@ $X$, so both are labeled `n d`. The row axis `n` is absent from the output, so i
 appears in both inputs **and** the output, so it is kept and aligned elementwise. Net effect: square $X$
 elementwise, then sum down the rows.
 
+**Watch the `diag` carefully.** $X^\top X$ itself is $(d \times d)$ — for $X$ of shape $(3,2)$ that is
+$(2,3)@(3,2) = (2,2)$. It is `diag` that collapses it to a length-$d$ **vector**, shape `(2,)`:
+
+```
+X = [[1,2],      X.T @ X  = [[35, 44],   (2,2)
+     [3,4],                  [44, 56]]
+     [5,6]]      np.diag(.) = [35, 56]   (2,)   <- what (iii) asks for
+                 col0=(1,3,5) -> 1+9+25 = 35
+```
+
+**Why einsum is the better route here (ties back to 1b):** `np.diag(X.T @ X)` builds the whole $d\times d$
+matrix and then throws the off-diagonal away — $O(nd^2)$ work for $d$ useful numbers. The einsum string never
+forms the matrix; it visits only the pairs it needs.
+
+| Route | Cost |
+|---|---|
+| `np.diag(X.T @ X)` | $O(nd^2)$ |
+| `einsum('nd,nd->d', X, X)` | $O(nd)$ |
+
+Read it off the letters exactly like 1b: `'n d, d p -> n p'` has 3 distinct letters -> 3 loops -> $O(ndp)$.
+`'n d, n d -> d'` has only **2** distinct letters -> 2 loops -> $O(nd)$. For $d=768$ that is ~768x less work.
+**The number of distinct letters in an einsum string is its complexity.**
+
 Note the contrast with (ii) — same two arrays, opposite axis roles:
 
 ```
