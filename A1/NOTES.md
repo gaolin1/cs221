@@ -19,10 +19,10 @@ Working notes and progress log. Due Sunday, Aug 30, 11:59pm PT.
 | 1g  `normalized_inner_products` | Coding  | 3 | ☑ **done** — 1g-0-basic passes |
 | 1h  `mask_strictly_upper`       | Coding  | 3 | ☑ **done** — 1h-0-basic passes |
 | 1i  `prob_weighted_sum_einsum`  | Coding  | 3 | ☑ **done** — 1i-0-basic passes |
-| 2a  Gradient warmup             | Written | 2 | ☐ |
-| 2b  `gradient_warmup`           | Coding  | 3 | ☐ |
+| 2a  Gradient warmup             | Written | 2 | ☑ **done** — written into submission.tex |
+| 2b  `gradient_warmup`           | Coding  | 3 | ☑ **done** — 2b-0-basic passes |
 | 2c  Matmul gradient by hand     | Written | 3 | ☐ |
-| 2d  `matrix_grad`               | Coding  | 3 | ☐ |
+| 2d  `matrix_grad`               | Coding  | 3 | ☑ **done** — 2d-0-basic passes |
 | 2e  `lsq_grad` / `lsq_finite_diff_grad` | Coding | 3 | ☐ |
 | 3a  Optimization warmup         | Written | 3 | ☐ |
 | 3b  Gradient descent tutor session | Written | 1 | ☐ |
@@ -42,7 +42,15 @@ Working notes and progress log. Due Sunday, Aug 30, 11:59pm PT.
   ```
 
   The `(medora_chat_build)` env already has numpy 2.1.3 + einops 0.8.1, so no conda setup needed.
-  (`A1/submission.py` is a leftover empty stub — delete it so there is only one submission file.)
+
+  **Two copies of the code exist.** `XCS221-A1/src/submission.py` is the one the grader reads and the
+  one to upload — always edit there. `A1/submission.py` and `A1/my_tests.py` are backup copies pushed to
+  the personal repo, because `XCS221-A1/` is gitignored here (it is the course clone, remote
+  `scpd-proed/XCS221-A1`, which must never be pushed to). Re-copy after each working session:
+
+  ```
+  cp XCS221-A1/src/submission.py XCS221-A1/src/my_tests.py A1/
+  ```
 
 ---
 
@@ -940,3 +948,175 @@ lands. It lives in `src/` but is **not** submitted — only `submission.py` is u
 
 > The 1f bug is the argument for this file: `'b (d g) -> b g d'` produced the **right shape** and the **wrong
 > values**, and the single shipped test would have caught it only by luck.
+
+---
+
+## 2a — Gradient warmup ✅
+
+**Task:** for $f(\mathbf w)=\sum_{i=1}^d (w_i-c_i)^2$, derive $\nabla f(\mathbf w)$ and evaluate at $\mathbf w=\mathbf 0$.
+
+$$\nabla f(\mathbf w) = 2(\mathbf w - \mathbf c), \qquad \nabla f(\mathbf 0) = -2\mathbf c$$
+
+Verified against central finite differences at both a random $\mathbf w$ and at $\mathbf 0$.
+
+### ⚠ The misconception: "derivatives automatically take away the sum"
+
+They do not. Differentiation is **linear**, so it *moves inside* a sum:
+
+$$\frac{\partial}{\partial w_j}\sum_i (w_i-c_i)^2 = \sum_i \frac{\partial}{\partial w_j}(w_i-c_i)^2$$
+
+The $\sum$ is **still there**. What happens next is that most summands *evaluate to zero*, and a sum of
+mostly zeros collapses to its one surviving term. Two different things.
+
+With $d=3$, differentiating w.r.t. $w_2$:
+
+```
+f = (w1-c1)^2  +  (w2-c2)^2  +  (w3-c3)^2
+    no w2 here    contains w2   no w2 here
+
+df/dw2 =    0    + 2(w2-c2)  +     0       = 2(w2-c2)
+```
+
+Terms with $i \neq j$ are **literally constants** with respect to $w_j$ — nudge $w_j$ and they do not move.
+Derivative of a constant is 0.
+
+### The contrast that proves it — this is 3a
+
+$f(\theta) = \sum_{i=1}^n w_i(\theta - x_i)^2$ has a **scalar** $\theta$ appearing in *every* term. Nothing is
+constant with respect to it, so nothing dies:
+
+$$\frac{\partial f}{\partial \theta} = \sum_{i=1}^n 2w_i(\theta - x_i) \qquad \textbf{the sum survives}$$
+
+Same linearity step, opposite outcome.
+
+> **Differentiation always distributes over a sum. Whether the sum *collapses* depends on how many terms
+> actually contain the variable — nothing to do with the derivative itself.**
+
+2a collapses because $f$ is **separable** (component $i$ touches only $w_i$). 3a does not, because one scalar
+is shared across all $n$ terms. That surviving sum in 3a is what gets set to zero to find the minimiser.
+
+### Chain rule detail
+
+$\frac{d}{dw_j}(w_j-c_j) = 1$ because $c_j$ is a constant — so the inner derivative contributes nothing and
+the factor of 2 from the square is the whole story. Dropping that 2 is the classic slip; it is exactly what
+2b's code encodes, and `my_tests.py` cross-checks 2b against finite differences, so a wrong constant shows up
+immediately.
+
+---
+
+## 2b — `gradient_warmup` ✅
+
+2a typed into Python. `-` on two arrays is elementwise and `2.0 * array` broadcasts the scalar, so the compact
+vector expression **is** the code — no loop, no indexing. That is the payoff of pushing 2a all the way to a
+vector form instead of stopping at $\partial f/\partial w_j$.
+
+---
+
+## 2c / 2d — Gradient of `sum(AB)`
+
+$s = \sum_{i,j} C_{ij}$ where $C = AB$, $A$ is $m \times p$, $B$ is $p \times n$.
+
+$$\frac{\partial s}{\partial A_{ik}} = \sum_j B_{kj} \quad\text{(independent of } i\text{)}
+\qquad
+\frac{\partial s}{\partial B_{kj}} = \sum_i A_{ik} \quad\text{(independent of } j\text{)}$$
+
+### ⚠ Trap 1: stopping at one entry of $C$
+
+I first computed $\partial C_{11}/\partial A_{11} = B_{11}$ and called that the answer. But **$s$ is not
+$C_{11}$** — it is the sum of *every* entry of $C$. An entry in row $i$ of $A$ feeds the whole of row $i$ of
+$C$, so every one of those appearances contributes. The outer sum over $j$ was still owed.
+
+**Free self-check, no arithmetic:** the answer must be *independent of $i$*, so every row of $\partial s/\partial A$
+is identical. My first attempt had two different rows — instant contradiction. A second tell: the array I wrote
+was just $B$ with rows and columns swapped. If a gradient of a sum comes out as a **rearrangement** of the input
+with no summing anywhere, the summation step got skipped.
+
+### ⚠ Trap 2: "is $\partial s/\partial A$ the transpose of $\partial s/\partial B$?"
+
+No. Two independent reasons:
+
+- **Shapes.** $\partial s/\partial A$ is $m \times p$; $(\partial s/\partial B)^\top$ is $n \times p$. Equal only
+  when $m = n$. In this problem $A$ is $2\times3$ and $B$ is $3\times2$, so they *do* match — a coincidence of
+  the chosen numbers, which is exactly why the idea is tempting.
+- **Sources.** $\partial s/\partial A$ is built from $B$; $\partial s/\partial B$ is built from $A$. A transpose
+  relation would need the two matrices to have coincidentally matching sums.
+
+The symmetry actually being sensed is a duality of **form** — same formula with the roles swapped — not of values.
+
+### ⚠ Trap 3: "row sum" vs "column sum"
+
+$\sum_j B_{kj}$ sums over $j$, the **column index**, which sweeps **across a row** ⇒ it is a **row sum** of $B$.
+
+> The axis you **name/keep** survives; the axis you **sum** is the other one. "Column sum" means summing *down*
+> a column, i.e. over the **row** index (`axis=0`).
+
+**Shape test settles it with no arithmetic.** $\partial s/\partial A$ is $m \times p$, entries indexed by $k$ over
+$1..p$. $B$ is $p \times n$: row sums give **$p$** numbers ✓, column sums give **$n$** ✗. Here $p=3, n=2$, so only
+one can be right.
+
+### einsum strings and the broadcast asymmetry
+
+Both reductions land at `(p,)` — **einsum drops the summed axis entirely**, it never leaves a length-1 stub.
+
+| | reduction | gives | target | why |
+|---|---|---|---|---|
+| `grad_A` | `'k j -> k'` on $B$ | `(p,)` | `(m, p)` | `p` is $A$'s **last** axis ⇒ right-aligns for free, the `1` stretches down the $m$ rows |
+| `grad_B` | `'i k -> k'` on $A$ | `(p,)` | `(p, n)` | `p` is $B$'s **first** axis ⇒ a bare `(p,)` aims at `n` and **fails loudly**; needs `[:, None]` → `(p,1)`, stretching across the $n$ columns |
+
+**Broadcasting aligns from the right**, so a `(p,)` vector naturally lands on whichever matrix has `p` trailing.
+$A$ does; $B$ does not.
+
+Good sign the code encodes the derivation: **the stretched axis is the axis the gradient is constant along.**
+`grad_A` stretches over $m$ = "independent of $i$"; `grad_B` stretches over $n$ = "independent of $j$".
+
+### The compatibility rule, and why the "limitation" is a guarantee
+
+> Two axes are compatible if they are **equal**, or if **one of them is 1**. A `1` is the wildcard — it stretches
+> to match anything.
+
+A `(p,)` vector carries **no orientation**; NumPy must pick an axis and always picks the last. It cannot read
+intent. That looks like a limitation but is a **safety feature**: had NumPy tried to match whichever axis fits,
+a **square** target would be ambiguous and it would silently guess. Fixing the rule makes ambiguity an *error you
+can see*.
+
+**On a square target both forms broadcast — to transposes of each other, with no error:**
+
+```
+bare (3,) -> (1,3)            explicit (3,1)
+[[10 20 30]                   [[10 10 10]
+ [10 20 30]                    [20 20 20]
+ [10 20 30]]                   [30 30 30]]
+numbers run ACROSS,           numbers run DOWN,
+row copied downward           column copied rightward
+= identical rows              = identical columns
+= "constant in i" = grad_A    = "constant in j" = grad_B
+```
+
+So omitting `[:, None]` on a square matrix silently hands you **grad\_A's layout where grad\_B was wanted**.
+
+> **Write the explicit `[:, None]` even when a bare vector happens to work.** It documents which direction you
+> meant and keeps working when the dimensions coincide — and square matrices are everywhere in ML.
+
+Here $B$ is $3\times2$, so the bare version cannot broadcast and the mistake is caught. The habit is for the cases
+where nothing warns you. Compare 1f: shapes matched, values were silently wrong. **The dangerous case is always
+the one where the numbers happen to line up.**
+
+### `np.broadcast_to` and an indexing confusion
+
+`np.broadcast_to(vec, A.shape)` materialises the stretch in one call. It returns a **read-only view** — no data
+copied — so `.copy()` before returning it.
+
+Note `v[:, None]` and `v[:, 2]` are different operations that share a syntax:
+
+| | does |
+|---|---|
+| `v[:, None]` | **adds** a length-1 axis — shape changes, data does not |
+| `v[:, 2]` | **selects** position 2 along axis 1 — needs `v` to already be 2-D |
+
+I tried `grad_a[:, a.shape[0]]`, which passes a *count* where an *index* goes, on a 1-D array with no second axis.
+
+### Verifying 2c by hand
+
+$s$ is **linear** in the entries of $A$ (each appears to the first power), so
+$\sum_{i,k} A_{ik}\,(\partial s/\partial A)_{ik} = s$. Same for $B$. Two independent routes to the same $s$,
+no calculus needed.
