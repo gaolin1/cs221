@@ -118,7 +118,9 @@ def prob_weighted_sum_einsum() -> str:
     """
     
     # ### START CODE HERE ###
-    return 'batch weights, batch weights data -> batch data'
+    # Single-letter names, space-separated: valid for einops.einsum (which the
+    # docstring above specifies) AND for np.einsum, which strips the whitespace.
+    return 'b n, b n d -> b d'
     # ### END CODE HERE ###
 
 

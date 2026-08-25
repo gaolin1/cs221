@@ -32,6 +32,33 @@ Working notes and progress log. Due Sunday, Aug 30, 11:59pm PT.
 
 **Total 50 pts = 27 coding + 23 written.** Every coding part is two tests: `X-0-basic` (1.5, local) + `X-1-hidden` (1.5, remote only — stripped from your `grader.py`, see the empty `BEGIN_HIDE`/`END_HIDE` blocks). So a local **13.5/13.5 is only half** the coding marks; the hidden half rewards code that generalises past the one visible case.
 
+### 1i — the PDF contradicts itself (resolved)
+
+The 1i heading says **"(einops.einsum pattern string)"** while the body says **"Provide only the numpy.einsum
+string"**. Genuinely contradictory prose.
+
+**The starter docstring settles it** — code beats prose:
+
+```
+Return a einops.einsum string that computes ...
+>>> out = einops.einsum(P, V, pattern)
+```
+
+So einops is what the grader applies. Resolved anyway by picking a string valid in **both** libraries:
+
+```
+'bn,bnd->bd'                                 numpy OK    einops FAIL (reads "bd" as one axis name)
+'batch weights, batch weights data -> ...'   numpy FAIL  einops OK
+'b n, b n d -> b d'                          numpy OK    einops OK   <- submitted
+```
+
+Single-letter names, space-separated. `np.einsum` strips whitespace from subscripts (verified), so it reads
+`bn,bnd->bd`; einops needs the spaces to tokenise names. This also matches the assignment's own house style —
+1d says *"e.g., `n d, d m -> n m`"* and 1f's example is `'b d -> b g (d/g)'`.
+
+**General lesson for the hidden tests:** when the PDF and the starter docstring disagree, follow the docstring,
+then prefer a form that satisfies both readings when one exists at no cost.
+
 ### Blockers
 - ~~Starter code missing.~~ **Resolved.** Real handout is cloned at `XCS221-A1/`. Work in
   `XCS221-A1/src/submission.py`; run the autograder from inside `XCS221-A1/src/`:
