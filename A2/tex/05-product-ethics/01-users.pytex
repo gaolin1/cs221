@@ -1,0 +1,12 @@
+\item \points{5a} \textbf{Product User Base and Demographics}
+
+\begin{itemize}
+    \item Research and report any available data on the product's users: total number of users, historical growth, and demographic breakdowns such as user type, geography, and age group. Cite your sources (e.g., company ``About,'' ``Press,'' or ``Investors'' pages, third-party analytics sites).
+\end{itemize}
+
+\expect{Provide a 2-3 sentence summary of the product's user numbers and user composition, with cited sources.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5a(.*?)% <SCPD_SUBMISSION_TAG>_5a', f.read(), re.DOTALL)).group(1))
+🐍

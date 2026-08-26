@@ -1,0 +1,12 @@
+\item \points{5c} \textbf{Market Share and Competitors}
+
+\begin{itemize}
+    \item Determine the current market share of this product compared to key competitors. If exact figures are unavailable, provide best available estimates or relevant data/quotes from news or analytics sources.
+\end{itemize}
+
+\expect{In 3-4 sentences, include a comparative overview of the product's market position, citing sources or providing reasonable estimates.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5c(.*?)% <SCPD_SUBMISSION_TAG>_5c', f.read(), re.DOTALL)).group(1))
+🐍

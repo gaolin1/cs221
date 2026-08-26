@@ -1,0 +1,16 @@
+\item \points{1c} \textbf{Cross-Entropy Loss}
+
+For the tweet ``so angry" with true label Anger (one-hot: [0, 1, 0]), suppose your model outputs probabilities $[0.2, 0.7, 0.1]$. Calculate the cross-entropy loss for this example. Then explain what happens to the loss as the predicted probability for the correct class approaches 1.
+
+\expect{
+    \begin{enumerate}
+        \item The numerical cross-entropy loss value
+        \item A brief explanation (2-3 sentences) of the loss behavior
+    \end{enumerate}
+}
+
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1c(.*?)% <SCPD_SUBMISSION_TAG>_1c', f.read(), re.DOTALL)).group(1))
+🐍

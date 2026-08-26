@@ -1,0 +1,48 @@
+\item \points{2b} \textbf{Forward Pass}
+
+sing the averaged representation for "so angry" from part (a), perform a forward pass step-by-step to find the predicted label $\hat{y}$. Show your intermediate calculations by filling in the table below.\\
+
+For the sake of simplicity, we'll use a 2-input, 2-hidden neuron, 1-output architecture consisting of:
+\begin{enumerate}
+    \item \textbf{Input layer:} Word embeddings $\mathbf{x}$
+    \item \textbf{Hidden layer:} 2 neurons with ReLU activation, where $\text{ReLU}(\mathbf{x}) = \max(0, \mathbf{x})$
+    \item \textbf{Output layer:} 1 neuron (binary sentiment classification) with sigmoid activation
+\end{enumerate}
+
+The forward pass equations are:
+$$\mathbf{h} = \text{ReLU}(\mathbf{W}^{(1)} \mathbf{x} + \mathbf{b}^{(1)})$$
+$$z = \mathbf{W}^{(2)} \mathbf{h} + b^{(2)}$$
+$$\hat{y} = \sigma(z) = \frac{1}{1 + e^{-z}}$$
+where $\mathbf{x} = [x_1, x_2]^T$ is the 2D input representation, here $\mathbf{x} = [x_1, x_2]^T$ is the 2D input representation, $\hat{y}$ is the predicted label, $\mathbf{W}^{(1)} \in \mathbb{R}^{2 \times 2}$, $\mathbf{b}^{(1)} \in \mathbb{R}^{2}$, $\mathbf{W}^{(2)} \in \mathbb{R}^{1 \times 2}$, and $b^{(2)} \in \mathbb{R}$.
+
+\textbf{Network parameters:}
+$$\mathbf{W}^{(1)} = \begin{bmatrix} 1.0 & 0.5 \\ -0.5 & 1.0 \end{bmatrix}, \quad \mathbf{b}^{(1)} = \begin{bmatrix} 0.1 \\ -0.2 \end{bmatrix}$$
+$$\mathbf{W}^{(2)} = \begin{bmatrix} 0.8 & -0.6 \end{bmatrix}, \quad b^{(2)} = 0.3$$
+
+\textbf{You should write your answers by copying and pasting the given table and filling its cells, or using bullet points to clearly state the value of each cell.}
+
+\expect{Compute forward pass values at each node. Show your calculations for each step by filling in the table provided.}
+
+    \begin{table}[h]
+  \centering
+  \lstDeleteShortInline|
+  \begin{tabular}{|l|l|l|}
+  \hline
+  Node/Variable & Formula/Computation & Value \\
+  \hline
+  $\mathbf{x}$ & NA & \\
+  \hline
+  $\mathbf{h}$ & & \\
+  \hline
+  $z$ & & \\
+  \hline
+  $\hat{y}$ & & \\
+  \hline
+  \end{tabular}
+  \lstMakeShortInline|  
+  \end{table}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_2b(.*?)% <SCPD_SUBMISSION_TAG>_2b', f.read(), re.DOTALL)).group(1))
+🐍

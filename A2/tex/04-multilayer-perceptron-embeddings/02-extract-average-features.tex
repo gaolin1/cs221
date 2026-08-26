@@ -1,0 +1,18 @@
+\item \points{4b} \textbf{Extract averaged features}
+
+Implement \texttt{extract\_averaged\_features(texts, vocab, embedding\_layer)},
+which processes a list of text strings and converts them all into a single tensor of averaged embeddings. This function
+builds on your \texttt{text\_to\_average\_embedding} implementation to handle entire datasets at once.
+
+Your implementation should:
+\begin{itemize}
+    \item Initialize an empty list to collect the embedding vectors
+    \item Loop through each text string in the input list
+    \item For each text, call your \texttt{text\_to\_average\_embedding} function to get its averaged embedding
+    \item Append each averaged embedding to your collection list
+    \item Combine all individual embeddings into a single tensor
+    \item Return a tensor of shape \texttt{(num\_texts, embedding\_dim)} where each row is one text's embedding
+\end{itemize}
+
+\textbf{Hint:} This function essentially applies your single-text embedding function to every text in a batch,
+then organizes the results into the matrix format that your MLP classifier expects.

@@ -1,0 +1,13 @@
+\item \points{5e} \textbf{Gaps and Unintended Use Cases}
+
+\begin{itemize}
+    \item Are there any aspects of user information or misuse that appear \textbf{not} to be safeguarded against---based on what you can find published by the company or in trusted third-party reports? Briefly discuss.
+    \item Provide at least one example of an unintended use case of the product---something the company likely did \textbf{not} intend, but that users or communities have pursued anyway. Cite examples if you find them.
+\end{itemize}
+
+\expect{In 2-3 sentences, briefly discuss gaps in company safeguards and highlight at least one notable unintended use case, with references to sources.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5e(.*?)% <SCPD_SUBMISSION_TAG>_5e', f.read(), re.DOTALL)).group(1))
+🐍

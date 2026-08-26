@@ -1,0 +1,13 @@
+\item \points{3g} \textbf{Train linear classifier} 
+
+Implement \texttt{train\_linear\_classifier(...)} which integrates all previous components into a complete training loop.
+
+Your implementation should:
+\begin{itemize}
+    \item Initialize weights randomly and bias as a 0-vector
+    \item For each epoch: compute forward pass, calculate loss, compute gradients, and update parameters correspondingly. At the end of the epoch, print out the training loss and validation accuracy
+    \item Use your implemented softmax, cross-entropy loss, gradient, and predictor functions
+    \item You should train the model on training data only; \textbf{do not} train the model on validation data.
+\end{itemize}
+
+Finally, run \texttt{python submission.py --model linear}. The autograder requires that you achieve at least a 0.45 accuracy using default hyperparameters.

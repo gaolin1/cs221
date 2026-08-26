@@ -1,0 +1,12 @@
+\item \points{5b} \textbf{Intended Use Cases and Audience}
+
+\begin{itemize}
+    \item Summarize what you learn about the intended use cases for this product. Who are the primary target users? Reference product documentation, official resources, or company case studies/testimonials as appropriate.
+\end{itemize}
+
+\expect{In 2-3 sentences, identify and concisely describe the main intended uses and user groups for the product.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5b(.*?)% <SCPD_SUBMISSION_TAG>_5b', f.read(), re.DOTALL)).group(1))
+🐍

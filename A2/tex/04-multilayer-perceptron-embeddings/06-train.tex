@@ -1,0 +1,18 @@
+\item \points{4f} \textbf{Train MLP classifier}
+
+Implement \texttt{train\_mlp\_classifier(...)}.
+
+This is the main training function that integrates everything together.
+Your implementation should:
+
+\begin{itemize}
+    \item Build vocabulary from training texts
+    \item Create and initialize embedding layer and MLP classifier
+    \item Set up training loop with batch processing
+    \item For each epoch: extract features, forward pass, compute loss, backpropagation, update parameters. At the start of each epoch, you should shuffle training data before processing them in batches. At the end of the epoch, print out the training loss and validation accuracy
+    \item Use stochastic gradient descent to update all parameters; \textbf{do not} use optimizers (if you don't know what they are, that's perfectly fine!)
+    \item You should train the model on training data only; \textbf{do not} train the model on validation data.
+\end{itemize}
+
+You can test your implementation with this terminal command: \texttt{python submission.py --model mlp}.
+The autograder requires that you achieve at least a 0.55 accuracy using default hyperparameters.

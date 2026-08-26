@@ -1,0 +1,15 @@
+\item \points{2d} \textbf{Embedding Analysis}
+
+Looking at the provided word embeddings, identify patterns in how positive emotion words, negative emotion words, and neutral words are positioned in the 2D embedding space. You don't have to plot anything for this problem; simply observe the patterns. What does this suggest about how word embeddings capture semantic relationships?
+
+\expect{
+    \begin{enumerate}
+        \item Describe the spatial clustering of different word types (1-2 sentences)
+        \item Explain how embeddings capture semantic similarity and its advantage over bag-of-words (1-2 sentences)
+    \end{enumerate}
+}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_2d(.*?)% <SCPD_SUBMISSION_TAG>_2d', f.read(), re.DOTALL)).group(1))
+🐍

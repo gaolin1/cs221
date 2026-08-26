@@ -1,0 +1,55 @@
+\item \points{2c} \textbf{Backpropagation}
+
+Using the same weights, bias and input vector as in part (b), first compute the loss value $L$. Then, perform backpropagation to compute gradients $\frac{\partial L}{\partial \mathbf{W}^{(1)}}$, $\frac{\partial L}{\partial \mathbf{b}^{(1)}}$, $\frac{\partial L}{\partial \mathbf{W}^{(2)}}$, and $\frac{\partial L}{\partial b^{(2)}}$. Assume the true label is $y_{\text{true}} = 0$ (negative sentiment) and we're using binary cross-entropy loss:
+$$L = -[y_{\text{true}} \log(\hat{y}) + (1 - y_{\text{true}}) \log(1 - \hat{y})]$$
+
+\textbf{You should write your answers by copying and pasting the tables below and filling their cells, or using bullet points to clearly state the value of each cell.}
+
+\begin{table}[h]
+\centering
+\lstDeleteShortInline| 
+\begin{tabular}{|l|l|l|}
+\hline
+Variable & Formula/Computation & Value \\
+\hline
+$L$ & & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+Gradient & Formula (Chain Rule) & Evaluated Value \\
+\hline
+$\frac{\partial L}{\partial \hat{y}}$ & & \\
+\hline
+$\frac{\partial L}{\partial z}$ & & \\
+\hline
+$\frac{\partial L}{\partial \mathbf{h}}$ & & \\
+\hline
+$\frac{\partial L}{\partial \mathbf{W}^{(2)}}$ & & \\
+\hline
+$\frac{\partial L}{\partial b^{(2)}}$ & & \\
+\hline
+$\frac{\partial L}{\partial \mathbf{W}^{(1)}}$ & & \\
+\hline
+$\frac{\partial L}{\partial \mathbf{b}^{(1)}}$ & & \\
+\hline
+\end{tabular}
+\lstMakeShortInline| 
+\end{table}
+
+\expect{
+    \begin{enumerate}
+        \item Compute the loss value $L$
+        \item Starting from $\frac{\partial L}{\partial \hat{y}}$, compute gradients for each node working backwards and fill out the tables given above. For the formula column, you should express each partial in terms of partials above it in the table (recall backpropagation from lecture!)
+        \item Feel free to reuse values you already computed in part b
+    \end{enumerate}
+}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_2c(.*?)% <SCPD_SUBMISSION_TAG>_2c', f.read(), re.DOTALL)).group(1))
+🐍

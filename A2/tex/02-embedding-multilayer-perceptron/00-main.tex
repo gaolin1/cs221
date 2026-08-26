@@ -1,0 +1,45 @@
+\item {\bf Building Intuition for Embeddings and Multilayer Perceptron}
+
+In the previous problem, we used bag-of-words features for sentiment classification. It is now an outdated method of representing texts in machine learning due to many limitations. For example, it doesn't capture word relationships (e.g., "amazing" and "wonderful" are similar but treated as completely different features) and creates very sparse, high-dimensional vectors. In this problem, we'll explore how neural networks with word embeddings can address these issues.\\
+
+We'll use the same set of tweets from Problem 1, but now represent each word with a dense 2-dimensional embedding vector. For simplicity, assume we have the following pre-trained word embeddings:
+
+\begin{table}[h]
+\centering
+\lstDeleteShortInline|
+\begin{tabular}{|l|l|}
+\hline
+Word & Embedding \\
+\hline
+amazing & [0.8, 0.6] \\
+day & [0.2, 0.1] \\
+scared & [-0.5, -0.7] \\
+of & [0.0, 0.0] \\
+spiders & [-0.3, -0.4] \\
+love & [0.9, 0.4] \\
+this & [0.0, 0.0] \\
+so & [0.1, 0.0] \\
+angry & [-0.6, -0.8] \\
+worried & [-0.3, -0.6] \\
+about & [0.0, -0.1] \\
+tomorrow & [0.2, -0.2] \\
+hate & [-0.8, -0.5] \\
+waiting & [-0.1, -0.3] \\
+\hline
+\end{tabular}
+\lstMakeShortInline|
+\end{table}
+
+For simplicity, we will focus on \textbf{binary sentiment classification (positive or negative)} instead of three-class classification for this problem only.
+
+\begin{enumerate}
+
+  \input{02-embedding-multilayer-perceptron/01-tweet-representation}
+
+  \input{02-embedding-multilayer-perceptron/02-forward-pass}
+
+  \input{02-embedding-multilayer-perceptron/03-backprop}
+
+  \input{02-embedding-multilayer-perceptron/04-embedding-analysis}
+
+\end{enumerate}

@@ -1,0 +1,13 @@
+\item \points{5d} \textbf{Misuse Risks and Company Safeguards}
+
+\begin{itemize}
+    \item Discuss at least one way the product could be misused. What steps, if any, does the company take to safeguard against this misuse? Reference any published safety guidelines, usage policies, or blog posts about misuse mitigation.
+    \item Consider the concept of \textbf{dual use technology}: AI systems can be used for both beneficial and harmful purposes, making governance challenging. How does your chosen product exemplify this dual-use nature? Can you identify both a beneficial use case and a potential harmful misuse of the same underlying technology?
+\end{itemize}
+
+\expect{In 4-6 sentences, identify a realistic misuse scenario and summarize the company's corresponding safety policies or interventions. Additionally, discuss how the product demonstrates dual-use characteristics, providing examples of both beneficial and potentially harmful applications.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5d(.*?)% <SCPD_SUBMISSION_TAG>_5d', f.read(), re.DOTALL)).group(1))
+🐍

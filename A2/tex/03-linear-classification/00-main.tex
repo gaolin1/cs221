@@ -1,0 +1,39 @@
+\item {\bf Linear Classifier}
+
+Now, we will implement the first classifier that can classify tweet sentiments.
+Recall that in our data, each tweet is labeled with one of three emotions (\textbf{joy}, \textbf{anger}, or \textbf{fear}) in one-hot encoding. For example:
+
+\begin{table}[h]
+\centering
+\lstDeleteShortInline|
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Text} & \textbf{One-hot label} \\
+\hline
+i feel very happy and excited since i learned so many things & [1,0,0] \\
+i feel angered and firey & [0,1,0] \\
+i remember feeling acutely distressed for a few days & [0,0,1] \\
+\hline
+\end{tabular}
+\lstMakeShortInline|
+\end{table}
+
+\begin{enumerate}
+
+  \input{03-linear-classification/01-build-vocab}
+
+  \input{03-linear-classification/02-text-to-features}
+
+  \input{03-linear-classification/03-numpy-softmax}
+
+  \input{03-linear-classification/04-numpy-cross-entropy-loss}
+
+  \input{03-linear-classification/05-numpy-gradient}
+
+  \input{03-linear-classification/06-linear-classifier-predictor}
+
+  \input{03-linear-classification/07-train}
+
+  \input{03-linear-classification/08-writeup}
+
+\end{enumerate}

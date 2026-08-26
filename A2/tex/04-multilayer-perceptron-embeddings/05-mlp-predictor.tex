@@ -1,0 +1,12 @@
+\item \points{4e} \textbf{MLP predictor function}
+
+Implement \texttt{predict\_mlp(texts, labels, classifier, embedding\_layer, vocab)}, which
+evaluates a trained model on new text data.
+
+Your implementation should:
+\begin{itemize}
+    \item Set models to evaluation mode (no training)
+    \item Extract averaged embeddings for the input texts
+    \item Pass embeddings through the classifier to get predictions
+    \item Compare predictions with true labels to compute accuracy
+\end{itemize}

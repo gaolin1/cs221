@@ -1,0 +1,11 @@
+\item \points{3f} \textbf{Linear classifier predictor}
+
+Implement \texttt{predict\_linear\_classifier(features, labels, weights, bias)}, which makes predictions on input features using trained weights and bias, and computes the accuracy of the predictions.
+
+Your implementation should include:
+\begin{itemize}
+    \item Compute logits by multiplying features with weights and adding bias
+    \item Apply softmax to convert logits to probabilities
+    \item Get predicted class labels by taking the argmax of probabilities
+    \item Compare with true labels to compute accuracy
+\end{itemize}

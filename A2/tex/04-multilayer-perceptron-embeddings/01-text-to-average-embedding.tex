@@ -1,0 +1,14 @@
+\item \points{4a} \textbf{Text to average embedding}
+
+Implement \texttt{text\_to\_average\_embedding(text, vocab, embedding\_layer)},
+which converts a text string into a single embedding vector by averaging word embeddings. This creates a fixed-size representation
+for variable-length tweets.
+
+Your implementation should include: 
+\begin{itemize}
+    \item Create a list of indices, with each position corresponding to the vocabulary index of the words in the input text.
+    \item Create a PyTorch tensor from the list of indices (hint: use \texttt{dtype=torch.long}).
+    \item Pass the tensor of indices through the embedding layer to get word embeddings
+    \item Average the embeddings across the word dimension to get a single vector (hint: use \texttt{einops})
+    \item Return the averaged embedding as a tensor
+\end{itemize}

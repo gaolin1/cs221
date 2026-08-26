@@ -1,0 +1,16 @@
+\item \points{1d} \textbf{Gradient Analysis}
+
+Derive $\frac{\partial \text{Loss}_{\text{CE}}}{\partial z_k}$, the gradient of the cross-entropy loss with respect to the logit $z_k$. Show the mathematical steps to find $\frac{\partial \text{Loss}_{\text{CE}}}{\partial z_k}$ and express your final answer in terms of $p_k$ and $y_k$ only. Then, explain intuitively why this expression makes sense for gradient-based learning.
+
+\expect{
+    \begin{enumerate}
+        \item Mathematical derivation showing the steps to compute $\frac{\partial \text{Loss}_{\text{CE}}}{\partial z_k}$. (Hint: you may need to use the chain rule.)
+        \item Final gradient expression in terms of $p_k$ and $y_k$
+        \item A brief intuitive explanation of why this gradient expression makes sense for learning (2-3 sentences)
+    \end{enumerate}
+}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1d(.*?)% <SCPD_SUBMISSION_TAG>_1d', f.read(), re.DOTALL)).group(1))
+🐍

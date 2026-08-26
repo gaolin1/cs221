@@ -1,0 +1,15 @@
+\item \points{3h} \textbf{Writeup}
+
+If you adjust \texttt{lr}, the learning rate, how do you expect loss and validation accuracy to change
+during training? Run the terminal command \texttt{python submission.py --model linear --lr [your\_learning\_rate]}
+to experiment with three different learning rates. Report what they are and what training behaviors
+you observed. Why did the learning rate affect loss and accuracy this way?
+
+For example, you can run: \texttt{python submission.py --model linear --lr 0.1}.  If you don't include an \texttt{--lr} argument, the default learning rate is 0.2.
+
+\expect{In 2-3 sentences, report three different \texttt{lr}'s you experimented with, and describe how they affected training behaviors. Explain why the learning rate affects loss and accuracy this way.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_3h(.*?)% <SCPD_SUBMISSION_TAG>_3h', f.read(), re.DOTALL)).group(1))
+🐍

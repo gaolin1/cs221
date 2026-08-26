@@ -1,0 +1,15 @@
+\item \points{2a} \textbf{Tweet Representation via Averaging}
+
+One simple approach is to represent each tweet as the average of its word embeddings. Compute the averaged embedding representation for "so angry". Comment on one advantage and one disadvantage of this approach.
+
+\expect{
+    \begin{enumerate}
+        \item A 2-dimensional averaged embedding vectors
+        \item Discuss one benefit and one limitation of creating embeddings for a text by averaging embeddings of its component words (2-3 sentences)
+    \end{enumerate}
+}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_2a(.*?)% <SCPD_SUBMISSION_TAG>_2a', f.read(), re.DOTALL)).group(1))
+🐍

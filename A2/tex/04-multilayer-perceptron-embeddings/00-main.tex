@@ -1,0 +1,35 @@
+\item {\bf Multilayer Perceptron and Embeddings}
+
+Linear classification was a simple attempt at detecting tweet sentiments. In class, we learned that word embeddings
+and neural networks are powerful tools in natural language processing, and we will now implement them.
+
+To build embeddings, we convert each word into a small,
+    dense "embedding" vector (such as a 32-dimensional array of numbers) that captures the word's meaning.
+    To obtain the embedding for each text, we simply average all the word embeddings to get one fixed-size vector per document -
+    so a 500-word document and a 10-word document both become the same size vector, making them perfect
+    inputs for your multilayer perceptron classifier while preserving much more semantic information than word counts alone.
+
+ We will implement a simple \textbf{2-layer neural network} consisting of:
+ \begin{itemize}
+    \item An input layer that takes averaged embeddings of size \texttt{embedding\_dim}
+    \item A hidden layer that uses ReLU activation
+    \item An output layer that produces raw scores (logits) for each sentiment class
+ \end{itemize}
+
+\textit{Note that this is different from the architecture described in problem 2.}
+
+\begin{enumerate}
+
+  \input{04-multilayer-perceptron-embeddings/01-text-to-average-embedding}
+
+  \input{04-multilayer-perceptron-embeddings/02-extract-average-features}
+
+  \input{04-multilayer-perceptron-embeddings/03-mlp-classifier}
+
+  \input{04-multilayer-perceptron-embeddings/04-utility}
+
+  \input{04-multilayer-perceptron-embeddings/05-mlp-predictor}
+
+  \input{04-multilayer-perceptron-embeddings/06-train}
+
+\end{enumerate}
