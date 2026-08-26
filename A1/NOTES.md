@@ -23,8 +23,8 @@ Working notes and progress log. Due Sunday, Aug 30, 11:59pm PT.
 | 2b  `gradient_warmup`           | Coding  | 3 | ☑ **done** — 2b-0-basic passes |
 | 2c  Matmul gradient by hand     | Written | 3 | ☐ |
 | 2d  `matrix_grad`               | Coding  | 3 | ☑ **done** — 2d-0-basic passes |
-| 2e  `lsq_grad` / `lsq_finite_diff_grad` | Coding | 3 | ☐ |
-| 3a  Optimization warmup         | Written | 3 | ☐ |
+| 2e  `lsq_grad` / `lsq_finite_diff_grad` | Coding | 3 | ☑ **done** — 2e-0-basic passes, stress suite clean |
+| 3a  Optimization warmup         | Written | 3 | ◐ **derived in full** — LaTeX write-up pending (notes in the tex block) |
 | 3b  Gradient descent tutor session | Written | 1 | ☐ |
 | 3c  `gradient_descent_quadratic`| Coding  | 3 | ☐ |
 | 4a–4d  Ethical issue spotting   | Written | 4 | ☐ |
@@ -1147,3 +1147,48 @@ I tried `grad_a[:, a.shape[0]]`, which passes a *count* where an *index* goes, o
 $s$ is **linear** in the entries of $A$ (each appears to the first power), so
 $\sum_{i,k} A_{ik}\,(\partial s/\partial A)_{ik} = s$. Same for $B$. Two independent routes to the same $s$,
 no calculus needed.
+
+## 3a — optimization warmup (written)
+
+$f(\theta) = \sum_i w_i(\theta - x_i)^2$, one scalar knob. Answer: $\theta^* = \frac{\sum_i w_i x_i}{\sum_i w_i}$,
+the **weighted average** of the $x_i$. Derivation trail: chain rule per term (inner derivative 1), the sum
+**survives** because the single $\theta$ is in every term (contrast 2a, where separability killed all but one
+term), set $f'=0$, factor $\theta$ out of its sum, divide.
+
+### Traps hit
+
+- **"Where $f = 0$" vs "where $f' = 0$".** Minimizing asks for the flat point of the curve, not zero error.
+  With $x=[1,3]$, $w=[1,1]$ the minimum value is $f(2)=2$; $f$ never reaches 0 unless all $x_i$ coincide.
+  $f=0$ means "no error at all"; $f'=0$ means "can't do better".
+- **Illegal cancellation.** $\frac{\sum w_i x_i}{\sum w_i} \ne \sum x_i$ — the denominator is a single number
+  under the whole fraction, not a factor of each numerator term. Same as $\frac{2+6}{2+2} \ne 1+3$.
+- The catch-it-fast habit: **test the formula on cases with known answers** — $n{=}1$ (must give $x_1$),
+  all $x_i$ equal (must give that value), equal weights on $[1,3]$ (must give the midpoint 2), one dominant
+  weight (must land near its $x_i$). The wrong answer $\sum x_i = 4$ fails the midpoint check instantly.
+  An average must stay inside the data's range; a sum can leave it.
+
+### Second derivative and negative weights
+
+$f''(\theta) = 2\sum_i w_i$ — a **constant** (quadratics!). Sign of the **sum** decides everything, not any
+individual $w_i$:
+
+| $\sum_i w_i$ | shape | $\theta^*$ is |
+|---|---|---|
+| $> 0$ | opens up | the global minimum |
+| $< 0$ | opens down | a **maximum**; $f$ unbounded below |
+| $= 0$ | affine (squares cancel) | undefined — divide by zero |
+
+Even with $\sum w_i > 0$, one negative weight can push $\theta^*$ outside the range of the $x_i$
+(e.g. $x=[1,3]$, $w=[2,-1]$ gives $\theta^*=-1$).
+
+### Reading it as ML
+
+3a is least squares with **no features**: the model predicts the same constant $\theta$ for every example.
+Parameter and prediction coincide, which is what makes it solvable in closed form. Notation collision to
+watch: here $w_i$ = per-example importance weights (given), NOT model parameters as in 2e; and the targets
+are $x_i$ here, $\mathbf b$ in 2e.
+
+Feeds 3c directly: gradient descent on this same $f$ with the update $\theta \leftarrow \theta - \text{lr}\cdot f'(\theta)$
+converges to the weighted average — the 3c test is literally named "converges to weighted average". Distance
+to $\theta^*$ shrinks by $|1 - \text{lr}\cdot f''|$ per step, so lr $< 2/f''$ converges, lr $= 1/f''$ lands in
+one step, larger diverges.

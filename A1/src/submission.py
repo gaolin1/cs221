@@ -250,6 +250,18 @@ def gradient_descent_quadratic(x: np.ndarray, w: np.ndarray, theta0: float, lr: 
 
     Gradient: df/dθ = 2 * sum_i w_i * (θ - x_i).
     """
-    pass
+    
     # ### START CODE HERE ###
+    current_theta = theta0
+    for step in range(num_steps):
+        if step == 0:
+            gradient = 2 * w * (current_theta - x)
+            gradient_summed = einsum(gradient, "n ->")
+            current_theta = current_theta - (lr * gradient_summed)
+        else:
+            gradient = 2 * w * (current_theta - x)
+            gradient_summed = einsum(gradient, "n ->")
+            current_theta = current_theta - (lr * gradient_summed)
+    return current_theta
+
     # ### END CODE HERE ###

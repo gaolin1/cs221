@@ -185,9 +185,35 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3a
 \begin{answer}
   % ### START CODE HERE ###
-  % Give the minimising theta for f(theta) = sum_i w_i (theta - x_i)^2 and how you got
-  % it; a short second-derivative argument that it is a minimum; then 1-2 sentences on
-  % what breaks if some w_i are negative.
+  % PROGRESS (all derived, ready to write up):
+  %
+  % 1. Derivative: f'(theta) = sum_i 2 w_i (theta - x_i)
+  %    [chain rule per term; d(theta-x_i)/dtheta = 1; sum SURVIVES because the one
+  %     scalar theta is in every term -- contrast 2a where separability killed all
+  %     but one term]
+  %
+  % 2. Minimizer: set f'= 0, cancel the 2, split the sum, move sum(w_i x_i) across,
+  %    factor theta out (it carries no i), divide by sum(w_i):
+  %        theta* = sum(w_i x_i) / sum(w_i)     -- the weighted average
+  %    sanity checks done: x=[1,3], w=[1,1] -> 4/2 = 2 (midpoint); w=[99,1] -> 1.02
+  %    (hugs x_1). NOT sum(x_i): denominator is one number, can't cancel termwise.
+  %
+  % 3. Minimum argument: f' expanded is a*theta - c with a = 2 sum(w_i), so
+  %        f''(theta) = 2 sum(w_i)   -- a CONSTANT, positive since all w_i > 0
+  %    => upward parabola, unique stationary point => theta* is the global minimum.
+  %    (my first attempt said f''=0 -- differentiated the coefficients, not a*theta;
+  %     d/dx of 5x is 5, not 0)
+  %
+  % 4. Negative w_i: what matters is the SIGN OF THE SUM, since only sum(w_i)
+  %    appears in f'':
+  %      - sum > 0: still a genuine minimum, but theta* can leave the range of the
+  %        x_i (x=[1,3], w=[2,-1] -> theta* = -1)
+  %      - sum = 0: quadratic terms cancel, f is a line, unbounded below, theta*
+  %        formula divides by zero
+  %      - sum < 0: parabola opens DOWN, theta* is the maximum, f -> -inf both ways,
+  %        no minimum exists
+  %
+  % TO DO: write this up in LaTeX (see 2a block for house style).
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3a
