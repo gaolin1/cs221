@@ -1,0 +1,14 @@
+\item \points{5a} \textbf{Product Purpose and Usage}
+
+\begin{itemize}
+    \item Use your chosen product for at least 20 minutes.
+    \item Include at least two \textbf{screenshots} showing your interactions with the product. These should highlight its key purposes, typical task flows, and the core problems it addresses for users. Paste your screenshots into your \textbf{PDF writeup for this part}.
+    \item Based on your hands-on use and official resources, describe what the product is designed to do in 4--6 sentences. Identify at least two use cases and provide concrete examples (with screenshots in your PDF) where appropriate.
+\end{itemize}
+
+\expect{Submit a brief description (4--6 sentences) of the product's purpose and at least two concrete example user tasks. Include relevant screenshots in your PDF writeup.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5a(.*?)% <SCPD_SUBMISSION_TAG>_5a', f.read(), re.DOTALL)).group(1))
+🐍

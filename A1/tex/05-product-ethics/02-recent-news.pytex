@@ -1,0 +1,12 @@
+\item \points{5b} \textbf{Recent News and Developments}
+
+\begin{itemize}
+\item Find and read 3+ recent news articles, official announcements, or blog updates about the product and/or its parent company. These articles need to be published within the last 1-2 months. Summarize your findings in 4--6 sentences, focusing on major new features, company developments, or relevant controversies.
+\end{itemize}
+
+\expect{Include a 3-5 sentence well-sourced summary (with links/citations) of the latest news and notable developments regarding this product or its parent company.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5b(.*?)% <SCPD_SUBMISSION_TAG>_5b', f.read(), re.DOTALL)).group(1))
+🐍

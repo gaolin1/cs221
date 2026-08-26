@@ -1,0 +1,7 @@
+\item \points{1e} \textbf{Batch Linear Projection (einsum)}
+
+Let $x \in \mathbb{R}^{B\times D_{in}}$ be a batch of input row-vectors, $W \in \mathbb{R}^{D_{in}\times D_{out}}$ a weight matrix, and $b \in \mathbb{R}^{D_{out}}$ a bias vector. We want to compute the following linear transformation in a batched manner:
+$y[i] = x[i] W + b$ for each batch index $i$, returning $y \in \mathbb{R}^{B\times D_{out}}$.
+Use \texttt{einsum} (from \texttt{einops}) without loops. for the matrix multiplication and NumPy broadcasting for the bias; do not use Python loops.
+    
+\expect{Implement \texttt{linear\_project(x, W, b)} in \texttt{submission.py} with shapes: \texttt{x:(B,D\_in)}, \texttt{W:(D\_in,D\_out)}, \texttt{b:(D\_out,)} $\rightarrow$ \texttt{(B,D\_out)}.}

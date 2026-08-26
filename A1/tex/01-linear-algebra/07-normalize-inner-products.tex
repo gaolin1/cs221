@@ -1,0 +1,5 @@
+\item \points{1g} \textbf{Normalize Inner Products (einsum)}
+
+Let $A \in \mathbb{R}^{B\times M\times D}$ and $C \in \mathbb{R}^{B\times N\times D}$. For each batch $b$, we want the matrix $S[b,i,j] = \langle A[b,i,:], C[b,j,:] \rangle$ of all pairwise dot products, giving $S \in \mathbb{R}^{B\times M\times N}$. Use \texttt{einsum} (from \texttt{einops}) without loops. If \texttt{normalize=True}, divide the result by $\sqrt{D}$.
+
+\expect{Implement \texttt{normalized\_inner\_products(A, C, normalize=True)} in \texttt{submission.py} with shapes: \texttt{A:(B,M,D)}, \texttt{C:(B,N,D)} $\rightarrow$ \texttt{(B,M,N)}.}

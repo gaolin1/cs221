@@ -1,0 +1,36 @@
+\begin{thebibliography}{1}
+
+\bibitem{obermeyer2019dissecting}
+Ziad Obermeyer, Brian Powers, Christine Vogeli, and Sendhil Mullainathan.
+\newblock Dissecting racial bias in an algorithm used to manage the health of
+  populations.
+\newblock {\em Science}, 366(6464):447--453, 2019.
+
+\bibitem{iom2003unequal}
+{Institute of Medicine of the National Academies}.
+\newblock {\em Unequal Treatment: Confronting Racial and Ethnic Disparities in
+  Health Care}.
+\newblock National Academies Press, 2003.
+
+\bibitem{imperial2014loan}
+{Imperial College London}.
+\newblock Loan default prediction dataset.
+\newblock Kaggle Competition, 2014.
+
+\bibitem{caliskanislam2015deanonymizing}
+Aylin Caliskan-Islam, Richard Harang, Andrew Liu, Arvind Narayanan, Clare Voss,
+  Fabian Yamaguchi, and Rachel Greenstadt.
+\newblock De-anonymizing programmers via code stylometry.
+\newblock In {\em 24th USENIX Security Symposium}, 2015.
+
+\bibitem{parkhi2015vggface}
+Omkar~M. Parkhi, Andrea Vedaldi, and Andrew Zisserman.
+\newblock Deep face recognition.
+\newblock In {\em British Machine Vision Conference (BMVC)}, 2015.
+
+\bibitem{inaturalist2020vision}
+{iNaturalist}.
+\newblock A new vision model.
+\newblock iNaturalist Blog, 2020.
+
+\end{thebibliography}

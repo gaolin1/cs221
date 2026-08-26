@@ -1,6 +1,12 @@
-# The assignment handout is its own clone (remote: scpd-proed/XCS221-A1).
-# Tracked there, not here.
-XCS221-A1/
+# The assignment lives in A1/ as a plain copy (no inner .git), so it is
+# tracked here.  A1/.gitignore (shipped with the handout) still applies.
 
 __pycache__/
 *.py[cod]
+
+# LaTeX build artifacts
+*.aux
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk

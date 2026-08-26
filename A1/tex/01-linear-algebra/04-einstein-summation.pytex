@@ -1,0 +1,10 @@
+\item \points{1d} \textbf{Einstein Summation}
+
+Given $X \in \mathbb R^{n\times d}$ and $\mathbf w \in \mathbb R^d$: (i) write an \texttt{einsum} string for $X\mathbf w$; (ii) for the pairwise dot-product matrix $XX^\top$; (iii) for $\operatorname{diag}(X^\top X)$ (column-wise squared norms). Briefly justify each.
+
+\expect{Provide einsum strings (e.g., \texttt{n d, d m -> n m}).}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1d(.*?)% <SCPD_SUBMISSION_TAG>_1d', f.read(), re.DOTALL)).group(1))
+🐍

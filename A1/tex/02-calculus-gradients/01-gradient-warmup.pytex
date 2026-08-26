@@ -1,0 +1,10 @@
+\item \points{2a} \textbf{Gradient Warmup}
+
+For $f(\mathbf w)=\sum_{i=1}^d (w_i-c_i)^2$, derive $\nabla f(\mathbf w)$. Then evaluate the gradient at $\mathbf w=\mathbf 0$.
+
+\expect{A compact vector expression (e.g., $(\mathbf w+\mathbf c)$) and one evaluated vector.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_2a(.*?)% <SCPD_SUBMISSION_TAG>_2a', f.read(), re.DOTALL)).group(1))
+🐍

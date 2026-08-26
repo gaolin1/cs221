@@ -1,0 +1,8 @@
+\item \points{4b}
+
+Stylometry is a way of predicting the author of contested or anonymous text by analyzing the writing patterns in the anonymous text and other texts written by the potential authors. Recently, highly accurate machine learning algorithms have been developed for this task. While these models are typically used to analyze historical documents and literature, they could be used for deanonymizing a wide range of texts, including code \cite{caliskanislam2015deanonymizing}.
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_4b(.*?)% <SCPD_SUBMISSION_TAG>_4b', f.read(), re.DOTALL)).group(1))
+🐍

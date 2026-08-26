@@ -1,0 +1,14 @@
+\item \points{3b} \textbf{Learn about gradient descent with an AI tutor!}
+
+Use an AI chatbot to teach yourself gradient descent optimization techniques.
+
+Gradient descent is a fundamental optimization algorithm used throughout machine learning and AI. It's the backbone of training neural networks and solving many optimization problems. The key idea is that we can find the minimum of a function by repeatedly taking steps in the direction of the negative gradient (steepest descent)––like a ball rolling downhill. Ask your AI tutor to explain the intuition behind why this works, how to choose step sizes, and what can go wrong (like overshooting or getting stuck in local minima).
+
+Feel free to use the prompt template from question 1 with the prompt: "Teach me how gradient descent works on simple and complicated functions.".
+
+\expect{Provide a link to the chat session transcript with the AI tutor. The session should be about 15-20 minutes and interactive!}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_3b(.*?)% <SCPD_SUBMISSION_TAG>_3b', f.read(), re.DOTALL)).group(1))
+🐍

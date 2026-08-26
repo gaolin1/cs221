@@ -1,0 +1,5 @@
+\item \points{1i} \textbf{Probability-Weighted Sum (einops.einsum pattern string)}
+
+Let $P \in \mathbb{R}^{B\times N}$ be batch-wise probability weights (each row sums to 1) and $V \in \mathbb{R}^{B\times N\times D}$ the corresponding value vectors. Provide only the \texttt{numpy.einsum} string that computes the weighted sums $out[b,:] = \sum_{j=1}^N P[b,j]\, V[b,j,:]$, yielding $out \in \mathbb{R}^{B\times D}$.
+
+\expect{Implement \texttt{prob\_weighted\_sum\_einsum()} in \texttt{submission.py} that returns the einsum string; the autograder will apply it to \texttt{P} and \texttt{V}.}

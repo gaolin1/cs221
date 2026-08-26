@@ -1,0 +1,16 @@
+\item \points{5d} \textbf{Product Pricing and Access}
+
+\begin{itemize}
+    \item What are the pricing details for this product (list the main plans/tiers and their costs)?
+    \item Does the pricing follow an equitable or tiered-access model (e.g., discounts for college students)?
+    \item Beyond financial cost, are there \textbf{non-financial barriers} to accessing or using the product (such as device requirements, region restrictions, or mandatory integrations)?
+    \item Suggest at least one alternative pricing model. Reflect on potential pros and cons for both the company and its user base.
+    \item Consider the \textbf{ecosystem view} of AI: AI's impact depends on upstream factors (data, compute, labor, environment) and downstream factors (users, deployment, harm). What can you determine about the computational resources required to run this product? Does the company disclose information about the \textbf{environmental impact} of training or operating the system (e.g., energy consumption, carbon footprint)? How might environmental costs relate to pricing and access?
+\end{itemize}
+
+\expect{In 3-4 sentences, list and describe the core pricing model, note any access barriers (financial or otherwise), and discuss at least one alternative pricing approach with a brief pros/cons analysis. Additionally, discuss what you can determine about the computational and environmental costs of the product, and how these relate to pricing and access.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5d(.*?)% <SCPD_SUBMISSION_TAG>_5d', f.read(), re.DOTALL)).group(1))
+🐍

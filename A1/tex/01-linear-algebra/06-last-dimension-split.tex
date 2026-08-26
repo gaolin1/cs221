@@ -1,0 +1,5 @@
+\item \points{1f} \textbf{Split Last Dimension (einops.rearrange pattern string)}
+
+Let $x \in \mathbb{R}^{B\times D}$ and let $G$ divide $D$ evenly. We want to reshape the last axis into $G$ equal chunks, producing $y \in \mathbb{R}^{B\times G\times (D/G)}$. Write the \texttt{einops.rearrange} pattern string that performs this reshape. Do not perform the reshape yourself; just return the pattern string. It is fine to assume \texttt{D \% G == 0}.
+
+\expect{Implement \texttt{split\_last\_dim\_pattern()} in \texttt{submission.py} returning a rearrange pattern string (e.g., \texttt{'b d -> b g (d/g)'}). The autograder will apply it with the appropriate \texttt{g=num\_groups}.}

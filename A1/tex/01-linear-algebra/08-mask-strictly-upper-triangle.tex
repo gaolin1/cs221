@@ -1,0 +1,8 @@
+\item \points{1h} \textbf{Mask Strictly Upper Triangle}
+
+Let $\text{scores} \in \mathbb{R}^{B\times L\times L}$. For each batch, set entries with column index strictly greater than the row index (i.e., the strictly upper-triangular part where $j>i$) to \texttt{-np.inf}, leaving other entries unchanged. Construct the mask using NumPy broadcasting; do not use loops.
+
+For example, if $L=3$, transform:
+$$\begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \\ 7 & 8 & 9 \end{pmatrix} \rightarrow \begin{pmatrix} 1 & -\infty & -\infty \\ 4 & 5 & -\infty \\ 7 & 8 & 9 \end{pmatrix}$$
+
+\expect{Implement \texttt{mask\_strictly\_upper(scores)} in \texttt{submission.py} for \texttt{scores:(B,L,L)}, returning a masked array of the same shape.}

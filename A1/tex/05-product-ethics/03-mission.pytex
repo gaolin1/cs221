@@ -1,0 +1,15 @@
+\item \points{5c} \textbf{Company \& Product Mission Alignment}
+
+\begin{itemize}
+    \item What is the company's stated mission (quote from their website/official pages)?
+    \item What is the specific goal or intended impact of this particular product?
+    \item How does this product fit (or not fit) into the company's stated mission?
+    \item Consider the concept of \textbf{alignment}: how to make AI do what we want. Does the product behave consistently with its stated goals, or have you observed instances where it might ``reward hack'' (optimize for the wrong objective) or produce outputs misaligned with user intentions? How does the company address the challenge of ensuring the AI system's behavior matches its intended purpose?
+\end{itemize}
+
+\expect{Briefly state the company's official mission and the product's stated goal. Analyze, in your own words (2-3 sentences), the relationship between the two---if you notice any tension, mismatch, or ``mission drift,'' flag and explain it. Additionally, reflect on alignment challenges: whether the product consistently behaves as intended, and how the company addresses potential misalignment issues.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5c(.*?)% <SCPD_SUBMISSION_TAG>_5c', f.read(), re.DOTALL)).group(1))
+🐍

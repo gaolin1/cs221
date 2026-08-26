@@ -1,0 +1,13 @@
+\item \points{1c} \textbf{Learn basic einsum with an AI tutor!}
+
+Use an AI chatbot to teach yourself Einstein summation notation (einsum) in NumPy using the \texttt{einops} library (\texttt{from einops import einsum, rearrange}). 
+\textit{What is einsum and why?} Einsum notation allows you to express complex array/matrix/tensor operations concisely, including matrix multiplications, tensor contractions, array reshaping, and pretty much everything used in the modern AI models \texttt{einops} is a library that allows you to implement einsum notation in Python. Understanding einsum allows you to code more readable code.
+
+Feel free to use the same prompt template from problem 1a, just replace the first sentence with "Teach me how einsum works and how to use the einops library with NumPy". If you'd like more help, \href{https://www.youtube.com/watch?v=pkVwUVEHmfI}{this YouTube video} may be helpful.
+
+\expect{Provide a link to the chat session transcript with the AI tutor. The session should be around 15–20 minutes and interactive!}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1c(.*?)% <SCPD_SUBMISSION_TAG>_1c', f.read(), re.DOTALL)).group(1))
+🐍

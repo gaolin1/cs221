@@ -1,0 +1,43 @@
+\item \points{1a} \textbf{Learn basic NumPy operations with an AI tutor!} Use an AI chatbot (e.g., ChatGPT, Claude, Gemini) to teach yourself basic vector and matrix operations in NumPy (\texttt{import numpy as np}). 
+If you'd like more help, \href{https://www.youtube.com/watch?v=pkVwUVEHmfI}{this YouTube video} may be helpful. AI tutors have become exceptionally good at creating interactive tutorials, and this year in XCS221, we're testing how they can help you learn fundamentals more interactively than traditional static exercises.
+
+There are many ways to do this. For example, you can simply ask the chatbot "Teach me basic NumPy operations interactively". We provide a prompt template for you to use, but feel free to use your own:
+
+\begin{llmprompt}
+Teach me basic NumPy operations. Keep the session around 15–20 minutes and interactive.
+
+\medskip
+\textbf{Guidelines}
+\begin{itemize}[leftmargin=*,topsep=2pt,itemsep=2pt]
+  \item Adjust difficulty: if I miss 2 in a row → slow + simpler; if I get 2 quickly → a bit harder or add a twist.
+  \item Use tiny, deterministic examples (small numbers, short tables, brief ASCII diagrams, code blocks). Show actual \textit{run-throughs} (step-by-step states) if helps.
+  \item Use Code if it clarifies: $\leq$2 Python/NumPy blocks, each $\leq$20 lines; ideally no imports beyond \texttt{import numpy as np}.
+  \item Do NOT solve graded work. If I paste any, refuse and make a similar practice item.
+  \item Be CONCISE. Don't make notation complicated/unnecessary. Focus on intuitions. Code blocks should be short with simple variable names.
+  \item I may interrupt and ask to start somewhere else. Simply adjust and adapt from there.
+\end{itemize}
+
+\medskip
+\textbf{Suggested flow} (flexible; use judgment)
+\begin{enumerate}[leftmargin=*,topsep=2pt,itemsep=2pt]
+  \item Start by explaining the topic in a few simple, but technically accurate sentences (explain core idea ($\leq$6 sentences): intuition + minimal notation + why it matters + one common pitfall). Use basic notations and visualizations if necessary (CS221 requires basic math/programming backgrounds). For topics about programming, OK to start with concise code blocks.
+  \item Quick check-in ($\leq$1–2 min): ask 2 short questions about prior exposure and specific goal.
+  \item Exercises: use a tiny instance and show intermediate states. Give exercises that build on each other. OK to give multiple exercises at the same time.
+  \begin{itemize}[leftmargin=*,topsep=2pt,itemsep=2pt]
+    \item e.g., for graph search: a 4–5 node weighted graph; show the frontier/priority-queue after each of 2–3 steps and which edges relax.
+    \item for DP/MDP/RL/Logic/ML, do an equivalently small, concrete step-by-step trace.
+    \item If code clarifies, include one concise NumPy block.
+  \end{itemize}
+  \item 3 quick checks: increasing difficulty; give a hint first; reveal answers only after I try or ask.
+  \item Assessment and feedback: Give me feedback on my performance - what I understood well, what needs improvement, and specific concepts to review further.
+  \item Session reflection: Ask me for feedback on how the tutoring session went - what worked well, what could be improved, and if the pacing/difficulty was appropriate.
+  \item Recap: a 60-second summary
+\end{enumerate}
+\end{llmprompt}
+
+\expect{Provide a link to the chat session transcript with the AI tutor. The session should be around 15–20 minutes and interactive!}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1a(.*?)% <SCPD_SUBMISSION_TAG>_1a', f.read(), re.DOTALL)).group(1))
+🐍
