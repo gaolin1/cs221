@@ -343,12 +343,9 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % Here nothing is inferred - the images themselves were collected and used without
   % permission - so the personally identifiable information item is the closer fit.
   This dataset appears to \ul{contain any personally identifiable information or sensitive
-  personally identifiable information}. A photograph of a person's face is precisely
-  that: it identifies an individual directly, and as biometric data it is the sensitive kind.
-  The celebrities depicted never gave permission for their images to be collected or used as
+  personally identifiable information}. The celebrities depicted never gave permission for their images to be collected or used as
   training data, and being a public figure is not consent to become a training example. The
-  dataset's handling of the copyrighted photos -- distributing URLs and bounding boxes rather
-  than the image files themselves -- avoids redistributing protected works, but it does nothing
+  dataset's handling of the copyrighted photos avoids redistributing protected works, but it does nothing
   about the underlying problem, since the faces are still assembled into a facial recognition
   dataset without the knowledge or agreement of the people in them.
   % ### END CODE HERE ###
@@ -368,16 +365,11 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % that conclusion. The last sentence names the strongest counterargument and
   % answers it, which makes a "no concern" answer more credible than a flat denial.
   I do not think this scenario raises an ethical concern from the guidelines. The photographs
-  were uploaded by users who consented to their use for research, so the consent problem that
-  affects scraped datasets does not arise here, and the model is used only within the app and
+  were uploaded by users who consented to their use for research, and the model is used only within the app and
   only for the purpose the data was collected for, so there is no repurposing beyond what those
   users agreed to. The images are of plants rather than people, so the dataset carries no
   personally identifiable information, and a species classifier has no demographic outputs
   through which it could encode bias against race, gender, or other protected characteristics.
-  The closest thing to a residual risk is that nature photographs can carry location metadata,
-  which for a rare or endangered species could be sensitive, but the model predicts a species
-  from the image itself and its predictions stay inside the app, so it does not publish or
-  expose those locations.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_4d
@@ -401,23 +393,20 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % NOTE: the tutoring screenshot could be read as a plain chatbot exchange, and the
   % handout says to pick something that is "not just a raw LLM chatbot". The other two
   % figures carry that requirement, since the tool calls are visible in both.
-  Claude Code was initially released as a command-line tool for generating code and answering
-  questions about a codebase through text prompts. Since then the set of tools available to it has
-  expanded considerably -- it can read and edit files, run shell commands, and create commits and
-  pull requests -- which has widened what a single prompt can accomplish. With the addition of
-  agents it also supports semi-autonomous sessions, where the model is given a goal and works
-  toward it across many tool calls, pausing for approval according to a configurable permission
-  mode rather than for every individual action. Two distinct patterns stood out in my own use.
-  The first is agentic software development, where a single request turns into a sequence of
-  reads, edits, commands and checks: in Figure~\ref{fig:cc-backend} it inspected an existing
-  investment portfolio backtester, added a rolling-correlation subcommand and a matching API
-  endpoint, wrote seven unit tests, and verified that the running server returned the expected
-  responses for both valid and invalid input; in Figure~\ref{fig:cc-agentic} the same pattern
-  builds a small application from scratch, creating four files and rewriting the game mod that
-  feeds it. The second is conceptual tutoring, shown in Figure~\ref{fig:cc-tutoring}: while I was
-  learning NumPy for this course it generated graded practice questions on array indexing and
-  shape, gave hints, and deliberately withheld the answers until I attempted them -- assistance
-  with understanding rather than with producing code.
+  Claude Code was released as a CLI tool for code generation and for scanning a codebase through
+  text prompts. Since then the tools available to it have expanded to running shell commands,
+  editing files and creating commits and pull requests, which has vastly increased what a single
+  prompt can do. With the arrival of agents it now supports semi autonomous sessions, where the
+  agent is given a goal and uses the various tools to reach it, asking for approval according to
+  the permission mode rather than for every action. Two uses stood out for me. The first is
+  agentic development, shown in Figure~\ref{fig:cc-backend}: from one request it read an existing
+  investment portfolio backtester, added a rolling correlation subcommand and a matching API
+  endpoint, wrote seven unit tests, and checked that the running server answered correctly on both
+  valid and invalid input. Figure~\ref{fig:cc-agentic} shows the same pattern building an
+  application from scratch, creating four files and rewriting the game mod that feeds it. The
+  second is tutoring, shown in Figure~\ref{fig:cc-tutoring}: while I was learning NumPy for this
+  course it generated practice questions on indexing and shape, gave hints, and held the answers
+  back until I attempted them.
 
   \begin{figure}[H]\centering
     \includegraphics[width=0.8\textwidth]{images/shot3-backend-api.png}
@@ -434,8 +423,8 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 
   \begin{figure}[H]\centering
     \includegraphics[width=0.8\textwidth]{images/shot2-concept-tutoring.png}
-    \caption{Tutoring use: generated practice questions on NumPy indexing and shape, with hints
-    and answers withheld.}
+    \caption{Tutoring use: practice questions on NumPy indexing and shape, with hints and answers
+    withheld.}
     \label{fig:cc-tutoring}
   \end{figure}
   % ### END CODE HERE ###
@@ -457,30 +446,22 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   %   Fable 5 access      12 Jun 2026  about 2.5 months - OUTSIDE the window.
   %     Kept because the follow-on developments ran into July; drop it and lead
   %     with the other three if the grader is strict about the window.
-  Recent developments from Anthropic, the company behind Claude Code, point in three directions.
-  On access, the U.S. government issued an export control order requiring Anthropic to suspend
-  Fable 5 and Mythos 5 for all customers worldwide
-  (\href{https://www.anthropic.com/news/fable-mythos-access}{12 June 2026}); the company complied
-  while publicly disagreeing, arguing that the jailbreak cited revealed only minor and already
-  known vulnerabilities, and that applying such a standard across the industry would halt new model
-  deployment altogether. Access to Mythos 5 was later restored for roughly a hundred vetted U.S.
-  organisations while broader and international access remained restricted, which leaves the most
-  capable model unavailable at any consumer price -- a live concern for a product like Claude Code,
-  whose usefulness depends on continued access to frontier models. On capability, Anthropic
-  reported that Claude designed protein binders against fifteen targets and succeeded on fourteen,
-  at hit rates above the industry norm, and analysed raw laboratory chemistry data in under half an
-  hour
+  Fable 5 was temporarily blocked for all access after the U.S. government issued an export control
+  order that also covered Mythos 5
+  (\href{https://www.anthropic.com/news/fable-mythos-access}{12 June 2026}). Anthropic complied but
+  publicly disagreed, arguing the jailbreak cited revealed only minor and already known
+  vulnerabilities, and the episode created controversy over how access to frontier models is
+  regulated. Mythos 5 was later restored to about a hundred vetted U.S. organisations while wider
+  and international access stayed restricted. Anthropic also reported that Claude designed protein
+  binders against fifteen targets and succeeded on fourteen, at hit rates above the industry norm
   (\href{https://www.anthropic.com/research/Claude-accelerates-protein-design}{18 August 2026}),
-  indicating a move beyond conversational assistance into scientific work with real-world outcomes.
-  On interpretability, research on a ``global workspace'' identifies internal representations
-  carrying Claude's intermediate reasoning and shows they can be inspected to detect behaviour such
-  as fabrication or deception that never appears in the output
-  (\href{https://www.anthropic.com/research/global-workspace}{6 July 2026}). Most recently the
-  company extended free and discounted access to verified scientists
-  (\href{https://www.anthropic.com/news/expanding-support-for-scientists}{27 August 2026}). Taken
-  together these show a company pushing capability and application outward while investing in
-  understanding the systems it releases, and operating under access constraints it does not itself
-  control.
+  which shows the company expanding into real world impact beyond an AI chatbot. Most notably,
+  research on a global workspace probes the inner thinking steps of the model and opens up the
+  black box of LLM reasoning, showing that fabrication or deception can be detected in
+  representations that never reach the output
+  (\href{https://www.anthropic.com/research/global-workspace}{6 July 2026}). The company has since
+  extended free and discounted access to verified scientists
+  (\href{https://www.anthropic.com/news/expanding-support-for-scientists}{27 August 2026}).
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5b
@@ -498,9 +479,9 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % and the product description from the Claude Code product page.
   % The last paragraph is the part the question weights most - edit it to match
   % what I actually observed rather than keeping my wording.
-  \textbf{Company mission.} Anthropic states: ``We believe AI will have a vast impact on the
-  world. Anthropic is dedicated to building systems that people can rely on and generating
-  research about the opportunities and risks of AI.''
+  \textbf{Company mission.} Anthropic states: ``We believe AI will have a vast impact on the world.
+  Anthropic is dedicated to building systems that people can rely on and generating research about
+  the opportunities and risks of AI.''
   (\href{https://www.anthropic.com/company}{anthropic.com/company})
 
   \medskip
@@ -509,29 +490,22 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   implementation that require deep codebase understanding.''
 
   \medskip
-  \textbf{Relationship.} The product fits the mission's first clause closely: it is an applied
-  system rather than a chat interface, and the tasks it targets -- bug fixes, tests, refactors --
-  are ones where being able to rely on the output matters more than novelty, since the result is
-  committed into a real codebase. There is a tension worth naming, though. A mission that
-  foregrounds research into the risks of AI sits somewhat uneasily beside a product that writes
-  files and executes shell commands semi-autonomously, which is precisely the class of capability
-  that carries risk. The company's answer appears to be the permission system: the tool asks for
-  approval before acting, with a configurable mode governing how much it may do unattended, so the
-  reliability clause of the mission is expressed as user control rather than as restraint in
-  capability.
+  \textbf{Relationship.} I believe the product aligns with the mission, since Claude Code is a
+  system that applies AI beyond simple chat, with impact on code generation such as tests and
+  codebase understanding. Those are also tasks where the output has to be reliable, because the
+  result is committed into a real codebase. The tension is that a mission built around researching
+  the risks of AI also produces a tool that writes files and runs shell commands on its own, which
+  is the kind of capability that carries risk.
 
   \medskip
-  \textbf{Alignment.} In my own use the product's behaviour was largely consistent with its stated
-  goal, and in ways that a system optimising for appearances would not be. In one session it
-  reported that nine commands had been run and two had failed, rather than quietly retrying and
-  presenting only a clean summary, and when it added an API endpoint it verified both the success
-  response and the error response for invalid input instead of testing only the case that would
-  look good. I did observe a smaller failure of intent: a debugging line it had suggested for one
-  function was later pasted into a different function where the variable it referenced did not
-  exist, producing an immediate error. I would call that an ordinary mistake rather than reward
-  hacking, since nothing about it advantaged the model -- reward hacking would look like
-  suppressing a failing test or reporting success without verifying it, which is the opposite of
-  what the transcripts show.
+  \textbf{Alignment.} What I observed matched the stated goal. In Figure~\ref{fig:cc-backend} it
+  reported that nine commands ran and two failed instead of hiding the failures, and it tested the
+  error response as well as the success response rather than only the case that looks good. I did
+  see one mistake, where a debugging line was pasted into a function whose variable did not exist
+  and immediately errored, but that gained the model nothing, so I would call it an ordinary error
+  rather than reward hacking. Anthropic handles misalignment mainly through the permission system,
+  which asks for approval before the tool acts and lets the user set how much it may do
+  unattended.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5c
@@ -556,57 +530,47 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % The alternative pricing model in the third paragraph is my suggestion - swap it
   % if you would rather argue for a different one.
   \textbf{Pricing and access.} Claude is sold on individual and enterprise plans
-  (\href{https://claude.com/pricing}{claude.com/pricing}). The free tier costs nothing but gives
-  only basic chat access and no access to Claude Code at all; Pro at \$17 per month billed
-  annually (\$20 billed monthly) is the entry point for Claude Code; and the Max tiers, which
-  raise usage limits five-fold and twenty-fold, start at \$100 per month.
-  default: the tool is unavailable to anyone unwilling or unable to pay a subscription. There are
-  targeted exceptions -- Claude for Education
+  (\href{https://claude.com/pricing}{claude.com/pricing}). The free tier costs nothing and gives
+  basic chat access with no Claude Code access. Pro at \$17 per month billed annually, or \$20
+  billed monthly, is the entry point for Claude Code, and the Max tiers raise usage limits five and
+  twenty times starting at \$100 per month. Access is tiered rather than equitable, since the tool
+  is unavailable to anyone who will not pay a subscription. Claude for Education
   (\href{https://claude.com/solutions/education}{claude.com/solutions/education}) exists but
-  publishes no pricing, and a recent programme gives verified scientists free standard seats for
-  one year and premium seats at \$15 per month
-  (\href{https://www.anthropic.com/news/expanding-support-for-scientists}{announcement}) -- but
-  these are discretionary and require belonging to a recognised institution or profession.
+  publishes no pricing, and a recent programme gives verified scientists free standard seats for a
+  year and premium seats at \$15 per month
+  (\href{https://www.anthropic.com/news/expanding-support-for-scientists}{announcement}), though
+  both require belonging to a recognised institution or profession.
 
   \medskip
-  \textbf{Non-financial barriers.} Using Claude Code has historically required comfort with a
-  terminal and a working development environment, which excludes users who would benefit from the
-  underlying capability but do not work at a command line; its recent addition to the Claude
-  desktop application lowers that barrier somewhat. Capability itself is also gated independently
-  of price: the top-tier Mythos model is available only to selected organisations and not to the
-  public, so the most capable system cannot be reached at any consumer price point. Region
-  availability and the need for an account in good standing add further access conditions that
-  money alone does not resolve.
+  \textbf{Non-financial barriers.} Claude Code has required terminal access, which excludes users
+  who would benefit from it but do not work at a command line, though it has recently been added to
+  the Claude desktop app for easier access. Capability is also gated separately from price: the top
+  tier Mythos model is only available to selected companies and not to the public, so the most
+  capable system cannot be reached at any consumer price. Region availability and an account in
+  good standing are further conditions that money does not resolve.
 
   \medskip
-  \textbf{An alternative pricing model.} A metered, pay-as-you-go model -- paying per unit of
-  computation actually consumed, with no monthly floor -- would suit this product better than a
-  flat subscription, because usage is extremely uneven: an agentic session that edits a dozen files
-  costs far more to serve than a single question. For users, the advantage is that occasional and
-  low-income users stop subsidising heavy ones and can access the tool for a few dollars a month;
-  the disadvantage is unpredictable bills and the anxiety of watching a meter, which discourages
-  exactly the exploratory use that helps people learn. For the company, metering aligns revenue
-  with serving cost and removes the incentive to throttle heavy users, but it forfeits predictable
-  recurring revenue and raises the barrier to casual adoption.
+  \textbf{An alternative pricing model.} A metered model, paying for the computation actually used
+  with no monthly floor, would fit this product better than a flat subscription, because an agentic
+  session that edits a dozen files costs far more to serve than a single question. For users it
+  means occasional and low income users stop subsidising heavy ones, but bills become
+  unpredictable, which discourages the exploratory use that helps people learn. For the company it
+  aligns revenue with serving cost, but it gives up predictable recurring revenue and makes casual
+  adoption harder.
 
   \medskip
-  \textbf{Computational and environmental cost.} The structure of the pricing itself shows that
-  serving this product is expensive: tiers are sold in multiples of usage rather than in features,
-  which only makes sense if the marginal cost of each request is significant. An agentic coding
-  session is unusually costly in this respect, since one request expands into many model calls as
-  the tool reads files, runs commands and checks results. Anthropic publishes no formal account of
-  the environmental cost of training or serving these models -- no emissions figures, no per-query
-  energy consumption and nothing about the data centres that run them -- so users cannot weigh the
-  environmental cost of a session against its benefit, and price is the only proxy available. That
-  proxy is likely to worsen rather than improve: demand for the underlying hardware is extreme, as
-  NVIDIA's quarterly revenue of \$96.2 billion, more than double the same quarter a year earlier,
-  makes plain
+  \textbf{Computational and environmental cost.} Selling tiers in multiples of usage rather than
+  features shows that each request costs real money to serve, and an agentic session is especially
+  expensive because one request expands into many model calls. Anthropic has no formal statements
+  on environmental cost, especially for data centres: no emissions figures, no per query energy and
+  nothing about the centres themselves, so users cannot weigh the environmental cost of a session
+  against its benefit. Given the rising price of computing chips and memory, reflected in the
+  quarterly revenue of \$96.2 billion reported by NVIDIA, more than double a year earlier
   (\href{https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-second-quarter-fiscal-2027}{Q2 FY2027 results}),
-  and rising chip and memory prices push inference costs up, raising the barrier to access rather
-  than lowering it. The countervailing force is competition from open-weight models such as
-  Moonshot AI's Kimi K3, released under a permissive licence and able to be self-hosted, which puts
-  downward pressure on prices and frees users from a single vendor's tiers -- a healthier landscape
-  overall, though it does nothing by itself to make the environmental cost visible.
+  the cost of compute will only rise and cause an eventually higher barrier to access. Newer open
+  weight models such as Kimi K3 from Moonshot AI add competitive pressure that should benefit the
+  overall landscape, though competition alone does nothing to make the environmental cost
+  visible.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5d
