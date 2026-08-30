@@ -393,6 +393,7 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % NOTE: the tutoring screenshot could be read as a plain chatbot exchange, and the
   % handout says to pick something that is "not just a raw LLM chatbot". The other two
   % figures carry that requirement, since the tool calls are visible in both.
+  The product I chose is Claude Code, from Anthropic. 
   Claude Code was released as a CLI tool for code generation and for scanning a codebase through
   text prompts. Since then the tools available to it have expanded to running shell commands,
   editing files and creating commits and pull requests, which has vastly increased what a single
@@ -449,7 +450,7 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   Fable 5 was temporarily blocked for all access after the U.S. government issued an export control
   order that also covered Mythos 5
   (\href{https://www.anthropic.com/news/fable-mythos-access}{12 June 2026}). Anthropic complied but
-  publicly disagreed, arguing the jailbreak cited revealed only minor and already known
+  arguing the jailbreak cited revealed only minor and already known
   vulnerabilities, and the episode created controversy over how access to frontier models is
   regulated. Mythos 5 was later restored to about a hundred vetted U.S. organisations while wider
   and international access stayed restricted. Anthropic also reported that Claude designed protein
@@ -494,8 +495,7 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   system that applies AI beyond simple chat, with impact on code generation such as tests and
   codebase understanding. Those are also tasks where the output has to be reliable, because the
   result is committed into a real codebase. The tension is that a mission built around researching
-  the risks of AI also produces a tool that writes files and runs shell commands on its own, which
-  is the kind of capability that carries risk.
+  the risks of AI also produces a tool that writes files and runs shell commands on its own, which carries the capability of reaching external systems.
 
   \medskip
   \textbf{Alignment.} What I observed matched the stated goal. In Figure~\ref{fig:cc-backend} it
@@ -503,7 +503,7 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   error response as well as the success response rather than only the case that looks good. I did
   see one mistake, where a debugging line was pasted into a function whose variable did not exist
   and immediately errored, but that gained the model nothing, so I would call it an ordinary error
-  rather than reward hacking. Anthropic handles misalignment mainly through the permission system,
+  rather than reward hacking. Anthropic handles misalignment mainly through the permission system and environmental control,
   which asks for approval before the tool acts and lets the user set how much it may do
   unattended.
   % ### END CODE HERE ###
@@ -531,9 +531,9 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % if you would rather argue for a different one.
   \textbf{Pricing and access.} Claude is sold on individual and enterprise plans
   (\href{https://claude.com/pricing}{claude.com/pricing}). The free tier costs nothing and gives
-  basic chat access with no Claude Code access. Pro at \$17 per month billed annually, or \$20
+  basic chat access with no Claude Code access. Pro at \$23 per month billed annually, or \$28
   billed monthly, is the entry point for Claude Code, and the Max tiers raise usage limits five and
-  twenty times starting at \$100 per month. Access is tiered rather than equitable, since the tool
+  twenty times starting at \$140 per month. Access is tiered rather than equitable, since the tool
   is unavailable to anyone who will not pay a subscription. Claude for Education
   (\href{https://claude.com/solutions/education}{claude.com/solutions/education}) exists but
   publishes no pricing, and a recent programme gives verified scientists free standard seats for a
@@ -550,13 +550,15 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   good standing are further conditions that money does not resolve.
 
   \medskip
-  \textbf{An alternative pricing model.} A metered model, paying for the computation actually used
-  with no monthly floor, would fit this product better than a flat subscription, because an agentic
-  session that edits a dozen files costs far more to serve than a single question. For users it
-  means occasional and low income users stop subsidising heavy ones, but bills become
-  unpredictable, which discourages the exploratory use that helps people learn. For the company it
-  aligns revenue with serving cost, but it gives up predictable recurring revenue and makes casual
-  adoption harder.
+  \textbf{An alternative pricing model.} A per product subscription would fit better than one plan
+  covering everything. Users who focus on coding could subscribe to Claude Code alone without
+  paying for chat access they do not use, and chat only users could be charged less, since
+  answering a question needs far less compute than searching and editing across a codebase. For
+  users this means paying for the product they actually want and a lower entry price for the
+  lighter one, which widens access. For the company it prices each product closer to what it costs
+  to serve and makes the cheaper tier attractive to new users, but it splits the subscriber base,
+  complicates the billing and gives up the revenue from users who currently pay one price for
+  everything and use only part of it.
 
   \medskip
   \textbf{Computational and environmental cost.} Selling tiers in multiples of usage rather than
