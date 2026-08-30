@@ -33,6 +33,23 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1a
 \begin{answer}
   % ### START CODE HERE ###
+  % ---- PROGRESS NOTES (comments only - nothing renders yet) ----
+  % Task: bag-of-words vector for "so so worried about tomorrow".
+  % Vocabulary is 14 words in alphabetical order, so the vector has 14 slots:
+  %   1 about, 2 amazing, 3 angry, 4 day, 5 hate, 6 love, 7 of,
+  %   8 scared, 9 so, 10 spiders, 11 this, 12 tomorrow, 13 waiting, 14 worried
+  %
+  % My draft: the tweet's words are so, so, worried, about, tomorrow.
+  % Nonzero slots: 1 (about), 9 (so), 12 (tomorrow), 14 (worried); all others 0.
+  % Slot 9 is the only one above 1, because "so" appears twice.
+  %
+  % Correction to my first attempt: I wrote 0.2 / 0.4 / 0.2 / 0.2, i.e. each
+  % count divided by the tweet's 5 words. This assignment defines bag-of-words
+  % as RAW COUNTS ("how many times that word appears"), so the values are
+  % 1 / 2 / 1 / 1. Dividing by the length is a different variant (term
+  % frequency); it hides tweet length from the model, which is not asked for.
+  %
+  % TO DO: write the full 14-entry vector out in LaTeX, alphabetical order.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1a
@@ -44,6 +61,21 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1b
 \begin{answer}
   % ### START CODE HERE ###
+  % ---- PROGRESS NOTES (comments only - nothing renders yet) ----
+  % Task: softmax of the logits [2.0, 1.0, -1.0] for [Joy, Anger, Fear],
+  % answer rounded to 3 decimals.
+  %
+  % My method (confirmed correct):
+  %   1. exponentiate each logit:  e^2.0, e^1.0, e^-1.0
+  %   2. add those three to get ONE sum (the same denominator for all classes)
+  %   3. divide each exponentiated logit by that sum
+  %
+  % Watch: e^1.0 is about 2.718, not 1. e^-1.0 is about 0.368 - small but
+  % still positive, so a negative logit never gives a negative probability.
+  % Round only at the very end; the three answers must add up to 1.000.
+  %
+  % TO DO: do the arithmetic, then write the three probabilities and the
+  % worked steps in LaTeX.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1b
@@ -55,6 +87,35 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1c
 \begin{answer}
   % ### START CODE HERE ###
+  % ---- PROGRESS NOTES (comments only - nothing renders yet) ----
+  % Task: cross-entropy loss for "so angry", true label Anger, one-hot
+  % [0, 1, 0], model probabilities [0.2, 0.7, 0.1]. Then explain the loss
+  % behaviour as the correct class's probability approaches 1.
+  %
+  % Part 1 - the number.
+  % Write all three terms of the sum, then watch two die: the one-hot has 0
+  % in the Joy and Fear slots, so those terms vanish and only the Anger term
+  % survives. Loss = -log(0.7)  (natural log, not base 10 - base 10 would
+  % give about 0.155, which is wrong here).
+  % TO DO: evaluate -log(0.7) to 3 decimals.
+  %
+  % Part 2 - the behaviour (my wording, to typeset):
+  % "As the predicted probability for the correct class approaches 1, the loss
+  % approaches 0, since log of 1 is 0. As that probability approaches 0, the
+  % loss grows without bound, since log of a number approaching 0 goes to
+  % negative infinity and the leading minus sign flips it to positive infinity."
+  %
+  % Two traps I hit while working this out:
+  %  - The loss is NOT U-shaped. The correct class's probability lives between
+  %    0 and 1, so there is no "other side" of 1 to move to. It is a one-way
+  %    street: probability up -> loss down to 0; probability down -> loss up.
+  %  - "Probability approaches 0" and "loss is unbounded" are two different
+  %    quantities moving in opposite directions, not a contradiction. Every
+  %    extra factor of 10 down in probability adds about 2.3 to the loss,
+  %    forever - a fixed amount added forever means no ceiling.
+  %    0.1 -> 2.30,  0.01 -> 4.61,  0.001 -> 6.91,  0.0001 -> 9.21
+  %
+  % TO DO: write parts 1 and 2 up in LaTeX.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1c
@@ -80,6 +141,39 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_2a
 \begin{answer}
   % ### START CODE HERE ###
+  % ---- PROGRESS NOTES (comments only - nothing renders yet) ----
+  % Task: averaged embedding for "so angry", plus one advantage and one
+  % limitation of representing a tweet by averaging its word embeddings.
+  %
+  % Part 1 - the vector (done):
+  %   so    = [ 0.1,  0.0]
+  %   angry = [-0.6, -0.8]
+  %   average position by position, divide by 2 words:
+  %     first  position: (0.1 + -0.6)/2 = -0.25
+  %     second position: (0.0 + -0.8)/2 = -0.40
+  %   answer: [-0.25, -0.40]
+  %   (stays 2 numbers wide - do NOT sum all four into one number)
+  %   Sanity: it lands in the negative quadrant, which fits an angry tweet.
+  %
+  % Part 2 - limitation (my point):
+  % Averaging washes out meaning when words pull in opposite directions - the
+  % result comes out neutral. Concrete example from the given table:
+  %   love = [0.9, 0.4], hate = [-0.8, -0.5]  ->  average about [0.05, -0.05]
+  % which is indistinguishable from a tweet of neutral words like "of this".
+  % Same root cause as dilution: the average gives every word equal voting
+  % power, so weak or opposing words drag the result toward the middle.
+  %
+  % Part 2 - advantage (my point):
+  % The input size stays fixed (2 numbers) as the vocabulary grows, while
+  % bag-of-words needs one more slot per new word - 14 words gives 14 slots,
+  % a realistic 50,000-word vocabulary gives 50,000 mostly-zero slots.
+  % Careful phrasing: what does not grow is the vector LENGTH; a genuinely new
+  % word still needs an embedding from somewhere.
+  % Optional second advantage (ties into 2d): similar words sit near each
+  % other, so what the model learns about "amazing" partly transfers to
+  % "wonderful"; in bag-of-words those are two unrelated slots.
+  %
+  % TO DO: write the vector and the 2-3 sentence discussion up in LaTeX.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2a
@@ -91,6 +185,40 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_2b
 \begin{answer}
   % ### START CODE HERE ###
+  % ---- PROGRESS NOTES (comments only - nothing renders yet) ----
+  % Task: forward pass for "so angry" through the 2 -> 2 (ReLU) -> 1 (logistic)
+  % network, filling the four-row table with computation and value.
+  %
+  % Worked values (all done):
+  %   x = [-0.25, -0.40]                  (averaged embedding from 2a)
+  %
+  %   hidden unit 1: row 1 of the weight matrix is [1.0, 0.5], bias 0.1
+  %       1.0*(-0.25) + 0.5*(-0.40) + 0.1 = -0.25 - 0.20 + 0.1 = -0.35
+  %   hidden unit 2: row 2 of the weight matrix is [-0.5, 1.0], bias -0.2
+  %       -0.5*(-0.25) + 1.0*(-0.40) - 0.2 = 0.125 - 0.40 - 0.2 = -0.475
+  %   both negative, so ReLU clips both:   h = [0, 0]
+  %
+  %   z = [0.8, -0.6] against h, plus bias 0.3
+  %     = 0.8*0 + (-0.6)*0 + 0.3 = 0.3     (only the output bias survives)
+  %
+  %   y-hat = logistic(0.3) = 1/(1 + e^-0.3) = 0.574
+  %
+  % Reading: 0.574 is above 0.5, so the model predicts POSITIVE while the true
+  % label is negative (0). It gets this example wrong, which is why the loss in
+  % 2c is sizeable. Also note that with both hidden values at zero, the output
+  % does not depend on the input at all - it is just the output bias.
+  %
+  % Mistakes I made getting here (worth not repeating in 2c):
+  %  - Each hidden unit uses BOTH input numbers, not one each. I first split
+  %    the two coefficients of row 1 across the two units.
+  %  - Read the matrix by ROW, not column. Row 2 is [-0.5, 1.0]; the column
+  %    [0.5, 1.0] belongs to no single unit.
+  %  - Each hidden unit has its OWN bias: 0.1 for the first, -0.2 for the
+  %    second. I reused 0.1 twice.
+  %
+  % TO DO: paste the table from the handout and fill in these four rows.
+  % Keep the pre-ReLU values (-0.35, -0.475) visible in the formula column;
+  % 2c needs them.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2b
@@ -103,6 +231,60 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_2c
 \begin{answer}
   % ### START CODE HERE ###
+  % ---- PROGRESS NOTES (comments only - nothing renders yet) ----
+  % Task: loss value plus the seven-row backprop table, same numbers as 2b,
+  % true label 0, binary cross-entropy. Each row expressed via the rows above.
+  %
+  % LOSS
+  %   With the true label 0, the first term of the loss dies and only
+  %   -log(1 - y-hat) survives:  -log(1 - 0.574) = -log(0.426) = 0.854
+  %   (natural log. Base 10 gives 0.371 - I made that mistake first.)
+  %
+  % GRADIENT TABLE (all worked)
+  %   at the probability:  (1 - y_true)/(1 - y-hat) - y_true/y-hat
+  %                        = 1/0.426 = 2.347
+  %       Trap I hit: the denominator is 1 minus the PROBABILITY (0.426),
+  %       not 1 minus the loss. The loss never appears in its own gradient.
+  %
+  %   at the score:        row above x logistic derivative
+  %                        logistic derivative = y-hat (1 - y-hat)
+  %                                            = 0.574 x 0.426 = 0.244
+  %                        2.347 x 0.244 = 0.574
+  %       The 0.426 cancels, leaving y-hat - y_true = 0.574 - 0 = 0.574.
+  %       Equivalent spelling of the logistic derivative: e^-z x y-hat^2,
+  %       since (1 - y-hat) = e^-z x y-hat. Only ONE y-hat factor is left
+  %       over after the swap - not y-hat^2 (1 - y-hat).
+  %       If the true label had been 1 this row would be 0.574 - 1 = -0.426.
+  %
+  %   at the hidden pair:  score gradient x each OUTPUT WEIGHT
+  %                        [0.574 x 0.8, 0.574 x -0.6] = [0.459, -0.344]
+  %       Two numbers, not one: the gradient has the shape of the thing
+  %       differentiated against, and there are two hidden values.
+  %
+  %   output weights:      score gradient x each HIDDEN VALUE
+  %                        0.574 x [0, 0] = [0, 0]
+  %       The swap to avoid: hidden-value gradients use the weights;
+  %       weight gradients use the hidden values. In a product, the
+  %       derivative with respect to one factor is the other factor.
+  %
+  %   output bias:         = the score gradient itself = 0.574
+  %                        (the bias enters with a coefficient of 1)
+  %
+  %   layer 1 weights:     [[0, 0], [0, 0]]   (a 2x2 block, not a pair)
+  %   layer 1 bias:        [0, 0]
+  %       Why: the ReLU passes gradient where its input was positive and
+  %       blocks it where negative. Both pre-ReLU values from 2b were
+  %       negative (-0.35 and -0.475), so the gradient at the
+  %       pre-activations is [0, 0] and nothing flows further back.
+  %
+  % Reading worth stating in the write-up: only the output bias gets a
+  % nonzero update from this example. Both weight matrices and the hidden
+  % biases receive nothing, because both hidden units are switched off by the
+  % ReLU - the "dead ReLU" situation that 2b's h = [0, 0] foreshadowed. The
+  % model is wrong on this tweet yet a gradient step barely changes it.
+  %
+  % TO DO: paste both tables from the handout and fill them in, with the
+  % chain-rule formula in the middle column and these values on the right.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2c

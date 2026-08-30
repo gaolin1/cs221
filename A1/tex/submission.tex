@@ -170,8 +170,52 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_2c
 \begin{answer}
   % ### START CODE HERE ###
-  % Compute C = AB and s = sum_ij C_ij for the given numeric A (2x3) and B (3x2).
-  % Then give ds/dA (2x3) and ds/dB (3x2) with a number in every entry.
+  % ---- DRAFT: all values worked out, formatting to polish ----
+  %
+  % Step 1: C = AB   (2x3 times 3x2 gives 2x2; each entry is one row of A
+  % against one column of B)
+  %   C[1][1] = 2*7 + 1*9 + 3*1 = 14 + 9 + 3  = 26
+  %   C[1][2] = 2*8 + 1*0 + 3*2 = 16 + 0 + 6  = 22
+  %   C[2][1] = 4*7 + 5*9 + 6*1 = 28 + 45 + 6 = 79
+  %   C[2][2] = 4*8 + 5*0 + 6*2 = 32 + 0 + 12 = 44
+  %
+  %   C = [[26, 22],
+  %        [79, 44]]
+  %
+  % Step 2: s = sum of all entries of C
+  %   s = 26 + 22 + 79 + 44 = 171
+  %
+  % Step 3: gradient with respect to A.
+  %   ds/dA[i][k] = ds/dC * dC/dA[i][k] = 1 * (sum over j of B[k][j])
+  %   i.e. the ROW SUMS of B:  7+8 = 15,  9+0 = 9,  1+2 = 3
+  %   Shape must match A (2x3), so the three values repeat in both rows:
+  %
+  %   ds/dA = [[15, 9, 3],
+  %            [15, 9, 3]]
+  %
+  %   Why both rows are identical: every entry in a given column of A meets
+  %   the same row of B, whichever row of A it sits in.
+  %
+  % Step 4: gradient with respect to B (the mirror image).
+  %   ds/dB[k][j] = ds/dC * dC/dB[k][j] = 1 * (sum over i of A[i][k])
+  %   i.e. the COLUMN SUMS of A:  2+4 = 6,  1+5 = 6,  3+6 = 9
+  %   Shape must match B (3x2), so each value repeats across its row:
+  %
+  %   ds/dB = [[6, 6],
+  %            [6, 6],
+  %            [9, 9]]
+  %
+  % Sanity checks used: every entry of C appears exactly once in s, so the
+  % outer derivative is 1 everywhere; and each gradient matrix has the same
+  % shape as the thing it differentiates against.
+  %
+  % TO DO: typeset as LaTeX pmatrix environments. Skeleton to fill in:
+  %
+  % $C = AB = \begin{pmatrix} 26 & 22 \ 79 & 44 \end{pmatrix}$, \quad $s = 171$
+  %
+  % $\frac{\partial s}{\partial A} = \begin{pmatrix} 15 & 9 & 3 \ 15 & 9 & 3 \end{pmatrix}$
+  %
+  % $\frac{\partial s}{\partial B} = \begin{pmatrix} 6 & 6 \ 6 & 6 \ 9 & 9 \end{pmatrix}$
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2c
@@ -185,35 +229,55 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3a
 \begin{answer}
   % ### START CODE HERE ###
-  % PROGRESS (all derived, ready to write up):
-  %
-  % 1. Derivative: f'(theta) = sum_i 2 w_i (theta - x_i)
-  %    [chain rule per term; d(theta-x_i)/dtheta = 1; sum SURVIVES because the one
-  %     scalar theta is in every term -- contrast 2a where separability killed all
-  %     but one term]
-  %
-  % 2. Minimizer: set f'= 0, cancel the 2, split the sum, move sum(w_i x_i) across,
-  %    factor theta out (it carries no i), divide by sum(w_i):
-  %        theta* = sum(w_i x_i) / sum(w_i)     -- the weighted average
-  %    sanity checks done: x=[1,3], w=[1,1] -> 4/2 = 2 (midpoint); w=[99,1] -> 1.02
-  %    (hugs x_1). NOT sum(x_i): denominator is one number, can't cancel termwise.
-  %
-  % 3. Minimum argument: f' expanded is a*theta - c with a = 2 sum(w_i), so
-  %        f''(theta) = 2 sum(w_i)   -- a CONSTANT, positive since all w_i > 0
-  %    => upward parabola, unique stationary point => theta* is the global minimum.
-  %    (my first attempt said f''=0 -- differentiated the coefficients, not a*theta;
-  %     d/dx of 5x is 5, not 0)
-  %
-  % 4. Negative w_i: what matters is the SIGN OF THE SUM, since only sum(w_i)
-  %    appears in f'':
-  %      - sum > 0: still a genuine minimum, but theta* can leave the range of the
-  %        x_i (x=[1,3], w=[2,-1] -> theta* = -1)
-  %      - sum = 0: quadratic terms cancel, f is a line, unbounded below, theta*
-  %        formula divides by zero
-  %      - sum < 0: parabola opens DOWN, theta* is the maximum, f -> -inf both ways,
-  %        no minimum exists
-  %
-  % TO DO: write this up in LaTeX (see 2a block for house style).
+  % ---- DRAFT: my derivation typeset. Wording still to polish. ----
+  % Kept for reference, not rendered:
+  %   sanity checks: x=[1,3], w=[1,1] -> theta* = 4/2 = 2 (the midpoint);
+  %                  w=[99,1] -> theta* = 1.02 (hugs x_1, the heavy point).
+  %   trap 1: theta* is NOT sum(x_i). The denominator is a single number, so it
+  %           cannot be cancelled term by term against the numerator's sum.
+  %   trap 2: my first attempt gave f'' = 0 by differentiating the coefficients
+  %           instead of the a*theta term. d/dx of 5x is 5, not 0.
+  \textbf{Minimizer.}
+  \[
+    \theta^{*} \;=\; \frac{\sum_{i=1}^{n} w_i x_i}{\sum_{i=1}^{n} w_i},
+  \]
+  the weighted average of the $x_i$.
+
+  \medskip
+  \textbf{Derivation.} Differentiation is linear, so it moves inside the sum, and the chain rule
+  applies to each term with $\frac{d}{d\theta}(\theta - x_i) = 1$ since $x_i$ is constant:
+  \[
+    f'(\theta) \;=\; \sum_{i=1}^{n} 2 w_i (\theta - x_i).
+  \]
+  Unlike the separable case in (2a), the sum \emph{survives} here: the single scalar $\theta$
+  appears in every term, so every term contributes. Setting $f'(\theta) = 0$, cancelling the
+  factor of $2$ and splitting the sum,
+  \[
+    \sum_{i=1}^{n} w_i \theta \;=\; \sum_{i=1}^{n} w_i x_i .
+  \]
+  Since $\theta$ carries no index $i$, it factors out of the left-hand sum, giving
+  $\theta \sum_i w_i = \sum_i w_i x_i$, and dividing by $\sum_i w_i$ yields $\theta^{*}$ above.
+
+  \medskip
+  \textbf{The optimum is a minimum.} Expanding the first derivative gives
+  $f'(\theta) = a\theta - c$ with $a = 2\sum_i w_i$ and $c = 2\sum_i w_i x_i$, so
+  \[
+    f''(\theta) \;=\; 2\sum_{i=1}^{n} w_i,
+  \]
+  a constant, and strictly positive because every $w_i > 0$. The function is therefore an
+  upward parabola with a single stationary point, so $\theta^{*}$ is its global minimum.
+
+  \medskip
+  \textbf{Negative weights.} Only $\sum_i w_i$ appears in $f''$, so the sign of that
+  \emph{sum} decides the behaviour, not the sign of any individual weight. Three cases:
+  \begin{itemize}
+    \item $\sum_i w_i > 0$: still a genuine minimum, but $\theta^{*}$ may fall outside the
+      range of the $x_i$. For $x = [1, 3]$ with $w = [2, -1]$, $\theta^{*} = -1$.
+    \item $\sum_i w_i = 0$: the quadratic terms cancel, $f$ reduces to a straight line and is
+      unbounded below; the formula for $\theta^{*}$ divides by zero.
+    \item $\sum_i w_i < 0$: the parabola opens downward, so $\theta^{*}$ is a \emph{maximum},
+      $f \to -\infty$ in both directions and no minimum exists.
+  \end{itemize}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3a
@@ -238,8 +302,22 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_4a
 \begin{answer}
   % ### START CODE HERE ###
-  % 2-5 sentences. Copy out and \underline{underline} one NeurIPS checklist item, then
-  % justify why it applies to the loan-default scenario.
+  % ---- DRAFT: my answer, wording to polish. ----
+  % CHECK BEFORE SUBMITTING: copy the checklist item verbatim from
+  % https://nips.cc/Conferences/2023/EthicsGuidelinesForReviewers
+  % (my version below is from memory of the page; the exact wording matters
+  % because the question asks us to copy the item out).
+  % Structure follows the handout's example solution: claim, quoted item,
+  % then the mechanism that makes it apply.
+  This model has likely \underline{encoded, contained, or potentially exacerbated bias against}
+  \underline{people of a certain gender, race, sexuality, or who have other protected}
+  \underline{characteristics}. Although race and gender are not inputs, the model predicts mainly
+  from location, and location acts as a substitute for those protected characteristics: because
+  of residential segregation and unequal rural and urban access to credit, a postcode carries
+  information about an applicant's race and income. The disparity in outcomes is visible in the
+  results -- loans are accepted from urban centres and denied to rural applicants, and the false
+  positive rate is significantly higher for Black and male applicants -- so the model reproduces
+  existing inequalities while never appearing to consider a protected characteristic directly.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_4a
@@ -251,8 +329,18 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_4b
 \begin{answer}
   % ### START CODE HERE ###
-  % 2-5 sentences on the stylometry / deanonymisation scenario, with an underlined
-  % checklist item.
+  % ---- DRAFT: my answer, wording to polish. ----
+  % CHECK: copy the checklist item verbatim from the NeurIPS guidelines page.
+  Stylometry models can \underline{contain information that could be deduced about individuals}
+  \underline{that they have not consented to share}. Applied outside the historical and literary
+  setting they are built for, these models can identify authors who deliberately wrote
+  anonymously, and they need no cooperation from the target: text the person already published
+  is enough, and they may never learn that it happened. The people who rely most on anonymity --
+  whistleblowers, dissidents, people writing under a pseudonym about their health or sexuality,
+  developers contributing to projects that are illegal where they live -- are precisely those for
+  whom deanonymization is most dangerous. The risk is not limited to correct identifications
+  either: a confident but incorrect prediction can attribute a text to someone who never wrote it,
+  and they have no practical way to contest it.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_4b
@@ -264,8 +352,21 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_4c
 \begin{answer}
   % ### START CODE HERE ###
-  % 2-5 sentences on the scraped celebrity-face dataset, with an underlined checklist
-  % item.
+  % ---- DRAFT: my answer, wording to polish. ----
+  % CHECK: copy the checklist item verbatim from the NeurIPS guidelines page.
+  % Note on item choice: I first reached for the same item as 4b ("information that
+  % could be deduced"), but that one is about INFERRING something new about a person.
+  % Here nothing is inferred - the images themselves were collected and used without
+  % permission - so the personally identifiable information item is the closer fit.
+  This dataset appears to \underline{contain personally identifiable information or sensitive}
+  \underline{personally identifiable information}. A photograph of a person's face is precisely
+  that: it identifies an individual directly, and as biometric data it is the sensitive kind.
+  The celebrities depicted never gave permission for their images to be collected or used as
+  training data, and being a public figure is not consent to become a training example. The
+  dataset's handling of the copyrighted photos -- distributing URLs and bounding boxes rather
+  than the image files themselves -- avoids redistributing protected works, but it does nothing
+  about the underlying problem, since the faces are still assembled into a facial recognition
+  dataset without the knowledge or agreement of the people in them.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_4c
@@ -277,8 +378,22 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_4d
 \begin{answer}
   % ### START CODE HERE ###
-  % 2-5 sentences on the iNaturalist plant-ID model. Note this one may legitimately have
-  % NO concern -- if so, justify that conclusion instead.
+  % ---- DRAFT: option B (no concern). Wording to polish. ----
+  % This is the scenario the handout says may legitimately have no concern, so no
+  % checklist item is quoted; the question asks instead for the reasoning behind
+  % that conclusion. The last sentence names the strongest counterargument and
+  % answers it, which makes a "no concern" answer more credible than a flat denial.
+  I do not think this scenario raises an ethical concern from the guidelines. The photographs
+  were uploaded by users who consented to their use for research, so the consent problem that
+  affects scraped datasets does not arise here, and the model is used only within the app and
+  only for the purpose the data was collected for, so there is no repurposing beyond what those
+  users agreed to. The images are of plants rather than people, so the dataset carries no
+  personally identifiable information, and a species classifier has no demographic outputs
+  through which it could encode bias against race, gender, or other protected characteristics.
+  The closest thing to a residual risk is that nature photographs can carry location metadata,
+  which for a rare or endangered species could be sensitive, but the model predicts a species
+  from the image itself and its predictions stay inside the app, so it does not publish or
+  expose those locations.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_4d
@@ -291,10 +406,54 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5a
 \begin{answer}
   % ### START CODE HERE ###
-  % Name your chosen product (it carries through later assignments).
-  % 4-6 sentences on its purpose + at least two concrete use cases.
-  % Two screenshots required. Put the image files in tex/ then:
-  % \begin{figure}[H]\centering\includegraphics[width=0.8\textwidth]{shot1.png}\end{figure}
+  % ---- DRAFT: my description plus two use cases. Wording to polish. ----
+  % PRODUCT CHOSEN: Claude Code (Anthropic). Carries through to later assignments.
+  %
+  % Three figures, two use cases: the agentic one is illustrated twice (a build from
+  % scratch and a change to an existing codebase), tutoring is the contrasting one.
+  % If space is tight, Figure 2 (the game overlay) is the one to drop - Figure 1 is
+  % the stronger engineering example because it shows tests and endpoint verification.
+  %
+  % NOTE: the tutoring screenshot could be read as a plain chatbot exchange, and the
+  % handout says to pick something that is "not just a raw LLM chatbot". The other two
+  % figures carry that requirement, since the tool calls are visible in both.
+  Claude Code was initially released as a command-line tool for generating code and answering
+  questions about a codebase through text prompts. Since then the set of tools available to it has
+  expanded considerably -- it can read and edit files, run shell commands, and create commits and
+  pull requests -- which has widened what a single prompt can accomplish. With the addition of
+  agents it also supports semi-autonomous sessions, where the model is given a goal and works
+  toward it across many tool calls, pausing for approval according to a configurable permission
+  mode rather than for every individual action. Two distinct patterns stood out in my own use.
+  The first is agentic software development, where a single request turns into a sequence of
+  reads, edits, commands and checks: in Figure~\ref{fig:cc-backend} it inspected an existing
+  investment portfolio backtester, added a rolling-correlation subcommand and a matching API
+  endpoint, wrote seven unit tests, and verified that the running server returned the expected
+  responses for both valid and invalid input; in Figure~\ref{fig:cc-agentic} the same pattern
+  builds a small application from scratch, creating four files and rewriting the game mod that
+  feeds it. The second is conceptual tutoring, shown in Figure~\ref{fig:cc-tutoring}: while I was
+  learning NumPy for this course it generated graded practice questions on array indexing and
+  shape, gave hints, and deliberately withheld the answers until I attempted them -- assistance
+  with understanding rather than with producing code.
+
+  \begin{figure}[H]\centering
+    \includegraphics[width=0.8\textwidth]{images/shot3-backend-api.png}
+    \caption{Agentic development on an existing codebase: reading the backend, adding an endpoint,
+    writing unit tests and verifying the live responses.}
+    \label{fig:cc-backend}
+  \end{figure}
+
+  \begin{figure}[H]\centering
+    \includegraphics[width=0.8\textwidth]{images/shot1-agentic-build.png}
+    \caption{The same agentic pattern building an application from scratch.}
+    \label{fig:cc-agentic}
+  \end{figure}
+
+  \begin{figure}[H]\centering
+    \includegraphics[width=0.8\textwidth]{images/shot2-concept-tutoring.png}
+    \caption{Tutoring use: generated practice questions on NumPy indexing and shape, with hints
+    and answers withheld.}
+    \label{fig:cc-tutoring}
+  \end{figure}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5a
@@ -306,7 +465,29 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5b
 \begin{answer}
   % ### START CODE HERE ###
-  % 3-5 sentences summarising 3+ sources published in the last 1-2 months, with links.
+  % ---- DRAFT: my three sources, summarised. Wording to polish. ----
+  % VERIFY BEFORE SUBMITTING (I could not check these while drafting):
+  %   1. each item was published within the last 1-2 months
+  %   2. the summary below matches what each page actually says
+  %   3. the links resolve
+  % Sources used:
+  %   https://www.anthropic.com/news/fable-mythos-access
+  %   https://www.anthropic.com/research/Claude-accelerates-protein-design
+  %   https://www.anthropic.com/research/global-workspace
+  Recent announcements from Anthropic, the company behind Claude Code, point in three different
+  directions. First, access to the Fable 5 model was temporarily blocked for all users
+  (\href{https://www.anthropic.com/news/fable-mythos-access}{anthropic.com/news/fable-mythos-access}),
+  which drew controversy over how access to frontier models is regulated and by whom -- a question
+  that matters directly for a product like Claude Code, whose usefulness depends on continued
+  access to the newest models. Second, the company reported work on accelerating protein design
+  (\href{https://www.anthropic.com/research/Claude-accelerates-protein-design}{anthropic.com/research/Claude-accelerates-protein-design}),
+  indicating an expansion beyond conversational assistance into scientific research with concrete
+  real-world outcomes. Third, research on a global workspace
+  (\href{https://www.anthropic.com/research/global-workspace}{anthropic.com/research/global-workspace})
+  probes the intermediate reasoning steps inside the model, part of a broader interpretability
+  effort to open up the black box of how a language model arrives at its output. Taken together
+  these suggest a company pushing capability and application outward while simultaneously
+  investing in understanding and controlling the systems it releases.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5b
@@ -318,8 +499,46 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5c
 \begin{answer}
   % ### START CODE HERE ###
-  % Quote the company mission; state the product goal; 2-3 sentences on the relationship
-  % and any mission drift; plus reflection on alignment / reward hacking.
+  % ---- DRAFT: four parts (mission, product goal, relationship, alignment). ----
+  % VERIFY: the mission quote is transcribed exactly from
+  %   https://www.anthropic.com/company
+  % and the product description from the Claude Code product page.
+  % The last paragraph is the part the question weights most - edit it to match
+  % what I actually observed rather than keeping my wording.
+  \textbf{Company mission.} Anthropic states: ``We believe AI will have a vast impact on the
+  world. Anthropic is dedicated to building systems that people can rely on and generating
+  research about the opportunities and risks of AI.''
+  (\href{https://www.anthropic.com/company}{anthropic.com/company})
+
+  \medskip
+  \textbf{Product goal.} Claude Code is described as excelling ``at both routine development tasks
+  like bug fixes and testing, as well as transformative work like refactors and feature
+  implementation that require deep codebase understanding.''
+
+  \medskip
+  \textbf{Relationship.} The product fits the mission's first clause closely: it is an applied
+  system rather than a chat interface, and the tasks it targets -- bug fixes, tests, refactors --
+  are ones where being able to rely on the output matters more than novelty, since the result is
+  committed into a real codebase. There is a tension worth naming, though. A mission that
+  foregrounds research into the risks of AI sits somewhat uneasily beside a product that writes
+  files and executes shell commands semi-autonomously, which is precisely the class of capability
+  that carries risk. The company's answer appears to be the permission system: the tool asks for
+  approval before acting, with a configurable mode governing how much it may do unattended, so the
+  reliability clause of the mission is expressed as user control rather than as restraint in
+  capability.
+
+  \medskip
+  \textbf{Alignment.} In my own use the product's behaviour was largely consistent with its stated
+  goal, and in ways that a system optimising for appearances would not be. In one session it
+  reported that nine commands had been run and two had failed, rather than quietly retrying and
+  presenting only a clean summary, and when it added an API endpoint it verified both the success
+  response and the error response for invalid input instead of testing only the case that would
+  look good. I did observe a smaller failure of intent: a debugging line it had suggested for one
+  function was later pasted into a different function where the variable it referenced did not
+  exist, producing an immediate error. I would call that an ordinary mistake rather than reward
+  hacking, since nothing about it advantaged the model -- reward hacking would look like
+  suppressing a failing test or reporting success without verifying it, which is the opposite of
+  what the transcripts show.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5c
@@ -331,8 +550,62 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5d
 \begin{answer}
   % ### START CODE HERE ###
-  % 3-4 sentences: pricing tiers, access barriers (financial and non-financial), one
-  % alternative pricing model with pros/cons, plus computational and environmental cost.
+  % ---- DRAFT: pricing, barriers, alternative model, compute/environment. ----
+  % VERIFY BEFORE SUBMITTING (I could not browse while drafting):
+  %   - the tier names and prices below, from https://claude.com/pricing
+  %   - the $15/seat figure for verified scientists, from
+  %     https://www.anthropic.com/news/expanding-support-for-scientists
+  %   - whether Claude for Education publishes any pricing yet
+  %   - the environmental paragraph is written as "I could not find disclosure";
+  %     if you do find a figure, replace it rather than leaving the claim vague.
+  % The alternative pricing model in the third paragraph is my suggestion - swap it
+  % if you would rather argue for a different one.
+  \textbf{Pricing and access.} Claude is sold on individual and enterprise plans
+  (\href{https://claude.com/pricing}{claude.com/pricing}). The free tier costs nothing but gives
+  only basic chat access and no access to Claude Code at all; Pro at roughly \$23 per month billed
+  annually (\$28 monthly) is the entry point for Claude Code; and Max tiers offer five to ten times
+  the usage, starting at about \$140 per month. Access is therefore tiered rather than equitable by
+  default: the tool is unavailable to anyone unwilling or unable to pay a subscription. There are
+  targeted exceptions -- Claude for Education
+  (\href{https://claude.com/solutions/education}{claude.com/solutions/education}) exists but
+  publishes no pricing, and a recent programme offers verified scientists a discounted rate of
+  about \$15 per seat per month
+  (\href{https://www.anthropic.com/news/expanding-support-for-scientists}{announcement}) -- but
+  these are discretionary and require belonging to a recognised institution or profession.
+
+  \medskip
+  \textbf{Non-financial barriers.} Using Claude Code has historically required comfort with a
+  terminal and a working development environment, which excludes users who would benefit from the
+  underlying capability but do not work at a command line; its recent addition to the Claude
+  desktop application lowers that barrier somewhat. Capability itself is also gated independently
+  of price: the top-tier Mythos model is available only to selected organisations and not to the
+  public, so the most capable system cannot be reached at any consumer price point. Region
+  availability and the need for an account in good standing add further access conditions that
+  money alone does not resolve.
+
+  \medskip
+  \textbf{An alternative pricing model.} A metered, pay-as-you-go model -- paying per unit of
+  computation actually consumed, with no monthly floor -- would suit this product better than a
+  flat subscription, because usage is extremely uneven: an agentic session that edits a dozen files
+  costs far more to serve than a single question. For users, the advantage is that occasional and
+  low-income users stop subsidising heavy ones and can access the tool for a few dollars a month;
+  the disadvantage is unpredictable bills and the anxiety of watching a meter, which discourages
+  exactly the exploratory use that helps people learn. For the company, metering aligns revenue
+  with serving cost and removes the incentive to throttle heavy users, but it forfeits predictable
+  recurring revenue and raises the barrier to casual adoption.
+
+  \medskip
+  \textbf{Computational and environmental cost.} The structure of the pricing itself reveals that
+  serving this product is expensive: tiers are sold explicitly in multiples of usage rather than in
+  features, which only makes sense if the marginal cost of each request is significant. An agentic
+  coding session is unusually costly in this respect, since one request expands into many model
+  calls as the tool reads files, runs commands and checks results. I could not find a disclosure
+  from the company of the energy consumption or carbon footprint of training or serving these
+  models, and that absence matters: without it, users cannot weigh the environmental cost of a
+  session against its benefit, and the price signal is the only proxy available. Because that price
+  signal is set by business considerations rather than by environmental cost, the people priced out
+  of the tool are not the same as the people whose usage is environmentally expensive -- access and
+  impact are decoupled.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5d

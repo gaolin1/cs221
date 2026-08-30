@@ -27,9 +27,14 @@ def build_vocabulary(examples: List[str]) -> Vocabulary:
     @return: a Vocabulary() object
     """
     vocab = Vocabulary()
-    pass
+    
     # (our solution is 5 lines of code, but don't worry if you deviate from this)
     ## ### START CODE HERE ###
+    for word in examples:
+        split_words = word.split()
+        for split_word in split_words:
+            vocab.add_word(split_word)
+    return vocab
     ## ### END CODE HERE ###
 
 
@@ -50,9 +55,14 @@ def text_to_features(text, vocab) -> np.ndarray:
     """
     features = np.zeros(vocab.size())
 
-    pass
     # (our solution is 5 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    split_text = text.split()
+    for word in split_text:
+        index = vocab.get_index(word)
+        features[index] = features[index] + 1
+    return features
+
     # ### END CODE HERE ###
 
 
@@ -80,9 +90,12 @@ def numpy_softmax(logits: np.ndarray) -> np.ndarray:
     """
     logits = logits - reduce(logits, "batch class -> batch 1", "max")
 
-    pass
+    
     # (our solution is 2 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    logits_exp = np.exp(logits)
+    logits_sum = reduce(logits_exp, "batch class -> batch 1", "sum")
+    return logits_exp/logits_sum
     # ### END CODE HERE ###
 
 
