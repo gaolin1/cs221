@@ -36,7 +36,7 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % NumPy tutor session transcript (interactive, 15-20 min).
   % CHECK: open the link in a private window before submitting to confirm the
   % share is public and the transcript loads.
-  Transcript of my NumPy tutoring session:
+  Link to my NumPy tutoring session:
   \url{https://claude.ai/share/9365fd54-617b-4519-875c-ed96bf982080}
   % ### END CODE HERE ###
 \end{answer}
@@ -51,17 +51,10 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   \textbf{Answer:} $O(mnp)$.
 
   \medskip
-  \textbf{Justification.} The product $C = AB$ has $m \cdot p$ entries, and each entry is an
+  \textbf{Justification.} The product $C = AB$ has $m \cdot p$ entries, and each operation is an
   inner product of length $n$:
-  \[
-    C_{ij} \;=\; \sum_{k=1}^{n} A_{ik} B_{kj},
-  \]
-  so each entry costs $n$ multiply--adds. The total is therefore $mp \cdot n = O(mnp)$.
+  so each operation costs $n$ multiply--adds. The total is therefore $mp \cdot n = O(mnp)$.
 
-  \medskip
-  Two caveats. This is the \emph{standard} (naive) algorithm --- Strassen-style methods beat
-  $O(n^3)$ on square matrices. And as a sanity check, the square case $m = n = p$ gives
-  $O(n^3)$, as expected.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1b
@@ -75,7 +68,7 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % einsum / einops tutor session transcript (interactive, 15-20 min).
   % CHECK: open the link in a private window before submitting to confirm the
   % share is public and the transcript loads.
-  Transcript of my einsum and einops tutoring session:
+  Link to my einops tutoring session:
   \url{https://claude.ai/share/f6b32ebe-894a-4ff8-b7a5-2ff4666d93cf}
   % ### END CODE HERE ###
 \end{answer}
@@ -102,31 +95,19 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
     \texttt{einsum(X, X, 'i d, j d -> i j')}
   \]
   Entry $[i,j]$ is the dot product of row $i$ with row $j$, that is
-  $(XX^\top)_{ij} = \sum_d X_{id} X_{jd}$. The two row axes index \emph{different} rows, so they
-  must receive different letters \texttt{i} and \texttt{j}, both of which are kept in the output.
+  $(XX^\top)_{ij} = \sum_d X_{id} X_{jd}$. The two row axes index \emph{different} rows, so they were assigned differentletters \texttt{i} and \texttt{j}, both of which are kept in the output.
   The feature axis \texttt{d} is shared by both operands and dropped from the output, so it is
-  contracted. No explicit transpose is required --- the transpose is expressed by \emph{which
-  letters line up}, not by flipping an array.
+  summed over.
 
   \medskip
   \textbf{(iii) $\operatorname{diag}(X^\top X)$, shapes $(n,d), (n,d) \to (d,)$}
   \[
     \texttt{einsum(X, X, 'n d, n d -> d')}
   \]
-  The $k$-th diagonal entry of $X^\top X$ is the squared norm of column $k$:
-  $\operatorname{diag}(X^\top X)_d = \sum_n X_{nd} X_{nd} = \sum_n X_{nd}^2$. Both operands are
-  the plain array $X$, so both are labelled \texttt{n d}. The row axis \texttt{n} is absent from
-  the output and so is summed; the feature axis \texttt{d} appears in both inputs \emph{and} the
-  output, so it is kept and aligned elementwise. The net effect is to square $X$ elementwise and
-  then sum down the rows.
+  Using the same index letter for the column axis of both inputs forces the row and column index of $X^\top X$ to be equal, which selects the diagonal entries: $y[d] \mathrel{+}= X[n,d] \cdot X[n,d]$,
+  each entry squared and added into its own column's position on the output vector. The $n$ axis is contracted away because it is not named in the output.
+ 
 
-  \medskip
-  Note that $X^\top X$ is itself $d \times d$; it is $\operatorname{diag}$ that collapses it to a
-  length-$d$ \emph{vector}. Computing it as \texttt{np.diag(X.T @ X)} would build the full
-  $d \times d$ matrix only to discard the off-diagonal entries --- $O(nd^2)$ work for $d$ useful
-  numbers --- whereas the einsum string never forms that matrix and costs $O(nd)$. The cost can
-  be read straight off the letters, as in 1b: \texttt{'n d, n d -> d'} has only two distinct
-  letters, hence two loops.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1d
@@ -178,29 +159,36 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 \begin{answer}
   % ### START CODE HERE ###
   % Working notes kept for reference (not rendered):
-  %   C[1][1] = 2*7 + 1*9 + 3*1 = 26      C[1][2] = 2*8 + 1*0 + 3*2 = 22
-  %   C[2][1] = 4*7 + 5*9 + 6*1 = 79      C[2][2] = 4*8 + 5*0 + 6*2 = 44
   %   ds/dA entries are the ROW sums of B; ds/dB entries are the COLUMN sums of A.
   %   Each gradient has the same shape as the matrix it differentiates against.
-  \textbf{Product and sum.} Each entry of $C$ is one row of $A$ against one column of $B$:
+  \textbf{Product.} Each entry of $C$ is one row of $A$ against one column of $B$:
   \[
-    C = AB = \begin{pmatrix} 26 & 22 \ 79 & 44 \end{pmatrix},
+    \begin{aligned}
+      C_{11} &= 2\cdot 7 + 1\cdot 9 + 3\cdot 1 = 26, &\qquad
+      C_{12} &= 2\cdot 8 + 1\cdot 0 + 3\cdot 2 = 22, \\
+      C_{21} &= 4\cdot 7 + 5\cdot 9 + 6\cdot 1 = 79, &\qquad
+      C_{22} &= 4\cdot 8 + 5\cdot 0 + 6\cdot 2 = 44,
+    \end{aligned}
+  \]
+  so
+  \[
+    C = AB = \begin{pmatrix} 26 & 22 \\ 79 & 44 \end{pmatrix},
     \qquad
     s = 26 + 22 + 79 + 44 = 171 .
   \]
 
   \medskip
   \textbf{Gradient with respect to $A$.} Since $s$ sums every entry of $C$ exactly once,
-  $\frac{\partial s}{\partial C_{i,j}} = 1$ for all $i,j$, and
-  $C_{i,j} = \sum_k A_{i,k} B_{k,j}$, so
+  $\frac{\partial s}{\partial C_{i,j}} = 1$ for all $i,j$, and $C_{i,j} = \sum_k A_{i,k} B_{k,j}$, so
   \[
     \frac{\partial s}{\partial A_{i,k}}
       = \sum_j \frac{\partial s}{\partial C_{i,j}} \cdot B_{k,j}
       = \sum_j B_{k,j},
   \]
-  the row sums of $B$. Every row of $A$ meets the same rows of $B$, so the result repeats:
+  the row sums of $B$: $7+8=15$, $9+0=9$, $1+2=3$. Every row of $A$ meets the same rows of $B$, so
+  the result repeats down both rows:
   \[
-    \frac{\partial s}{\partial A} = \begin{pmatrix} 15 & 9 & 3 \ 15 & 9 & 3 \end{pmatrix}.
+    \frac{\partial s}{\partial A} = \begin{pmatrix} 15 & 9 & 3 \\ 15 & 9 & 3 \end{pmatrix}.
   \]
 
   \medskip
@@ -210,9 +198,9 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
       = \sum_i \frac{\partial s}{\partial C_{i,j}} \cdot A_{i,k}
       = \sum_i A_{i,k},
   \]
-  the column sums of $A$, giving
+  the column sums of $A$: $2+4=6$, $1+5=6$, $3+6=9$, giving
   \[
-    \frac{\partial s}{\partial B} = \begin{pmatrix} 6 & 6 \ 6 & 6 \ 9 & 9 \end{pmatrix}.
+    \frac{\partial s}{\partial B} = \begin{pmatrix} 6 & 6 \\ 6 & 6 \\ 9 & 9 \end{pmatrix}.
   \]
   Each gradient has the same shape as the matrix it is taken with respect to, $2 \times 3$ and
   $3 \times 2$ respectively.
