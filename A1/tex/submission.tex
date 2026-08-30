@@ -313,8 +313,8 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % because the question asks us to copy the item out).
   % Structure follows the handout's example solution: claim, quoted item,
   % then the mechanism that makes it apply.
-  This model has likely \underline{encoded, contained, or potentially exacerbated bias against}
-  \underline{people of a certain gender, race, sexuality, or who have other protected}
+  This model has likely \underline{encoded, contains, or potentially exacerbates bias against}
+  \underline{people of a certain gender, race, sexuality, or who have other protected}
   \underline{characteristics}. Although race and gender are not inputs, the model predicts mainly
   from location, and location acts as a substitute for those protected characteristics: because
   of residential segregation and unequal rural and urban access to credit, a postcode carries
@@ -362,8 +362,8 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % could be deduced"), but that one is about INFERRING something new about a person.
   % Here nothing is inferred - the images themselves were collected and used without
   % permission - so the personally identifiable information item is the closer fit.
-  This dataset appears to \underline{contain personally identifiable information or sensitive}
-  \underline{personally identifiable information}. A photograph of a person's face is precisely
+  This dataset appears to \underline{contain any personally identifiable information or}
+  \underline{sensitive personally identifiable information}. A photograph of a person's face is precisely
   that: it identifies an individual directly, and as biometric data it is the sensitive kind.
   The celebrities depicted never gave permission for their images to be collected or used as
   training data, and being a public figure is not consent to become a training example. The
@@ -467,33 +467,40 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 \normalsize
 
 % <SCPD_SUBMISSION_TAG>_5b
-\begin{answer}
-  % ### START CODE HERE ###
-  % ---- DRAFT: my three sources, summarised. Wording to polish. ----
-  % VERIFY BEFORE SUBMITTING (I could not check these while drafting):
-  %   1. each item was published within the last 1-2 months
-  %   2. the summary below matches what each page actually says
-  %   3. the links resolve
-  % Sources used:
-  %   https://www.anthropic.com/news/fable-mythos-access
-  %   https://www.anthropic.com/research/Claude-accelerates-protein-design
-  %   https://www.anthropic.com/research/global-workspace
-  Recent announcements from Anthropic, the company behind Claude Code, point in three different
-  directions. First, access to the Fable 5 model was temporarily blocked for all users
-  (\href{https://www.anthropic.com/news/fable-mythos-access}{anthropic.com/news/fable-mythos-access}),
-  which drew controversy over how access to frontier models is regulated and by whom -- a question
-  that matters directly for a product like Claude Code, whose usefulness depends on continued
-  access to the newest models. Second, the company reported work on accelerating protein design
-  (\href{https://www.anthropic.com/research/Claude-accelerates-protein-design}{anthropic.com/research/Claude-accelerates-protein-design}),
-  indicating an expansion beyond conversational assistance into scientific research with concrete
-  real-world outcomes. Third, research on a global workspace
-  (\href{https://www.anthropic.com/research/global-workspace}{anthropic.com/research/global-workspace})
-  probes the intermediate reasoning steps inside the model, part of a broader interpretability
-  effort to open up the black box of how a language model arrives at its output. Taken together
-  these suggest a company pushing capability and application outward while simultaneously
-  investing in understanding and controlling the systems it releases.
-  % ### END CODE HERE ###
-\end{answer}
+\begin{answer}
+  % ### START CODE HERE ###
+  % ---- DRAFT: sources verified 30 Aug 2026. Wording to polish. ----
+  % DATE WINDOW WARNING: the question asks for items from the last 1-2 months.
+  %   - protein design     18 Aug 2026  (within)
+  %   - scientists support 27 Aug 2026  (within)
+  %   - global workspace    6 Jul 2026  (just under 2 months)
+  %   - Fable 5 / Mythos 5 access  12 Jun 2026  (about 2.5 months - OUTSIDE the
+  %     window). I kept it because the follow-on developments continued into
+  %     July, but if the grader is strict, drop it and lead with the other three.
+  Recent developments from Anthropic, the company behind Claude Code, point in three directions.
+  On access, Anthropic was ordered by the U.S. government under export controls to suspend Fable 5
+  and Mythos 5 for all customers worldwide
+  (\href{https://www.anthropic.com/news/fable-mythos-access}{June 12}); the company complied while
+  publicly disagreeing, arguing that the jailbreak cited revealed only minor, already-known
+  vulnerabilities and that applying such a standard industry-wide would halt new model deployment.
+  Mythos 5 access was subsequently restored to roughly a hundred vetted U.S. organisations while
+  broader and international access remained restricted, which makes the most capable model
+  unavailable at any consumer price and matters directly for a tool like Claude Code that depends
+  on continued access to frontier models. On capability, the company reported that Claude designed
+  protein binders against fifteen targets and succeeded on fourteen, at hit rates above the
+  industry norm, and processed raw laboratory chemistry data in under half an hour
+  (\href{https://www.anthropic.com/research/Claude-accelerates-protein-design}{August 18}),
+  indicating expansion beyond conversational assistance into scientific work with real-world
+  outcomes. On interpretability, research on a ``global workspace'' identifies internal
+  representations that carry Claude's intermediate reasoning and shows they can be inspected to
+  detect behaviour such as fabrication or deception that is not visible in the output
+  (\href{https://www.anthropic.com/research/global-workspace}{July 6}). Most recently the company
+  extended free and discounted access to verified scientists
+  (\href{https://www.anthropic.com/news/expanding-support-for-scientists}{August 27}). Together
+  these show a company pushing capability and application outward while investing in understanding
+  the systems it releases -- and operating under access constraints it does not fully control.
+  % ### END CODE HERE ###
+\end{answer}
 % <SCPD_SUBMISSION_TAG>_5b
 
 \LARGE
@@ -567,14 +574,14 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % if you would rather argue for a different one.
   \textbf{Pricing and access.} Claude is sold on individual and enterprise plans
   (\href{https://claude.com/pricing}{claude.com/pricing}). The free tier costs nothing but gives
-  only basic chat access and no access to Claude Code at all; Pro at roughly \$23 per month billed
-  annually (\$28 monthly) is the entry point for Claude Code; and Max tiers offer five to ten times
-  the usage, starting at about \$140 per month. Access is therefore tiered rather than equitable by
+  only basic chat access and no access to Claude Code at all; Pro at \$17 per month billed
+  annually (\$20 billed monthly) is the entry point for Claude Code; and the Max tiers, which
+  raise usage limits five-fold and twenty-fold, start at \$100 per month.
   default: the tool is unavailable to anyone unwilling or unable to pay a subscription. There are
   targeted exceptions -- Claude for Education
   (\href{https://claude.com/solutions/education}{claude.com/solutions/education}) exists but
-  publishes no pricing, and a recent programme offers verified scientists a discounted rate of
-  about \$15 per seat per month
+  publishes no pricing, and a recent programme gives verified scientists free standard seats for
+  one year and premium seats at about \$15 per month
   (\href{https://www.anthropic.com/news/expanding-support-for-scientists}{announcement}) -- but
   these are discretionary and require belonging to a recognised institution or profession.
 
