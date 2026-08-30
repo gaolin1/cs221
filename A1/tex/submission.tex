@@ -33,8 +33,11 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1a
 \begin{answer}
   % ### START CODE HERE ###
-  % Paste the share link to your NumPy tutor session (15-20 min, interactive).
-  % e.g.  \url{https://...}
+  % NumPy tutor session transcript (interactive, 15-20 min).
+  % CHECK: open the link in a private window before submitting to confirm the
+  % share is public and the transcript loads.
+  Transcript of my NumPy tutoring session:
+  \url{https://claude.ai/share/9365fd54-617b-4519-875c-ed96bf982080}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1a
@@ -69,7 +72,11 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1c
 \begin{answer}
   % ### START CODE HERE ###
-  % Paste the share link to your einsum/einops tutor session (15-20 min, interactive).
+  % einsum / einops tutor session transcript (interactive, 15-20 min).
+  % CHECK: open the link in a private window before submitting to confirm the
+  % share is public and the transcript loads.
+  Transcript of my einsum and einops tutoring session:
+  \url{https://claude.ai/share/f6b32ebe-894a-4ff8-b7a5-2ff4666d93cf}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1c
@@ -170,52 +177,45 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_2c
 \begin{answer}
   % ### START CODE HERE ###
-  % ---- DRAFT: all values worked out, formatting to polish ----
-  %
-  % Step 1: C = AB   (2x3 times 3x2 gives 2x2; each entry is one row of A
-  % against one column of B)
-  %   C[1][1] = 2*7 + 1*9 + 3*1 = 14 + 9 + 3  = 26
-  %   C[1][2] = 2*8 + 1*0 + 3*2 = 16 + 0 + 6  = 22
-  %   C[2][1] = 4*7 + 5*9 + 6*1 = 28 + 45 + 6 = 79
-  %   C[2][2] = 4*8 + 5*0 + 6*2 = 32 + 0 + 12 = 44
-  %
-  %   C = [[26, 22],
-  %        [79, 44]]
-  %
-  % Step 2: s = sum of all entries of C
-  %   s = 26 + 22 + 79 + 44 = 171
-  %
-  % Step 3: gradient with respect to A.
-  %   ds/dA[i][k] = ds/dC * dC/dA[i][k] = 1 * (sum over j of B[k][j])
-  %   i.e. the ROW SUMS of B:  7+8 = 15,  9+0 = 9,  1+2 = 3
-  %   Shape must match A (2x3), so the three values repeat in both rows:
-  %
-  %   ds/dA = [[15, 9, 3],
-  %            [15, 9, 3]]
-  %
-  %   Why both rows are identical: every entry in a given column of A meets
-  %   the same row of B, whichever row of A it sits in.
-  %
-  % Step 4: gradient with respect to B (the mirror image).
-  %   ds/dB[k][j] = ds/dC * dC/dB[k][j] = 1 * (sum over i of A[i][k])
-  %   i.e. the COLUMN SUMS of A:  2+4 = 6,  1+5 = 6,  3+6 = 9
-  %   Shape must match B (3x2), so each value repeats across its row:
-  %
-  %   ds/dB = [[6, 6],
-  %            [6, 6],
-  %            [9, 9]]
-  %
-  % Sanity checks used: every entry of C appears exactly once in s, so the
-  % outer derivative is 1 everywhere; and each gradient matrix has the same
-  % shape as the thing it differentiates against.
-  %
-  % TO DO: typeset as LaTeX pmatrix environments. Skeleton to fill in:
-  %
-  % $C = AB = \begin{pmatrix} 26 & 22 \ 79 & 44 \end{pmatrix}$, \quad $s = 171$
-  %
-  % $\frac{\partial s}{\partial A} = \begin{pmatrix} 15 & 9 & 3 \ 15 & 9 & 3 \end{pmatrix}$
-  %
-  % $\frac{\partial s}{\partial B} = \begin{pmatrix} 6 & 6 \ 6 & 6 \ 9 & 9 \end{pmatrix}$
+  % Working notes kept for reference (not rendered):
+  %   C[1][1] = 2*7 + 1*9 + 3*1 = 26      C[1][2] = 2*8 + 1*0 + 3*2 = 22
+  %   C[2][1] = 4*7 + 5*9 + 6*1 = 79      C[2][2] = 4*8 + 5*0 + 6*2 = 44
+  %   ds/dA entries are the ROW sums of B; ds/dB entries are the COLUMN sums of A.
+  %   Each gradient has the same shape as the matrix it differentiates against.
+  \textbf{Product and sum.} Each entry of $C$ is one row of $A$ against one column of $B$:
+  \[
+    C = AB = \begin{pmatrix} 26 & 22 \ 79 & 44 \end{pmatrix},
+    \qquad
+    s = 26 + 22 + 79 + 44 = 171 .
+  \]
+
+  \medskip
+  \textbf{Gradient with respect to $A$.} Since $s$ sums every entry of $C$ exactly once,
+  $\frac{\partial s}{\partial C_{i,j}} = 1$ for all $i,j$, and
+  $C_{i,j} = \sum_k A_{i,k} B_{k,j}$, so
+  \[
+    \frac{\partial s}{\partial A_{i,k}}
+      = \sum_j \frac{\partial s}{\partial C_{i,j}} \cdot B_{k,j}
+      = \sum_j B_{k,j},
+  \]
+  the row sums of $B$. Every row of $A$ meets the same rows of $B$, so the result repeats:
+  \[
+    \frac{\partial s}{\partial A} = \begin{pmatrix} 15 & 9 & 3 \ 15 & 9 & 3 \end{pmatrix}.
+  \]
+
+  \medskip
+  \textbf{Gradient with respect to $B$.} By the mirrored argument,
+  \[
+    \frac{\partial s}{\partial B_{k,j}}
+      = \sum_i \frac{\partial s}{\partial C_{i,j}} \cdot A_{i,k}
+      = \sum_i A_{i,k},
+  \]
+  the column sums of $A$, giving
+  \[
+    \frac{\partial s}{\partial B} = \begin{pmatrix} 6 & 6 \ 6 & 6 \ 9 & 9 \end{pmatrix}.
+  \]
+  Each gradient has the same shape as the matrix it is taken with respect to, $2 \times 3$ and
+  $3 \times 2$ respectively.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2c
@@ -289,7 +289,11 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3b
 \begin{answer}
   % ### START CODE HERE ###
-  % Paste the share link to your gradient-descent tutor session (15-20 min).
+  % Gradient descent tutor session transcript (interactive, 15-20 min).
+  % CHECK: open the link in a private window before submitting to confirm the
+  % share is public and the transcript loads.
+  Transcript of my gradient descent tutoring session:
+  \url{https://claude.ai/share/ddd9eae2-8131-4c41-b06a-9924d9fd2fdc}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3b
