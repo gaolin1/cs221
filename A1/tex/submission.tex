@@ -302,14 +302,13 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % Structure follows the handout's example solution: claim, quoted item,
   % then the mechanism that makes it apply.
   This model has likely \ul{encoded, contains, or potentially exacerbates bias against people of a
-  certain gender, race, sexuality, or who have other protected characteristics}. Although race and
-  gender are not inputs, the model predicts mainly
-  from location, and location acts as a substitute for those protected characteristics: because
+  certain gender, race, sexuality, or who have other protected characteristics}. Location likely 
+  acted as substitute for the underlying income inequalities: because
   of residential segregation and unequal rural and urban access to credit, a postcode carries
-  information about an applicant's race and income. The disparity in outcomes is visible in the
-  results -- loans are accepted from urban centres and denied to rural applicants, and the false
-  positive rate is significantly higher for Black and male applicants -- so the model reproduces
-  existing inequalities while never appearing to consider a protected characteristic directly.
+  information about the applicant's race and income. The disparity in outcomes is visible in the
+  results, namely loans are accepted from urban centres and denied to rural applicants, and the false
+  positive rate is significantly higher for Black and male applicants. So the model reproduces
+  existing inequalities without considering the characteristics such as race and gender directly.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_4a
@@ -324,15 +323,8 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % ---- DRAFT: my answer, wording to polish. ----
   % CHECK: copy the checklist item verbatim from the NeurIPS guidelines page.
   Stylometry models can \ul{contain information that could be deduced about individuals that they
-  have not consented to share}. Applied outside the historical and literary
-  setting they are built for, these models can identify authors who deliberately wrote
-  anonymously, and they need no cooperation from the target: text the person already published
-  is enough, and they may never learn that it happened. The people who rely most on anonymity --
-  whistleblowers, dissidents, people writing under a pseudonym about their health or sexuality,
-  developers contributing to projects that are illegal where they live -- are precisely those for
-  whom deanonymization is most dangerous. The risk is not limited to correct identifications
-  either: a confident but incorrect prediction can attribute a text to someone who never wrote it,
-  and they have no practical way to contest it.
+  have not consented to share}. The output could likely identify authors who do not want to be
+  identified, and texts could even be attributed to people who did not author them.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_4b
