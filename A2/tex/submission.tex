@@ -375,6 +375,73 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3h
 \begin{answer}
   % ### START CODE HERE ###
+  % ---- PROGRESS NOTES (comments only - nothing renders yet) ----
+  % Task: try three learning rates, report what each did to loss and validation
+  % accuracy, and explain why the learning rate has that effect. 2-3 sentences.
+  %
+  % MY RUNS (bag-of-words linear classifier, 15 epochs unless noted,
+  % gradients averaged over the batch, initialisation scaled to 0.1 * randn):
+  %
+  %   lr 0.2   loss falls slowly and steadily; accuracy climbs 0.48 -> 0.5645
+  %            over the 15 epochs and is still rising when training stops.
+  %   lr 5     loss falls at first then rises back to about 1.44; accuracy
+  %            reaches roughly 0.58 but bounces between epochs.
+  %   lr 20    loss climbs to about 4.94; accuracy swings (0.75 one epoch,
+  %            0.24 a few epochs later). Clearly diverging.
+  %
+  % WHY (the explanation to write up): each step moves the weights by the
+  % learning rate times the gradient. Too small and the weights cannot travel
+  % far enough within the fixed number of epochs, so the loss is still falling
+  % when training ends. Too large and each step overshoots the minimum and
+  % lands further up the other side, so the loss grows instead of shrinking and
+  % the accuracy swings between epochs. This is the same 1 - lr*f'' shrinking
+  % factor from A1 3c: convergence needs the step small enough for the
+  % curvature of the loss, and above that threshold the iteration diverges.
+  %
+  % SEPARATE FINDING WORTH MENTIONING: initialisation scale mattered more than
+  % the learning rate did. The handout initialises weights with
+  % np.random.randn over 11757 features, which makes the starting logits large
+  % (roughly the square root of the words per tweet, so about +/- 4) and the
+  % softmax saturated. Measured at the default lr 0.2 and 15 epochs:
+  %       randn          -> 0.42   (fails the 0.45 requirement, 0.39 to 0.44
+  %                                 across six random seeds, so not a fluke)
+  %       randn * 0.1    -> 0.55
+  %       randn * 0.01   -> 0.56
+  % Reason: every weight starts about 1.0 away from where it needs to be, while
+  % the averaged gradient for a given word is on the order of 0.001, so the
+  % distance cannot be covered in 15 epochs. Starting small removes the
+  % distance rather than raising the speed.
+  % I scaled the initialisation by 0.1 INSIDE my own code region; the handout's
+  % np.random.randn line above the marker is untouched, lr and num_epochs are
+  % unchanged, and 3g only asks that weights be initialised randomly. Say this
+  % openly in the write-up rather than leaving it silent.
+  %
+  % HONEST READING OF THE RESULT (do not oversell 0.56):
+  %   predicted class counts [1114, 53, 27] against true [695, 275, 224]
+  %   per class recall 0.938 / 0.055 / 0.027
+  %   accuracy 0.5637 versus a majority class baseline of 0.5821
+  % The model passes the 0.45 bar but still predicts the dominant class most of
+  % the time and barely recognises the two minority classes, so on plain
+  % accuracy it does not beat always guessing the most common class.
+  %
+  % DEBUGGING TRAPS I HIT ON THE WAY (3e to 3g):
+  %  - Updated from the initial weights each epoch instead of the current ones,
+  %    so every epoch took the same first step and the loss froze.
+  %  - Summed the weight gradient over the batch while averaging the bias
+  %    gradient, so the two were on scales differing by the batch size and the
+  %    training oscillated wildly.
+  %  - Accuracy that kept the winning probability instead of a 1, which returns
+  %    average confidence rather than the fraction correct.
+  %  - Divided the initial weights by num_train_examples (about 7566) instead
+  %    of by a constant. The weights were then so close to zero that only the
+  %    bias learned, the model predicted class 0 for all 1194 examples, and the
+  %    accuracy froze at exactly the majority baseline 0.5821 while the loss
+  %    drifted down to the entropy of the label priors. Frozen accuracy plus a
+  %    falling loss is the signature of that failure; checking the predicted
+  %    class counts catches it immediately.
+  %
+  % TO DO: rerun the three learning rates on my machine after the final code is
+  % settled, then write 2-3 sentences quoting my own numbers.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3h

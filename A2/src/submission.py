@@ -116,9 +116,11 @@ def numpy_cross_entropy_loss(predictions: np.ndarray,
 
     @return: Average cross-entropy loss (scalar value)
     """
-    pass
+    
     # (our solution is 2 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    terms = targets * -np.log(predictions+epsilon)
+    return np.average(terms)
     # ### END CODE HERE ###
 
 
@@ -144,9 +146,13 @@ def numpy_compute_gradients(features: np.ndarray, predictions: np.ndarray,
     """
     batch_size = features.shape[0]
 
-    pass
+    
     # (our solution is 4 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    differences = predictions - targets
+    gradients_weight = einsum(features, differences, "batch_size num_features, batch_size K -> num_features K")/batch_size
+    gradient_bias = reduce(differences, "batch_size K -> 1 K", "mean")
+    return [gradients_weight, gradient_bias]
     # ### END CODE HERE ###
 
 
@@ -167,9 +173,17 @@ def predict_linear_classifier(features: np.ndarray, labels: np.ndarray, weights:
 
     @return: Accuracy as a float
     """
-    pass
+    
     # (our solution is 6 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    features_with_weights = einsum(features, weights, "num_examples num_features, num_features K -> num_examples K")
+    predictions = features_with_weights + bias
+    predictions_probabilities = 1/ (1 + np.exp(-predictions))
+    predictions_find_highest = np.where(predictions_probabilities == predictions_probabilities.max(axis=1, keepdims=True), 1., 0)
+    target_prediction = einsum(predictions_find_highest, labels, "num_examples K, num_examples K -> num_examples")
+    target_accuracy = reduce(target_prediction, "num_examples -> ", "mean")
+    return target_accuracy
+
     # ### END CODE HERE ###
 
 
@@ -203,9 +217,28 @@ def train_linear_classifier(train_features: np.ndarray, train_labels: np.ndarray
     weights = np.random.randn(num_features, K)
     bias = np.zeros((1, K))
 
-    pass
+    
     # (our solution is 11 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    for epoch in range(num_epochs):
+        if epoch == 0:
+            current_weight = weights*0.1
+            current_bias = bias
+        else:
+            current_weight = updated_weights
+            current_bias = updated_bias
+
+        features_with_weight = einsum(train_features, current_weight, "num_train_examples num_features, num_features K -> num_train_examples K")
+        prediction_logits = features_with_weight + current_bias
+        prediction_softmax = numpy_softmax(prediction_logits)
+        training_loss = numpy_cross_entropy_loss(prediction_softmax, train_labels)
+        gradient_weight, gradient_bias = numpy_compute_gradients(train_features, prediction_softmax, train_labels)
+        updated_weights = current_weight - lr * gradient_weight
+        updated_bias = current_bias - lr * gradient_bias                        
+
+        validation_accuracy = predict_linear_classifier(val_features, val_labels, updated_weights, updated_bias)
+        print(f"training loss: {training_loss:.2f} validation accuracy: {validation_accuracy:.4f}")
+    return updated_weights, updated_bias
     # ### END CODE HERE ###
 
 
