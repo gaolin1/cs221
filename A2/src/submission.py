@@ -260,9 +260,20 @@ def text_to_average_embedding(text: str, vocab: Vocabulary,
     @param embedding_layer: PyTorch embedding layer
     @return: A single tensor representing the averaged embedding
     """
-    pass
+    
     # (our solution is 8 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    split_texts = text.split()
+    text_index = []
+    if split_texts:
+        for split_text in split_texts:
+            text_index.append(vocab.get_index(split_text))
+        text_tensor_index = torch.tensor(text_index, dtype=torch.long)
+        text_tensor = embedding_layer(text_tensor_index)
+        word_tensor = torch.mean(text_tensor, dim=0)
+    else:
+        word_tensor = torch.zeros(embedding_layer.embedding_dim)
+    return word_tensor
     # ### END CODE HERE ###
 
 
@@ -280,9 +291,14 @@ def extract_averaged_features(texts: List[str], vocab: Vocabulary,
     @param embedding_layer: PyTorch embedding layer
     @return: Tensor of shape (num_texts, embedding_dim)
     """
-    pass
+    
     # (our solution is 5 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    text_embedding_vectors = []
+    for text in texts:
+        text_average_embedding = text_to_average_embedding(text, vocab, embedding_layer)
+        text_embedding_vectors.append(text_average_embedding)
+    return torch.stack(text_embedding_vectors)
     # ### END CODE HERE ###
 
 
