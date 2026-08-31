@@ -60,7 +60,7 @@ def text_to_features(text, vocab) -> np.ndarray:
     split_text = text.split()
     for word in split_text:
         index = vocab.get_index(word)
-        features[index] = features[index] + 1
+        features[index] += 1
     return features
 
     # ### END CODE HERE ###
