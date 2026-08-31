@@ -128,6 +128,71 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1d
 \begin{answer}
   % ### START CODE HERE ###
+  % ---- PROGRESS NOTES (comments only - nothing renders yet) ----
+  % Task: derive d(CE loss)/d(logit k), give the answer in terms of p_k and y_k
+  % only, then explain intuitively why it makes sense for learning.
+  %
+  % INDEX BOOKKEEPING (this is what tripped me up):
+  %   k = the class we differentiate against. FIXED, never summed.
+  %   i = index of the loss terms, one per class.
+  %   j = index inside the softmax denominator, one per class.
+  %   All three range over the classes; they need separate letters because they
+  %   vary independently. Reusing one letter forces two roles to be equal, the
+  %   same trap as einsum 'n d, n d -> d' versus 'n i, n j -> i j'.
+  %
+  % DERIVATION
+  %   1. CE = -sum_i y_i log p_i, and p_i = e^{z_i} / sum_j e^{z_j}, so
+  %        CE = -sum_i y_i log( e^{z_i} / sum_j e^{z_j} )
+  %   2. log of a quotient splits into a difference of logs (the log stays on
+  %      the denominator - it is log-sum-exp, not a raw sum of exponentials):
+  %        CE = -sum_i ( y_i log e^{z_i} - y_i log sum_j e^{z_j} )
+  %   3. log e^{z_i} = z_i, and the log-sum-exp does not depend on i so it comes
+  %      out of the sum, leaving sum_i y_i which is 1 for a one-hot label:
+  %        CE = -sum_i y_i z_i + log sum_j e^{z_j}
+  %   4. Differentiate with respect to z_k, term by term:
+  %        first term: only the i = k piece contains z_k, giving -y_k. The label
+  %          is data, not a function of the logits, so it is never itself
+  %          differentiated; it survives as the coefficient.
+  %        second term: z_k appears in exactly one term of the denominator sum,
+  %          so the derivative is e^{z_k} / sum_j e^{z_j}, which is p_k.
+  %        No sum survives: differentiating against one fixed class collapses
+  %        both sums to their single matching term.
+  %
+  %   ANSWER:  d CE / d z_k = p_k - y_k
+  %
+  % Read as two cases, which is how I first found it:
+  %   k is the target  ->  y_k = 1  ->  p_k - 1   (negative, so the step pushes
+  %                                                this logit UP)
+  %   k is not target  ->  y_k = 0  ->  p_k       (positive, pushed DOWN)
+  % Worked example, 3 classes, softmax [0.26, 0.71, 0.035], target = class 3:
+  %   gradient = [0.26, 0.71, -0.965];  entries sum to 0, a useful check.
+  %
+  % MISTAKES I MADE, worth not repeating:
+  %  - Treated the loss as -log(sum) and produced an outer -1/(sum) factor. The
+  %    logs are inside each term; there is no outer log.
+  %  - Dropped the minus sign in front of the loss.
+  %  - Wrote y_k/p_k * dp_k/dz_k. The surviving term holds the TARGET's
+  %    probability, so differentiating against class k needs dp_target/dz_k,
+  %    which is nonzero even when k is not the target, because every
+  %    probability contains every logit in its shared denominator.
+  %  - Left a sum in the answer, sum(y_k p_k - y_k). Shape check kills it: the
+  %    gradient needs one number per class, not one number in total.
+  %  - Lost the log off the denominator when splitting the quotient.
+  %
+  % PART (iii), INTUITION - my wording to typeset:
+  % The gradient makes sense for learning because it goes to zero exactly when
+  % the prediction matches the label: the target class's probability approaches
+  % 1 so p_k - 1 approaches 0, and the non-target probabilities approach 0 so
+  % their gradients p_k approach 0 as well. The signs point the right way too,
+  % since the target class's gradient is negative and a descent step therefore
+  % raises its logit, while every other class has a positive gradient and gets
+  % pushed down, hardest on whichever wrong class currently holds the most
+  % probability. The size of each entry is just how far that class's predicted
+  % probability sits from its label, so a confident mistake produces a large
+  % correction and an almost correct prediction produces almost none.
+  %
+  % TO DO: typeset parts (i) derivation, (ii) the expression p_k - y_k, and
+  % (iii) the intuition above in LaTeX.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1d
