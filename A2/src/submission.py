@@ -332,9 +332,17 @@ class MLPClassifier(nn.Module):
         @param x: Input tensor of averaged embeddings, shape (batch_size, embedding_dim)
         @return: Raw logits of shape (batch_size, output_dim)
         """
-        pass
+        
         # (our solution is 4 lines of code, but don't worry if you deviate from this)
         # ### START CODE HERE ###
+        # can potentially use self.fcq(x) directly to @ W and add bias in one step
+        #breakpoint()
+        weight_hidden_layer_1 = einsum(x, self.fc1.weight, "batch_size embedding_dim, hidden_dim embedding_dim -> batch_size hidden_dim")
+        hidden_layer_1 = weight_hidden_layer_1 + self.fc1.bias
+        relu_activated = self.relu(hidden_layer_1)
+        weight_output_layer = einsum(relu_activated, self.fc2.weight, "batch_size hidden_dim, output_dim hidden_dim -> batch_size output_dim")
+        return weight_output_layer + self.fc2.bias 
+
         # ### END CODE HERE ###
 
 
@@ -350,9 +358,11 @@ def torch_softmax(logits: torch.Tensor) -> torch.Tensor:
     @return: PyTorch tensor of shape (batch_size, K) where each row sums to 1.0
     and all values are probabilities in range [0, 1]
     """
-    pass
+    
     # (our solution is 1 line of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    softmax_function = nn.modules.activation.Softmax(dim=1)
+    return softmax_function(logits)
     # ### END CODE HERE ###
 
 
@@ -371,9 +381,12 @@ def torch_cross_entropy_loss(predictions: torch.Tensor,
         before taking logarithm to prevent numerical instability from log(0)
     @return: Scalar PyTorch tensor containing the mean cross-entropy loss across the batch
     """
-    pass
+    
     # (our solution is 1 line of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    batch_loss = targets * - torch.log(predictions + epsilon)
+    batch_sum = batch_loss.sum(dim=1)
+    return torch.mean(batch_sum)
     # ### END CODE HERE ###
 
 
@@ -390,9 +403,11 @@ def update_parameter(param: torch.Tensor, grad: torch.Tensor, lr: float) -> None
     Hint: Don't forget to wrap your code in `with torch.no_grad():`, to temporarily disable
     gradient calculation.
     """
-    pass
+    
     # (our solution is 2 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    with torch.no_grad():
+        param -= grad * lr
     # ### END CODE HERE ###
 
 
@@ -421,9 +436,17 @@ def predict_mlp(texts: List[str], labels: torch.Tensor, classifier: nn.Module,
 
     accuracy = 0.0
 
-    pass
+    
     # (our solution is 7 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    text_tensors = extract_averaged_features(texts, vocab, embedding_layer)
+    with torch.no_grad():
+        prediction_logits = classifier.forward(text_tensors)
+        predicted_probabilities = torch_softmax(prediction_logits)
+        true_max_idx = torch.argmax(labels, dim=1)
+        pred_max_idx = torch.argmax(predicted_probabilities, dim=1)
+        compare_idx = pred_max_idx == true_max_idx
+    return float(compare_idx.sum()/compare_idx.size()[0])
     # ### END CODE HERE ###
 
 
@@ -471,9 +494,60 @@ def train_mlp_classifier(
     embedding_layer = nn.Embedding(vocab.size(), embedding_dim, padding_idx=0)
     nn.init.xavier_uniform_(embedding_layer.weight)
 
-    pass
     # (our solution is 35 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
+    # get vocab (done)
+    # initialize embedding (done)
+    # initialize classifier
+    classifier = MLPClassifier(embedding_dim, hidden_dim, num_classes)
+
+    # training loop
+    for epoch in range(num_epochs):
+        # shuffle data
+        training_size = len(train_texts)
+        random_list = torch.randperm(training_size).tolist()
+        # process in batches
+        batch_training_loss = 0.0
+        batch_num = 0
+        for start_idx in range(0, training_size, batch_size):
+            end_idx = min(start_idx + batch_size, training_size)
+            batch_list = random_list[start_idx:end_idx]
+            text_batch = []
+            label_batch = []
+            for batch_idx in batch_list:
+                text_batch.append(train_texts[batch_idx])
+                label_batch.append(train_labels[batch_idx])
+        # extract features
+            classifier.train()
+            embedding_layer.train()
+
+            text_tensors = extract_averaged_features(text_batch, vocab, embedding_layer)
+        # forward pass
+            pred_logits = classifier(text_tensors)
+        # calculate loss
+            pred_probabilities = torch_softmax(pred_logits)
+            training_loss = torch_cross_entropy_loss(pred_probabilities, torch.tensor(label_batch))
+            batch_training_loss += training_loss
+            batch_num += 1
+        # backward calculate gradient
+            training_loss.backward()
+        # update parameters
+        #breakpoint()
+            for model_parameter_name, model_parameter in classifier.named_parameters():
+                update_parameter(model_parameter, model_parameter.grad, lr)
+            for embedding_parameter_name, embedding_parameter in embedding_layer.named_parameters():
+                update_parameter(embedding_parameter,embedding_parameter.grad, lr)
+        # reset gradient
+            classifier.zero_grad()
+            embedding_layer.zero_grad()
+        # get validation accuracy (not done)
+        classifier.eval()
+        embedding_layer.eval()
+        validation_accuracy = predict_mlp(val_texts, torch.tensor(val_labels), classifier, embedding_layer, vocab)
+        # print training loss and validation accuracy
+        print(f"training loss {batch_training_loss/batch_num:3f} validation accuracy: {validation_accuracy:3f}")
+
+    return [classifier, embedding_layer, vocab]
     # ### END CODE HERE ###
 
 
