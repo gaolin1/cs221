@@ -437,6 +437,23 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   loss grow and the accuracy swing instead of settling.
 
   \medskip
+  \begin{table}[H]
+  \centering
+  \lstDeleteShortInline|
+  \begin{tabular}{|l|l|l|}
+  \hline
+  Learning rate & Training loss & Validation accuracy \\
+  \hline
+  $0.02$ & $1.16 \rightarrow 1.08$ & $0.351 \rightarrow 0.437$ \\
+  \hline
+  $0.2$ & $1.16 \rightarrow 1.02$ & $0.436 \rightarrow 0.554$ \\
+  \hline
+  $2.0$ & $1.17 \rightarrow 4.26 \rightarrow 2.58$ & $0.582 \rightarrow 0.500 \rightarrow 0.582$ \\
+  \hline
+  \end{tabular}
+  \lstMakeShortInline|
+  \end{table}
+  \medskip
   Separately, I scaled the given random initialisation by $0.1$ inside my own code region, since
   unscaled \texttt{np.random.randn} over 11757 features starts the scores saturated and averages
   only $0.414$ accuracy across six seeds; the learning rate and epoch count are unchanged.
