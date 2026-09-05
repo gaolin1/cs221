@@ -150,7 +150,7 @@ def numpy_compute_gradients(features: np.ndarray, predictions: np.ndarray,
     # (our solution is 4 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
     differences = predictions - targets
-    gradients_weight = einsum(features, differences, "batch_size num_features, batch_size K -> num_features K")/batch_size
+    gradients_weight = np.einsum("df,dk->fk",features,differences,optimize=True)/batch_size
     gradient_bias = reduce(differences, "batch_size K -> 1 K", "mean")
     return [gradients_weight, gradient_bias]
     # ### END CODE HERE ###
@@ -176,7 +176,7 @@ def predict_linear_classifier(features: np.ndarray, labels: np.ndarray, weights:
     
     # (our solution is 6 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
-    features_with_weights = einsum(features, weights, "num_examples num_features, num_features K -> num_examples K")
+    features_with_weights = features @ weights
     predictions = features_with_weights + bias
     predictions_probabilities = 1/ (1 + np.exp(-predictions))
     predictions_find_highest = np.where(predictions_probabilities == predictions_probabilities.max(axis=1, keepdims=True), 1., 0)
@@ -228,7 +228,7 @@ def train_linear_classifier(train_features: np.ndarray, train_labels: np.ndarray
             current_weight = updated_weights
             current_bias = updated_bias
 
-        features_with_weight = einsum(train_features, current_weight, "num_train_examples num_features, num_features K -> num_train_examples K")
+        features_with_weight = train_features @ current_weight
         prediction_logits = features_with_weight + current_bias
         prediction_softmax = numpy_softmax(prediction_logits)
         training_loss = numpy_cross_entropy_loss(prediction_softmax, train_labels)
