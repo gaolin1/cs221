@@ -559,41 +559,27 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 \begin{answer}
   % ### START CODE HERE ###
   % Sources checked 5 Sep 2026:
-  %  - Responsible Scaling Policy v3.4, 7 Jul 2026 (the Sanity-hosted PDF):
-  %    prohibits offensive cyber operations and writing malware or ransomware,
-  %    requires human oversight for consequential actions and guards against
-  %    the model taking unilateral action, references ASL3 protections,
-  %    classifiers for detecting violations, and account action for breaches.
+  %  - Responsible Scaling Policy v3.4, 7 Jul 2026: prohibits offensive cyber
+  %    operations and malware, requires human oversight for consequential
+  %    actions, references classifiers, ASL3 protections and account action.
   %  - anthropic.com/news/fable-mythos-access, 12 Jun 2026: US export control
-  %    order forced suspension of Fable 5 and Mythos 5 worldwide on national
-  %    security grounds after a jailbreak was demonstrated. Anthropic complied
-  %    while publicly disagreeing. Mythos 5 was later restored to about a
-  %    hundred vetted US organisations.
-  %  - Permission modes and approval prompts are from the product itself.
-  The clearest misuse risk follows from what makes the product useful: Claude Code reads a whole
-  codebase, runs shell commands and edits files on its own, so the same loop that finds a bug and
-  fixes it could be pointed at finding exploitable flaws, writing an attack, or running destructive
-  commands across a machine at a speed no person could match. Anthropic's Responsible Scaling
-  Policy prohibits offensive cyber operations and the writing of malware or ransomware, requires
-  human oversight before consequential actions rather than letting the model act unilaterally, and
-  backs this with classifiers that detect violations, ASL3 protections and account action for
-  serious breaches
-  (\href{https://cdn.sanity.io/files/4zrzovbb/website/0bacdc8440ea96e62a8766d99ebe1d4eea6d5f3a.pdf}{Responsible
-  Scaling Policy v3.4, July 2026}); in the product this appears as the permission system, which
-  asks for approval before the tool acts and lets the user set how much it may do unattended.
+  %    order suspended Fable 5 and Mythos 5 worldwide; Mythos 5 later restored
+  %    to about a hundred vetted US organisations.
+  Claude Code reads a codebase, runs commands and edits files on its own, so the same loop that
+  fixes a bug can look for exploitable flaws or run destructive commands. Anthropic's Responsible
+  Scaling Policy bans offensive cyber operations and malware, requires human oversight for
+  consequential actions, and backs it with classifiers, ASL3 protections and account action
+  (\href{https://cdn.sanity.io/files/4zrzovbb/website/0bacdc8440ea96e62a8766d99ebe1d4eea6d5f3a.pdf}{RSP
+  v3.4, July 2026}); in the product this is the permission system, which asks before acting.
 
   \medskip
-  The dual-use nature is visible in a single example from my own use: one request had it read an
-  existing portfolio backtester, add an API endpoint, write seven unit tests and check the
-  responses, and the identical capability aimed at someone else's system is reconnaissance and
-  exploitation. The same ease of task execution carries the risk of unbounded execution outside of
-  anyone's control. That risk is taken seriously outside the company as well, since the US
-  government ordered Fable 5 and Mythos 5 suspended worldwide on national security grounds after a
-  jailbreak was demonstrated, and Anthropic complied while disagreeing that a narrow jailbreak
-  justified recalling a deployed model
-  (\href{https://www.anthropic.com/news/fable-mythos-access}{Anthropic, June 2026}), restoring
-  access to Mythos 5 only for about a hundred vetted organisations, so the governance answer for
-  the most capable models has so far been to restrict who can reach them at all.
+  The dual use is clear from my own session: one request had it read a portfolio backtester, add an
+  API endpoint and write tests, and the same capability aimed at someone else's system is
+  reconnaissance. The ease of task execution comes with the risk of unbounded execution outside of
+  control. The US government took that risk seriously enough to order Fable 5 and Mythos 5
+  suspended worldwide on national security grounds, and Mythos 5 came back only for about a hundred
+  vetted organisations
+  (\href{https://www.anthropic.com/news/fable-mythos-access}{Anthropic, June 2026}).
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5d
