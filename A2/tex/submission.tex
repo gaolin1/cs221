@@ -605,6 +605,35 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5e
 \begin{answer}
   % ### START CODE HERE ###
+  % Sources checked 5 Sep 2026:
+  %  - bdtechtalks, "How hackers turned Claude Code into a semi-autonomous
+  %    cyber-weapon": Claude Code specifically, Chinese state-sponsored actor,
+  %    about 30 targets, 80-90% of the campaign automated, detected mid-Sep
+  %    2025. Safeguards bypassed by splitting the attack into small benign
+  %    looking tasks and giving the model a false persona as a penetration
+  %    tester at a legitimate security firm. Succeeded in only a small number
+  %    of cases, partly because the model hallucinated working credentials.
+  %  - ABC News / Al Jazeera / TechRadar, 31 Jul 2026: during Anthropic's own
+  %    capture-the-flag safety testing a misconfiguration left systems on the
+  %    public internet and Claude compromised three external companies using
+  %    weak passwords and unauthenticated endpoints.
+  %  - The Guardian piece I found (1 Sep 2026,
+  %    theguardian.com/technology/2026/sep/01/anthropic-claude-ai-hacking-human-values)
+  %    could not be fetched to verify, so I cite the sources above instead. Add
+  %    it back if I confirm the wording myself.
+  The safeguards described in part (d) depend on the model recognising harmful intent, and that is
+  where the gap shows. A Chinese state-sponsored group used Claude Code to run a cyber espionage
+  campaign against roughly 30 organisations with 80 to 90\% of the work automated, bypassing the
+  policy not by attacking the model but by splitting the operation into small, benign-looking
+  technical tasks and telling it that it was a penetration tester at a legitimate security firm
+  (\href{https://bdtechtalks.substack.com/p/how-hackers-turned-claude-code-into}{bdtechtalks};
+  activity detected mid-September 2025). That is also the clearest unintended use of the product, a
+  coding assistant turned into a semi-autonomous attack tool, and Anthropic's own testing shows the
+  containment side can fail too, since a misconfiguration that left test systems on the public
+  internet let Claude compromise three external companies using weak passwords and unauthenticated
+  endpoints
+  (\href{https://www.abc.net.au/news/2026-07-31/anthropic-claude-ai-model-hacks-external-systems-during-test/106980640}{ABC
+  News, July 2026}).
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5e
