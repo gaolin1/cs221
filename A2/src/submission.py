@@ -120,7 +120,7 @@ def numpy_cross_entropy_loss(predictions: np.ndarray,
     # (our solution is 2 lines of code, but don't worry if you deviate from this)
     # ### START CODE HERE ###
     terms = targets * -np.log(predictions+epsilon)
-    return np.average(terms)
+    return np.sum(terms)/targets.shape[0]
     # ### END CODE HERE ###
 
 
