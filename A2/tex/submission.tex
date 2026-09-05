@@ -431,7 +431,7 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   predicts all classes equally, and the accuracy was still climbing at $0.437$ when training
   stopped; at $0.2$ the loss reached $1.02$ and the accuracy the best of the three at $0.554$;
   at $2.0$ the loss rose to $4.26$ and the accuracy swung between $0.582$ and $0.500$ before
-  ending at the majority-class baseline. Each step moves the weights by the learning rate times the
+  ending at the baseline. Each step moves the weights by the learning rate times the
   gradient, so too small a rate cannot cover the distance to the minimum within the epochs
   available, while too large a rate overshoots and lands further up the other side, which makes the
   loss grow and the accuracy swing instead of settling.
@@ -453,10 +453,6 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   \end{tabular}
   \lstMakeShortInline|
   \end{table}
-  \medskip
-  Separately, I scaled the given random initialisation by $0.1$ inside my own code region, since
-  unscaled \texttt{np.random.randn} over 11757 features starts the scores saturated and averages
-  only $0.414$ accuracy across six seeds; the learning rate and epoch count are unchanged.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3h
@@ -469,6 +465,27 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5a
 \begin{answer}
   % ### START CODE HERE ###
+  % Sources checked 5 Sep 2026:
+  %   https://backlinko.com/claude-users  (page updated 16 Jan 2026)
+  %   https://www.anthropic.com/research/economic-index-march-2026-report (24 Mar 2026)
+  % Corrections to my first draft:
+  %  - growth is 4M (Dec 2023) to a peak of 18.8M (Nov 2024), then DOWN to 16M
+  %    by Jan 2025; not a straight rise from 3M
+  %  - the US is not a majority: 3.2M of 18.9M MAU, with India second at 2.1M,
+  %    the two together 33.13%
+  %  - the income point is about occupations and task value, not user income
+  % Other figures available if needed: 51.88% aged 18-24, 25% aged 25-34,
+  % 77% male, 2.9M mobile MAU, top 20 countries hold 48% of per-capita usage.
+  Anthropic publishes no user numbers for Claude Code specifically, so the closest available
+  figures are for Claude overall: about 18.9 million monthly active users worldwide as of January
+  2025, having grown from roughly 4 million monthly website visits in December 2023 to 16 million
+  (\href{https://backlinko.com/claude-users}{Backlinko, updated January 2026}). The user base is
+  geographically concentrated but not US-dominated: the United States is the largest single market
+  at 3.2 million users and India the second at 2.1 million, the two together making up 33.13\% of
+  users, and it skews young and male, with 51.88\% aged 18 to 24 and roughly 77\% male. Anthropic reports that usage concentrates in higher-wage, higher-education work, with an average task value of \$47.90 per hour equivalent and tasks requiring 11.9 years of education on
+  average, while the top 20 countries account for 48\% of per-capita usage\%
+  (\href{https://www.anthropic.com/research/economic-index-march-2026-report}{Anthropic Economic
+  Index, March 2026}).
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5a
@@ -480,6 +497,20 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5b
 \begin{answer}
   % ### START CODE HERE ###
+  % Source checked 5 Sep 2026: https://code.claude.com/docs/en/overview
+  % Stated uses: build features, fix bugs, write tests, fix lint errors, resolve
+  % merge conflicts, update dependencies, write release notes, commits and pull
+  % requests, PR review and issue triage in CI, scheduled runs, Agent SDK.
+  % Surfaces: terminal, VS Code, JetBrains, desktop, web, mobile, Slack, Chrome,
+  % GitHub Actions, GitLab CI/CD.
+  The documentation calls Claude Code an agentic coding tool that ``reads your codebase, edits
+  files, runs commands, and integrates with your development tools''
+  (\href{https://code.claude.com/docs/en/overview}{code.claude.com/docs/en/overview}). The intended
+  uses are all code tasks: building features, fixing bugs, writing tests, fixing lint errors,
+  resolving merge conflicts, updating dependencies, and making commits and pull requests, along
+  with automation such as PR review and issue triage in CI, bug reports from Slack, scheduled runs,
+  and custom agents through the Agent SDK. It targets software engineers and programmers, which
+  matches the higher-wage and higher-education usage reported in part (a).
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5b
