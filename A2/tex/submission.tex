@@ -416,65 +416,30 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3h
 \begin{answer}
   % ### START CODE HERE ###
-  % Kept for reference, not rendered:
-  %  - numbers rerun on the final code, after fixing numpy_cross_entropy_loss to
-  %    sum over classes and average over the batch. On the earlier scale (which
-  %    also divided by the 3 classes) every loss read three times smaller and
-  %    could not be compared against log 3.
-  %  - traps from 3e to 3g: updating from the initial weights instead of the
-  %    current ones (loss froze); summing the weight gradient while averaging
-  %    the bias gradient (scales differed by the batch size); accuracy that kept
-  %    the winning probability instead of a 1; dividing the initial weights by
-  %    num_train_examples, which left only the bias learning and pinned the
-  %    accuracy at the majority baseline.
-  \textbf{Three learning rates.} All runs use the default 15 epochs on the bag-of-words linear
-  classifier. For reference, a model predicting all three classes equally has a loss of
-  $\log 3 = 1.099$, and always guessing the most common class gives an accuracy of $0.582$.
+  % Kept for reference, not rendered. Full numbers behind the three sentences:
+  %   lr 0.02  loss 1.16 -> 1.08 (still falling)  acc 0.351 -> 0.437  final 0.4372
+  %   lr 0.2   loss 1.16 -> 1.02                  acc 0.436 -> 0.554  final 0.5544
+  %   lr 2.0   loss 1.17 -> 4.26 -> 2.58          acc 0.582 -> 0.500 -> 0.582
+  % Landmarks: log 3 = 1.099 is the loss of a model predicting all classes
+  % equally; 0.582 is the accuracy of always guessing the most common class.
+  % Numbers rerun after fixing numpy_cross_entropy_loss to sum over classes and
+  % average over the batch, so the losses are comparable against log 3.
+  % Initialisation measurement: unscaled randn averages 0.414 over six seeds
+  % (range 0.361 to 0.482), missing the 0.45 requirement on four of six.
+  I ran learning rates of $0.02$, $0.2$ and $2.0$ for the default 15 epochs. At $0.02$ the loss
+  fell steadily but only from $1.16$ to $1.08$, never reaching the $\log 3 = 1.099$ of a model that
+  predicts all classes equally, and the accuracy was still climbing at $0.437$ when training
+  stopped; at $0.2$ the loss reached $1.02$ and the accuracy the best of the three at $0.554$;
+  at $2.0$ the loss rose to $4.26$ and the accuracy swung between $0.582$ and $0.500$ before
+  ending at the majority-class baseline. Each step moves the weights by the learning rate times the
+  gradient, so too small a rate cannot cover the distance to the minimum within the epochs
+  available, while too large a rate overshoots and lands further up the other side, which makes the
+  loss grow and the accuracy swing instead of settling.
 
   \medskip
-  \begin{table}[H]
-  \centering
-  \lstDeleteShortInline|
-  \begin{tabular}{|l|l|l|l|}
-  \hline
-  Learning rate & Training loss & Validation accuracy & Final accuracy \\
-  \hline
-  $0.02$ & $1.16 \rightarrow 1.08$, still falling & $0.351 \rightarrow 0.437$ & $0.4372$ \\
-  \hline
-  $0.2$ & $1.16 \rightarrow 1.02$ & $0.436 \rightarrow 0.554$ & $0.5544$ \\
-  \hline
-  $2.0$ & $1.17 \rightarrow 4.26 \rightarrow 2.58$ & $0.582 \rightarrow 0.500 \rightarrow 0.582$ & $0.5821$ \\
-  \hline
-  \end{tabular}
-  \lstMakeShortInline|
-  \end{table}
-
-  \medskip
-  At $0.02$ the loss falls steadily but never reaches $\log 3$ within the 15 epochs, so the model
-  is still worse than uniform when training stops and the accuracy is the lowest of the three. At
-  $0.2$ the loss drops below the uniform landmark and the accuracy climbs to $0.554$, the best of
-  the three. At $2.0$ the loss rises to well above uniform and the accuracy swings between epochs,
-  ending back at exactly the majority baseline, which means the model has stopped distinguishing
-  the classes at all.
-
-  \medskip
-  \textbf{Why.} Each step moves the weights by the learning rate times the gradient. Too small a
-  rate means the weights cannot travel far enough in the epochs available, so training ends while
-  the loss is still falling. Too large a rate means each step overshoots the minimum and lands
-  further up the other side, so the loss grows instead of shrinking and the accuracy swings rather
-  than settling. There is a threshold set by the curvature of the loss: below it the distance to
-  the minimum shrinks each step, and above it the iteration diverges.
-
-  \medskip
-  \textbf{One further observation.} The scale of the initial weights mattered more than the
-  learning rate did. The handout initialises with \texttt{np.random.randn} over 11757 features,
-  which makes the starting scores large and the softmax saturated. Across six random seeds at the
-  default settings that gives an average accuracy of $0.414$, ranging from $0.361$ to $0.482$ and
-  falling short of the required $0.45$ on four of the six. Scaling the same random initialisation
-  by $0.1$ inside my own code region raises it to $0.554$, because each weight then starts near
-  where it needs to be rather than a full unit away, and the averaged gradient for any single word
-  is far too small to cover that distance in 15 epochs. The handout initialisation line, the
-  learning rate and the epoch count are all unchanged.
+  Separately, I scaled the given random initialisation by $0.1$ inside my own code region, since
+  unscaled \texttt{np.random.randn} over 11757 features starts the scores saturated and averages
+  only $0.414$ accuracy across six seeds; the learning rate and epoch count are unchanged.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3h
