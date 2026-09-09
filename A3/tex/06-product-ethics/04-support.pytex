@@ -1,0 +1,12 @@
+\item \points{6d} \textbf{Submitting Customer Support Queries}
+
+\begin{itemize}
+    \item Submit \textbf{two customer support queries} based on your personal experience using the product. These should reflect genuine questions or typical issues you encountered. List those queries here and reflect in 1-2 sentences how customer support responded to and handled your queries.
+\end{itemize}
+
+\expect{Include two well-constructed sample support emails or chat messages, each clearly stating a question, problem, or request for help and, for each query, 1-2 sentences reflecting on how the company handled that query.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6d(.*?)% <SCPD_SUBMISSION_TAG>_6d', f.read(), re.DOTALL)).group(1))
+🐍

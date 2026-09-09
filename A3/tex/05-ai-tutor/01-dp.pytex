@@ -1,0 +1,12 @@
+\item \points{5a} \textbf{Practice Dynamic Programming with an AI tutor!}
+
+Use an AI chatbot (e.g., ChatGPT, Claude, Gemini).
+
+For the prompt, use \textbf{"Teach me basic Dynamic Programming interactively"}. We recommend using the template provided above.
+
+\expect{Provide a link to the chat session transcript with the AI tutor. The session should be around 15–20 minutes and interactive!}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5a(.*?)% <SCPD_SUBMISSION_TAG>_5a', f.read(), re.DOTALL)).group(1))
+🐍

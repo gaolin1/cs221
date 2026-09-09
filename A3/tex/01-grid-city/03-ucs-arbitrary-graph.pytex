@@ -1,0 +1,16 @@
+\item \points{1c}
+Now consider running UCS on an arbitrary graph. Mark the following as true or false:
+
+\begin{enumerate}
+    \item If you add a connection between two locations, the minimum distance cannot go up.
+    \item If you make the cost of an action from some state small enough (possibly negative), that action will show up in the minimum cost path.
+    \item If you increase the cost of each action by 1, the minimum cost path does not change (even though its cost does).
+\end{enumerate}
+
+\expect{T/F for each subpart.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1c(.*?)% <SCPD_SUBMISSION_TAG>_1c', f.read(), re.DOTALL)).group(1))
+🐍
+

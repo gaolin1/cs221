@@ -1,0 +1,12 @@
+\item \points{6a} \textbf{Marketing Channels and Discovery}
+
+\begin{itemize}
+    \item How is the product marketed and how do users discover it? Describe the channels and messaging the company uses.
+\end{itemize}
+
+\expect{In 4-6 sentences, provide a summary of the main marketing channels and discovery avenues for the product, with links, cited examples, and/or screenshots.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6a(.*?)% <SCPD_SUBMISSION_TAG>_6a', f.read(), re.DOTALL)).group(1))
+🐍

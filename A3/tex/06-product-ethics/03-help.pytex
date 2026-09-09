@@ -1,0 +1,12 @@
+\item \points{6c} \textbf{Feedback, Help, and Customer Support}
+
+\begin{itemize}
+  \item How can users contact the company or get support? Describe the official support channels, any community-based help resources, and your overall impression of how easy it is to get assistance.
+\end{itemize}
+
+\expect{In 2-3 sentences, summarize the avenues available for support and community help, and comment on the effectiveness of official and unofficial documentation resources.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6c(.*?)% <SCPD_SUBMISSION_TAG>_6c', f.read(), re.DOTALL)).group(1))
+🐍

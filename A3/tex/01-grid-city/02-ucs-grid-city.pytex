@@ -1,0 +1,16 @@
+\item \points{1b}
+How will Uniform Cost Search (UCS) behave on this problem? Mark the following as true or false:
+
+\begin{enumerate}
+    \item UCS will never terminate because the number of states is infinite.
+    \item UCS will return the minimum cost path and explore only locations between $(0,0)$ and $(m,n)$; that is, $(x,y)$ such that $0 \le x \le m$ and $0 \le y \le n$.
+    \item UCS will return the minimum cost path and explore only locations whose past costs are less than the minimum cost from $(0,0)$ to $(m,n)$.
+\end{enumerate}
+
+\expect{T/F for each subpart.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1b(.*?)% <SCPD_SUBMISSION_TAG>_1b', f.read(), re.DOTALL)).group(1))
+🐍
+

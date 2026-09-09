@@ -1,0 +1,10 @@
+\item \points{3b}
+
+If there are $n$ locations and $k$ waypoint tags, what is the maximum number of states that UCS could visit?
+
+\expect{A mathematical expression that depends on $n$ and $k$, with a brief explanation justifying it.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_3b(.*?)% <SCPD_SUBMISSION_TAG>_3b', f.read(), re.DOTALL)).group(1))
+🐍

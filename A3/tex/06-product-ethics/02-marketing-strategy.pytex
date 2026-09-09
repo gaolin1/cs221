@@ -1,0 +1,13 @@
+\item \points{6b} \textbf{Marketing Strategy and Mission Alignment}
+
+\begin{itemize}
+    \item Summarize what you believe the company's \textbf{core mission} is, based on official statements (About page, press releases, etc.).
+    \item Discuss whether the product's marketing strategy and messaging \textbf{align or conflict with the company's mission}. In your view, does the marketing sensationalize or misrepresent what the product can do, or is it fair and accurate? Provide rationale and cite examples (ads, taglines, posts, etc.).
+\end{itemize}
+
+\expect{In 4-6 sentences, clearly articulate whether the company's marketing supports, contradicts, or sensationalizes its stated mission and product capabilities, providing specific evidence.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6b(.*?)% <SCPD_SUBMISSION_TAG>_6b', f.read(), re.DOTALL)).group(1))
+🐍

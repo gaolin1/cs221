@@ -1,0 +1,11 @@
+\item \points{3a}
+
+Implement |WaypointsShortestPathProblem| so that given a |startLocation|, set of |waypointTags|, and an |endTag|, the minimum cost path corresponds to the shortest path from |startLocation| to a location with the |endTag|, such that all of |waypointTags| are covered by some location in the path.
+
+Note that a single location can be used to satisfy multiple tags.
+
+Like in Problem 2, you need to implement |startState()|, |isEnd(state)|, and |successorsAndCosts(state)|.
+
+There are many ways to implement this search problem, so you should think carefully about how to design your |State|. We want to optimize for a compact state space so that search is as efficient as possible.
+
+\expect{An implementation of the \texttt{WaypointsShortestPathProblem} class. To get full credit, your implementation must have the right asymptotic dependence on the number of locations and waypoints. Note that your code will timeout if you do this incorrectly.}

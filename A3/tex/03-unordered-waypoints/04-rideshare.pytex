@@ -1,0 +1,15 @@
+\item \points{3d}
+Ride sharing companies use route-finding systems similar to the one you built in this problem to route their drivers. However, these systems have been criticized for using exploitative behavioral nudges. For example, a \href{https://www.nytimes.com/interactive/2017/04/02/technology/uber-drivers-psychological-tricks.html}{New York Times} article reported how one app uses “forward dispatch,” a feature that dispatches a new ride to a driver before the current one ends, to constantly keep drivers busy. This makes it more difficult for drivers to take breaks.
+
+We want you to discuss how these companies could implement better labor practices, finding a way to use the unordering waypoints feature to balance company goals with the protection of driver interests. Specifically, we want you to think about ways your new unordered waypoints feature could help drivers in their working experience.
+
+What waypoints could you include from one drop-off location to the next pick-up location to improve the driver experience? What information about drivers would you need to determine appropriate waypoints?
+
+Note, however, that the unordered waypoints feature is an example of a dual use technology. For more, refer to the module on dual use technologies to help answer this question (\href{https://drive.google.com/file/d/1gbzdQ8nmGHsKLLL838uuBPoiEdb6ICnt/view?usp=sharing}{video} and \href{https://stanford-cs221.github.io/autumn2025-extra/hw3_route/externalities-and-dual-use-technologies.pdf}{pdf}). Thus, we also want you to answer: What are some ways that a company could use this waypoints feature to increase profits at the expense of driver health? What are any downsides in collecting the appropriate information you need to recommend the waypoints?
+
+\expect{Provide 3-5 sentences describing (a) the waypoints you would include to improve the driver experience, (b) at least one dimension of drivers' identity that could inform selection of waypoints, and (c) a potential negative use of the waypoints feature that a company could use to increase profits while harming the driver experience or driver health, or downsides in collecting the appropriate information needed to recommend the waypoints.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_3d(.*?)% <SCPD_SUBMISSION_TAG>_3d', f.read(), re.DOTALL)).group(1))
+🐍

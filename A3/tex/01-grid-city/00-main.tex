@@ -1,0 +1,21 @@
+\item {\bf Grid City}
+
+Consider an infinite city consisting of locations $(x,y)$ where $x, y$ are integers. From each location $(x,y)$, one can go east, west, north, or south. You start at $(0,0)$ and want to go to $(m, n)$, where $m, n \geq 0$. We can define the following search problem to capture this:
+
+\begin{itemize}
+  \item $s_\text{start} = (0,0)$
+  \item $\text{Actions}(s) = \{ (+1, 0), (-1, 0), (0, +1), (0, -1) \}$
+  \item $\text{Succ}(s, a) = s + a$
+  \item $\text{Cost}((x,y), a) = 1 + \max(x, 0)$ (it is more expensive as $x$ increases)
+  \item $\text{IsEnd}(s) = \mathbf{1}[s = (m,n)]$
+\end{itemize}
+
+\begin{enumerate}
+
+  \input{01-grid-city/01-min-cost}
+
+  \input{01-grid-city/02-ucs-grid-city}
+
+  \input{01-grid-city/03-ucs-arbitrary-graph}
+
+\end{enumerate}

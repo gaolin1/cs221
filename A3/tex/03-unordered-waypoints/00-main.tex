@@ -1,0 +1,19 @@
+\item {\bf Finding Shortest Paths with Unordered Waypoints}
+
+Let's introduce an even more powerful feature: unordered waypoints! In Google Maps, you can specify an ordered sequence of waypoints that a path must go through – for example, going from point A to point X to point Y to point B, where [X, Y] are "waypoints" (such as a gas station or a friend's house).
+
+However, we want to consider the case where the waypoints are \textit{unordered}: ${X, Y}$, so that both $A \rightarrow X \rightarrow Y \rightarrow B$ and $A \rightarrow Y \rightarrow X \rightarrow B$ are allowed. Moreover, $X$, $Y$, and $B$ are each specified by a tag like in Problem 2 (e.g., |amenity=food|)
+
+This is a neat feature if you think about your day-to-day life; you might be on your way home after a long day, but need to stop by the package center, Tressider to grab a bite of food, and the bookstore to buy some notebooks. Having the ability to get a short, quick path that hits all these stops might be really convenient (rather than searching over the various waypoint orderings yourself).
+
+\begin{enumerate}
+
+  \input{03-unordered-waypoints/01-waypoints-shortest-path-problem}
+
+  \input{03-unordered-waypoints/02-max-possible-states}
+
+  \input{03-unordered-waypoints/03-simulation}
+
+  \input{03-unordered-waypoints/04-rideshare}
+
+\end{enumerate}

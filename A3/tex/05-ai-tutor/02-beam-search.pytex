@@ -1,0 +1,12 @@
+\item \points{5b} \textbf{Practice Beam Search with an AI tutor!}
+
+Use an AI chatbot (e.g., ChatGPT, Claude, Gemini).
+
+For the prompt, use \textbf{"Teach me basic Beam Search interactively"}. We recommend using the template provided above.
+
+\expect{Provide a link to the chat session transcript with the AI tutor. The session should be around 15–20 minutes and interactive!}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5b(.*?)% <SCPD_SUBMISSION_TAG>_5b', f.read(), re.DOTALL)).group(1))
+🐍

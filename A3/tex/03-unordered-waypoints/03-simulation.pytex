@@ -1,0 +1,10 @@
+\item \points{3c}
+
+Choose a starting location, set of waypoint tags, and an end tag (perhaps that captures an interesting route planning problem relevant to you), and implement |getStanfordWaypointsShortestPathProblem()| to create a search problem. Then, similar to Problem 1b, run |python grader.py 3c-0-helper| to generate |path.json|. Once generated, run |python visualization.py| to visualize it (opens in browser).
+
+\expect{A screenshot of the visualized path with a list of the waypoint tags you selected. In addition, provide one or more sentences describing unexpected or interesting features of the selected path. Does it match your expectations? What does this path fail to capture that might be important?}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_3c(.*?)% <SCPD_SUBMISSION_TAG>_3c', f.read(), re.DOTALL)).group(1))
+🐍

@@ -1,0 +1,14 @@
+\item \points{2c} 
+
+Your system now allows anyone to find the shortest path between any pair of locations on campus. By shortening their travel distance, it promises to optimize travel efficiency. But, there might be issues when a large fraction of the population start using your system to plan their routes.
+
+In particular, what \textit{negative externalities} might result from this system being widely deployed? Please refer to these brief articles for inspiration: \href{https://vcresearch.berkeley.edu/news/why-traffic-apps-make-congestion-worse}{"Why Traffic Apps Make Congestion Worse"}, \href{https://www.theatlantic.com/technology/archive/2018/03/mapping-apps-and-the-price-of-anarchy/555551/}{"The Perfect Selfishness of Mapping Apps"} as well as the module on Externalities (\href{https://drive.google.com/file/d/1gbzdQ8nmGHsKLLL838uuBPoiEdb6ICnt/view}{video} and \href{https://stanford-cs221.github.io/autumn2025-extra/hw3_route/externalities-and-dual-use-technologies.pdf}{pdf}).
+
+Discuss the impact of these externalities on (1) users of your system and (2) non-users. Remember that these sorts of problems often arise from the mismatch between the real world and one's model of it. What are potential ways you could reduce this mismatch?
+
+\expect{Provide 3-5 sentences describing (a) two externalities (one for users of the route-planning system and one for other people/non-users of the system), as well as (b) at least one potential solution to reduce the impact of these problems.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_2c(.*?)% <SCPD_SUBMISSION_TAG>_2c', f.read(), re.DOTALL)).group(1))
+🐍

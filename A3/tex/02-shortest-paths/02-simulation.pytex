@@ -1,0 +1,26 @@
+\item \points{2b}
+
+Run |python mapUtil.py > readableStanfordMap.txt| to write a (long-ish) file of the possible locations on the Stanford map along with their tags. Each tag is a |[key]=[value]|.  Here are some examples of keys:
+
+\begin{itemize}
+    \item |landmark|: Hand-defined landmarks (from |src/data/stanford-landmarks.json|)
+    \item |amenity|: Various amenity types (e.g., "park", "food")
+    \item |parking|: Assorted parking options (e.g., "underground")
+\end{itemize}
+
+Choose a starting location and end tag (perhaps that's relevant to your daily life) and implement \newline
+|getStanfordShortestPathProblem()| to create a search problem. Then, run |python grader.py 2b-0-helper| to generate |path.json|. Once generated, run |python visualization.py| to visualize it (opens in browser). Try different start locations and end tags. Pick two settings corresponding to the following:
+
+\begin{itemize}
+    \item A start location and end tag that produced new insight into traveling around campus. Describe whether the system was useful.
+    \item A start location and end tag where the minimum cost path found isn't desirable. Is this due to incorrect modeling assumptions? Explain.
+\end{itemize}
+
+You should feel free to add new landmarks and if you are not at Stanford, follow the instructions in the |README.md| to use your own map and landmarks.
+
+\expect{A screenshot of the visualization of your two solutions as well as i) one or more sentences describing something interesting you've learned about traveling (around campus, or elsewhere) and ii) something incorrect about either the map or modeling assumptions (such a landmark being out of place, etc.).}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_2b(.*?)% <SCPD_SUBMISSION_TAG>_2b', f.read(), re.DOTALL)).group(1))
+🐍
