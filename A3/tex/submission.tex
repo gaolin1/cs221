@@ -76,6 +76,37 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1b
 \begin{answer}
   % ### START CODE HERE ###
+  % Kept for reference, not rendered. What I had to get straight:
+  %  - "pop" means taking a state OUT of the frontier to process it. Popping a
+  %    state makes its cost final; it does not stop the search. UCS stops only
+  %    when the state it pops is the goal.
+  %  - the frontier is a priority queue deciding who gets processed next,
+  %    ordered by past cost. Expanding a state pushes all four neighbours, but
+  %    UCS always processes the cheapest known state next, so it grows in rings
+  %    of increasing cost rather than racing off in every direction.
+  %  - ties are not random here: util.PriorityQueue stores (priority, state)
+  %    tuples, so equal priorities are broken by comparing the states, lower x
+  %    first then lower y: (-1,0) < (0,-1) < (0,1) < (1,0).
+  %  - the state SPACE is infinite; the number of states UCS EXPLORES before
+  %    the goal is finite. My first justification for (i) mixed those up.
+  %  - (iii) could be read loosely as "never explores anything costlier than
+  %    the goal", which is true. The justification is written out so the tie
+  %    argument is visible.
+  \begin{enumerate}
+    \item \textbf{False.} The state space is infinite, but UCS processes states in order of past
+    cost and every step costs at least 1, so a state with past cost below the goal's cost is within
+    that many steps of the origin. There are only finitely many such states, so UCS reaches the goal
+    and terminates.
+
+    \item \textbf{False.} UCS returns the minimum-cost path, but it explores outside the rectangle:
+    $(-1, 0)$ and $(0, -1)$ each cost 1 to reach, which is cheaper than any goal beyond the origin, so
+    they are processed even though they lie outside $0 \le x \le m$, $0 \le y \le n$.
+
+    \item \textbf{False.} UCS does return the minimum-cost path, but it can explore locations whose
+    past cost \emph{equals} the minimum rather than being strictly less than it. When several states
+    tie for the lowest cost, the queue's tie-break decides the order. For the goal $(1, 0)$, which costs
+    1, the states $(-1, 0)$, $(0, -1)$ and $(0, 1)$ also have past cost 1 and are popped before the goal.
+  \end{enumerate}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1b
