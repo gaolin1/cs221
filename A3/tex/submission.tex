@@ -119,6 +119,33 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1c
 \begin{answer}
   % ### START CODE HERE ###
+  % Kept for reference, not rendered. What I had to get straight:
+  %  - "arbitrary graph" means ANY graph. A True answer must hold for every
+  %    graph; a False answer needs only one counterexample graph.
+  %  - (i): I first said False, then "it's whatever the direct connection is".
+  %    Wrong: adding A-C at cost 100 does not delete A-B-C at 20, so the minimum
+  %    stays 20. The minimum is the cheapest of ALL paths, not the newest edge.
+  %    What matters is the cheapest full path using the new edge, not the edge
+  %    cost alone.
+  %  - (iii): I briefly argued True from a three-edge example that did not
+  %    flip. One graph where the path stays the same proves nothing; one graph
+  %    where it changes proves False.
+  \begin{enumerate}
+    \item \textbf{True.} Adding a connection only adds paths and never removes one, so the minimum
+    over the larger set of paths cannot exceed the minimum over the smaller set. The distance either
+    drops, if the best path through the new connection is cheaper, or stays the same.
+
+    \item \textbf{False.} An action out of a state that the start cannot reach lies on no path from
+    the start to the goal, however small its cost. For example, with $A \xrightarrow{5} C$ as the only
+    route from start $A$ to goal $C$ and a separate component $D \xrightarrow{-1000} E$, the cheap action
+    never appears in the minimum-cost path. The same holds for an action leading into a dead end.
+
+    \item \textbf{False.} Adding 1 to every action raises a path's cost by its number of edges, so paths
+    with more edges are penalised more and the ranking can change. Take route 1, $A \xrightarrow{10} Z$
+    with one edge, and route 2, $A \xrightarrow{2} B \xrightarrow{2} C \xrightarrow{2} D \xrightarrow{2} Z$
+    with four. Before the change route 1 costs 10 and route 2 costs 8, so route 2 is the minimum. After
+    adding 1 to every action, route 1 costs 11 and route 2 costs 12, so route 1 becomes the minimum-cost path.
+  \end{enumerate}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1c
