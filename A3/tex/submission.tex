@@ -33,6 +33,37 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1a
 \begin{answer}
   % ### START CODE HERE ###
+  % Kept for reference, not rendered. How I got here:
+  %  - Cost((x, y), a) is priced on the state being LEFT, and depends only on
+  %    x: 1 + x for x >= 0, and 1 for x < 0. Direction does not matter, so a
+  %    north step from x = 2 costs 3, not 1.
+  %  - each action moves one coordinate by one, so every step is priced
+  %    separately; the formula is applied per step, never once per leg
+  %  - checked by hand: (2, 1) north-first costs 1 + 1 + 2 = 4, while
+  %    east-first costs 1 + 2 + 3 = 6; (3, 0) costs 1 + 2 + 3 = 6
+  %  - guesses that failed a hand check: 1 + m, 1 + m + n, 2n + m, 2m + n
+  %  - closed form of 1 + 2 + ... + m by writing the series forwards and
+  %    backwards: m columns each summing to m + 1, two copies of the series,
+  %    so the sum is m(m + 1)/2. Works for odd m, where pairing leaves a middle
+  %    term.
+  \textbf{Minimum cost.}
+  \[
+    \frac{m(m+1)}{2} + n .
+  \]
+
+  \medskip
+  Every step is priced by the $x$ coordinate of the location being left, whatever the direction.
+  The $n$ north steps each cost exactly 1 if they are taken while $x = 0$, contributing $n$. The $m$
+  east steps have to leave from $x = 0, 1, \dots, m-1$ in turn, costing $1, 2, \dots, m$, which sums
+  to $m(m+1)/2$.
+
+  \medskip
+  \textbf{Path.} Take all $n$ steps north from the origin first, then all $m$ steps east.
+
+  \medskip
+  \textbf{Uniqueness.} The path is unique. Any north step taken after moving east costs more than 1,
+  since it leaves from $x > 0$, and a detour into negative $x$ adds at least one step west and one
+  step back east, each costing at least 1, without making any other step cheaper.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1a
