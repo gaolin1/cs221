@@ -34,18 +34,27 @@ class ShortestPathProblem(SearchProblem):
         self.cityMap = cityMap
 
     def startState(self) -> State:
-        pass
         # ### START CODE HERE ###
+        initial_state = State(location=self.startLocation)
+        return initial_state
         # ### END CODE HERE ###
 
     def isEnd(self, state: State) -> bool:
-        pass
         # ### START CODE HERE ###
+        current_tags = self.cityMap.tags[state.location]
+        if self.endTag in current_tags:
+            return True
+        else:
+            return False
         # ### END CODE HERE ###
 
     def successorsAndCosts(self, state: State) -> List[Tuple[str, State, float]]:
-        pass
         # ### START CODE HERE ###
+        successors_dict = []
+        for neighbour, distance in self.cityMap.distances[state.location].items():
+            current_succesor = (neighbour, State(location=neighbour), distance)
+            successors_dict.append(current_succesor)
+        return successors_dict
         # ### END CODE HERE ###
 
 
