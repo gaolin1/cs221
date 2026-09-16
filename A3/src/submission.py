@@ -80,10 +80,10 @@ def getStanfordShortestPathProblem() -> ShortestPathProblem:
     # Or, if you would rather use a custom map, you can uncomment the following!
     # cityMap = createCustomMap("data/custom.pbf", "data/custom-landmarks".json")
 
-    startLocation, endTag = None, None
+    startLocation, endTag = "2411240427", "landmark=bookstore"
 
-    pass
     # ### START CODE HERE ###
+    # stanfordShortest = ShortestPathProblem(startLocation, endTag, cityMap)
     # ### END CODE HERE ###
     return ShortestPathProblem(startLocation, endTag, cityMap)
 
@@ -111,18 +111,35 @@ class WaypointsShortestPathProblem(SearchProblem):
         self.waypointTags = tuple(sorted(waypointTags))
 
     def startState(self) -> State:
-        pass
         # ### START CODE HERE ###
+        start_tags = self.cityMap.tags[self.startLocation]
+        start_tags_valid = set(start_tags) & set(self.waypointTags)
+        start_tags_sorted = tuple(sorted(start_tags_valid))
+        return State(location=self.startLocation,memory=start_tags_sorted)
         # ### END CODE HERE ###
 
     def isEnd(self, state: State) -> bool:
-        pass
         # ### START CODE HERE ###
+        state_tags = self.cityMap.tags[state.location]
+        if self.endTag in state_tags:
+            if self.waypointTags == state.memory:
+                return True
+            else:
+                return False
+        else:
+            return False
         # ### END CODE HERE ###
 
     def successorsAndCosts(self, state: State) -> List[Tuple[str, State, float]]:
-        pass
         # ### START CODE HERE ###
+        successors_dict = []
+        for neighbour, distance in self.cityMap.distances[state.location].items():
+            neighbour_tags = self.cityMap.tags[neighbour]
+            negihbour_tags_valid = set(neighbour_tags) & set(self.waypointTags)
+            neighbour_with_current_tags = tuple(sorted(set(negihbour_tags_valid) | set(state.memory)))
+            current_succesor = (neighbour, State(location=neighbour, memory=neighbour_with_current_tags), distance)
+            successors_dict.append(current_succesor)
+        return successors_dict
         # ### END CODE HERE ###
 
 
