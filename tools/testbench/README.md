@@ -57,6 +57,24 @@ to a file and line rather than to one recording.
 - A breakpoint on a line stops once per time the line runs, not again when the same
   line returns.
 
+### Opening up a value
+
+Click the small arrow next to a variable to see what is actually inside it: attributes
+of an object, entries of a dict, elements of a list, rows of an array. Keep clicking to
+go deeper, for example `self` &rarr; `cityMap` &rarr; `distances` &rarr; one location's
+neighbours. Large containers load 25 at a time with a **show more** link, and the tree
+scrolls in its own box so it never pushes the rest of the panel away.
+
+The recording only keeps a short text of each value, so opening one up **re-runs the
+test** behind the scenes, stops at the step you are on, and reads the real object there.
+Two consequences:
+
+- The first click on a variable costs one run of the test; after that, expanding within
+  it is usually instant, since each fetch brings back two levels and results are cached.
+- If the re-run reaches that step with a different value, the tree says so instead of
+  showing you something that never happened. Memory addresses are ignored in that check,
+  because they differ on every run.
+
 ### Variable flow
 
 Press **Variable flow** above the code (or **V**) to see how the variables of the

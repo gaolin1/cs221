@@ -11,6 +11,7 @@ the recording fast and small.
 import argparse
 import ast
 import contextlib
+import itertools
 import io
 import json
 import os
@@ -243,10 +244,110 @@ def analyze_source(source):
     return info
 
 
+# ---------------------------------------------------------------------------------
+# Inspecting a value: re-run the test, stop at one step, and walk into a variable.
+# Children are addressed by position so that any key type works without encoding it.
+# ---------------------------------------------------------------------------------
+
+ATOMIC = (str, bytes, bytearray, int, float, complex, bool, type(None))
+
+
+def _entries(obj, offset, limit):
+    """(list of (label, value), total count), or (None, 0) if obj has nothing to open."""
+    if isinstance(obj, ATOMIC):
+        return None, 0
+    try:
+        if isinstance(obj, dict):
+            total = len(obj)
+            items = list(itertools.islice(obj.items(), offset, offset + limit))
+            return [(safe_repr(k), v) for k, v in items], total
+        if isinstance(obj, (list, tuple)):
+            total = len(obj)
+            return [(str(offset + i), v) for i, v in enumerate(obj[offset:offset + limit])], total
+        if isinstance(obj, (set, frozenset)):
+            total = len(obj)
+            return [(str(offset + i), v) for i, v in enumerate(itertools.islice(obj, offset, offset + limit))], total
+        shape = getattr(obj, "shape", None)  # numpy arrays and torch tensors
+        if shape is not None and getattr(obj, "ndim", 0) > 0:
+            total = int(shape[0])
+            rows = [(str(offset + i), obj[offset + i]) for i in range(offset, min(total, offset + limit))]
+            return rows, total
+        attrs = None
+        if hasattr(obj, "__dict__") and vars(obj):
+            attrs = list(vars(obj).items())
+        elif hasattr(type(obj), "__slots__"):
+            names = [s for s in type(obj).__slots__ if hasattr(obj, s)]
+            attrs = [(s, getattr(obj, s)) for s in names]
+        if attrs:
+            total = len(attrs)
+            return attrs[offset:offset + limit], total
+    except Exception:
+        return None, 0
+    return None, 0
+
+
+def _preview(obj):
+    """A short description: the repr, plus size or shape when that is the useful part."""
+    text = safe_repr(obj)
+    extra = ""
+    shape = getattr(obj, "shape", None)
+    if shape is not None and not isinstance(obj, ATOMIC):
+        extra = f"shape {tuple(shape)}"
+        dtype = getattr(obj, "dtype", None)
+        if dtype is not None:
+            extra += f", dtype {dtype}"
+    elif isinstance(obj, (dict, list, tuple, set, frozenset)):
+        extra = f"{len(obj)} item{'' if len(obj) == 1 else 's'}"
+    return text, extra
+
+
+def _child_kind(obj):
+    """Are this value's children reached by position, or by attribute name?"""
+    if isinstance(obj, (dict, list, tuple, set, frozenset)) or getattr(obj, "shape", None) is not None:
+        return "item"
+    return "attr"
+
+
+def _describe(obj, depth, limit, offset=0):
+    entries, total = _entries(obj, offset, limit)
+    text, extra = _preview(obj)
+    node = {
+        "type": type(obj).__name__, "preview": text, "extra": extra, "childKind": _child_kind(obj),
+        "total": total, "offset": offset, "hasChildren": bool(entries),
+        "truncated": bool(entries) and offset + len(entries) < total,
+        "children": None,
+    }
+    if entries and depth > 0:
+        node["children"] = []
+        for index, (label, value) in enumerate(entries):
+            child = _describe(value, depth - 1, limit)
+            child["label"] = label
+            child["index"] = offset + index
+            node["children"].append(child)
+    return node
+
+
+def _resolve(root, path):
+    current = root
+    for segment in path:
+        if segment.get("t") == "a":
+            current = getattr(current, segment["v"])
+        else:
+            index = int(segment["v"])
+            entries, _ = _entries(current, index, 1)
+            if not entries:
+                raise LookupError(f"nothing at position {index}")
+            current = entries[0][1]
+    return current
+
+
 class Recorder:
-    def __init__(self, src, trace_names, max_steps):
+    def __init__(self, src, trace_names, max_steps, inspect=None):
         self.max_steps = max_steps
         self.steps = []
+        self.count = 0          # counted identically in both modes so step numbers line up
+        self.inspect = inspect  # when set, capture one value instead of recording
+        self.result = None
         self.recording = True
         self.truncated = False
         self.depth = 0
@@ -274,11 +375,33 @@ class Recorder:
             values[name] = safe_repr(value)
         return values
 
+    def _capture(self, frame):
+        """Resolve the requested variable and path in this frame."""
+        spec = self.inspect
+        name = spec["name"]
+        if name not in frame.f_locals:
+            self.result = {"error": f"{name} is not a local variable at that step"}
+            return
+        root = frame.f_locals[name]
+        self.result = {"rootPreview": safe_repr(root)}
+        try:
+            target = _resolve(root, spec.get("path", []))
+            self.result["node"] = _describe(target, spec.get("depth", 2), spec.get("limit", 50), spec.get("offset", 0))
+        except Exception as exc:
+            self.result["error"] = f"{type(exc).__name__}: {exc}"
+
     def _add(self, event, frame, fid, extra=None):
-        if len(self.steps) >= self.max_steps:
+        if self.count >= self.max_steps:
             self.recording = False
             self.truncated = True
             return False
+        if self.inspect is not None:
+            if self.count == self.inspect["step"]:
+                self._capture(frame)
+                self.recording = False
+                return False
+            self.count += 1
+            return True
         step = {
             "e": event,
             "f": fid,
@@ -290,6 +413,7 @@ class Recorder:
         if extra:
             step.update(extra)
         self.steps.append(step)
+        self.count += 1
         return True
 
     def global_trace(self, frame, event, arg):
@@ -332,7 +456,13 @@ def main():
     parser.add_argument("--out", required=True)
     parser.add_argument("--max-steps", type=int, default=20000)
     parser.add_argument("--trace", default="submission.py,grader.py")
+    parser.add_argument("--inspect", help="JSON file describing one value to capture instead of recording")
     args = parser.parse_args()
+
+    inspect = None
+    if args.inspect:
+        with open(args.inspect, encoding="utf-8") as handle:
+            inspect = json.load(handle)
 
     src = os.path.abspath(args.src)
     os.chdir(src)
@@ -344,7 +474,7 @@ def main():
         signal.alarm = lambda *_: 0
 
     trace_names = [n.strip() for n in args.trace.split(",") if n.strip()]
-    recorder = Recorder(src, trace_names, args.max_steps)
+    recorder = Recorder(src, trace_names, args.max_steps, inspect)
     result = {
         "test": args.test,
         "status": None,
@@ -389,6 +519,10 @@ def main():
     result["elapsed"] = time.perf_counter() - start
     result["stdout"] = captured.getvalue()
     result["truncated"] = recorder.truncated
+
+    if inspect is not None:
+        write(args.out, recorder.result or {"error": "that step was never reached on the re-run"})
+        return
 
     problems = outcome.failures + outcome.errors
     if problems:

@@ -164,6 +164,23 @@
   .newv { color: #8fd494; font-style: italic; }
   .ioLegend { color: var(--muted); font-size: 11px; margin-top: 6px; }
   .ioLegend b { font-weight: 600; }
+
+  /* opening up a value */
+  .caret { display: inline-block; width: 12px; color: var(--muted); cursor: pointer; user-select: none; transition: transform .12s; }
+  .caret:hover { color: var(--text); }
+  .caret.open { transform: rotate(90deg); }
+  .tree { margin: 2px 0 6px 4px; border-left: 1px solid var(--border); padding-left: 6px; font: 12px var(--mono);
+          max-height: 44vh; overflow: auto; resize: vertical; }
+  .tnode { padding: 1px 0; }
+  .tline { display: flex; gap: 6px; align-items: baseline; white-space: nowrap; }
+  .tlabel { color: #b9c0ca; flex: 0 0 auto; }
+  .ttype { color: var(--muted); font-size: 11px; flex: 0 0 auto; }
+  .tval { color: var(--text); overflow: hidden; text-overflow: ellipsis; }
+  .tkids { margin-left: 10px; border-left: 1px solid var(--border); padding-left: 6px; }
+  .tmore { color: var(--accent); cursor: pointer; font-size: 11.5px; padding: 2px 0; }
+  .tmore:hover { text-decoration: underline; }
+  .tnote { color: var(--muted); font-size: 11.5px; padding: 2px 0; }
+  .tstale { color: var(--err); font-size: 11.5px; padding: 3px 0; }
   .msg { font: 12px var(--mono); white-space: pre-wrap; word-break: break-word; margin-top: 6px; }
   .note { color: var(--muted); font-size: 12px; margin-top: 4px; }
   .warn { color: var(--err); font-size: 12px; margin-top: 4px; }
@@ -634,6 +651,8 @@ $("flow").addEventListener("dblclick", (e) => { if (e.target.closest(".fnode")) 
 const KEYWORDS = new Set("False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield match case".split(" "));
 const BUILTINS = new Set("abs all any bool dict enumerate filter float getattr hasattr int isinstance len list map max min next print range repr reversed round set sorted str sum super tuple type zip open iter object Exception ValueError TypeError KeyError IndexError AssertionError NotImplementedError".split(" "));
 function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+// for values placed inside a double-quoted HTML attribute, such as the JSON paths below
+function escAttr(s) { return esc(String(s)).replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
 function wrap(cls, text) {
   // never let a span cross a newline, so the result can be split into lines
   return text.split("\n").map(p => p ? `<span class="${cls}">${esc(p)}</span>` : "").join("\n");
@@ -1001,7 +1020,129 @@ function renderStep() {
   $("stepCard").innerHTML = html;
 }
 
+/* ---------------- opening up a value ---------------- */
+// The recording only keeps a short text of each value, so expanding one asks the server
+// to re-run the test, stop at this step, and look at the real object.
+Object.assign(S, { insp: null });   // { key, name, root, expanded:Set, loading:Set, error, stale }
+
+const pathKey = (path) => JSON.stringify(path);
+const inspKey = () => `${S.runId}|${S.step}`;
+
+function nodeAt(path) {
+  let node = S.insp && S.insp.root;
+  for (const segment of path) {
+    if (!node || !node.children) return null;
+    node = node.children.find(c => (node.childKind === "attr" ? c.label === segment.v : String(c.index) === String(segment.v)));
+  }
+  return node || null;
+}
+
+async function inspectFetch(path, offset) {
+  const s = S.run.steps[S.step];
+  const body = {
+    assignment: S.assignment, test: S.run.test, trace: traceSelection(),
+    max_steps: Number($("maxSteps").value) || 20000,
+    step: S.step, name: S.insp.name, path, offset: offset || 0,
+    expected: s.v[S.insp.name],
+  };
+  return api("/api/inspect", body);
+}
+
+async function openVariable(name) {
+  const s = S.run.steps[S.step];
+  if (!(name in s.v)) return;
+  if (S.insp && S.insp.key === inspKey() && S.insp.name === name) { S.insp = null; renderLocals(S.lastFx); return; }
+  S.insp = { key: inspKey(), name, root: null, expanded: new Set([pathKey([])]), loading: new Set([pathKey([])]), error: null, stale: false };
+  renderLocals(S.lastFx);
+  try {
+    const result = await inspectFetch([], 0);
+    if (!S.insp || S.insp.name !== name) return;
+    S.insp.loading.delete(pathKey([]));
+    if (result.error) S.insp.error = result.error;
+    S.insp.stale = !!result.stale;
+    S.insp.root = result.node || null;
+  } catch (err) {
+    if (S.insp) { S.insp.error = String(err); S.insp.loading.clear(); }
+  }
+  renderLocals(S.lastFx);
+}
+
+async function toggleNode(path) {
+  const key = pathKey(path), node = nodeAt(path);
+  if (!node || !node.hasChildren) return;
+  if (S.insp.expanded.has(key)) { S.insp.expanded.delete(key); renderLocals(S.lastFx); return; }
+  S.insp.expanded.add(key);
+  if (node.children === null) {          // deeper than the two levels already fetched
+    S.insp.loading.add(key);
+    renderLocals(S.lastFx);
+    try {
+      const result = await inspectFetch(path, 0);
+      const target = nodeAt(path);
+      if (target && result.node) { target.children = result.node.children; target.truncated = result.node.truncated; target.offset = result.node.offset; }
+      if (result.error) S.insp.error = result.error;
+    } catch (err) { S.insp.error = String(err); }
+    S.insp.loading.delete(key);
+  }
+  renderLocals(S.lastFx);
+}
+
+async function loadMore(path) {
+  const node = nodeAt(path);
+  if (!node) return;
+  const key = pathKey(path);
+  S.insp.loading.add(key);
+  renderLocals(S.lastFx);
+  try {
+    const result = await inspectFetch(path, (node.offset || 0) + node.children.length);
+    const target = nodeAt(path);
+    if (target && result.node && result.node.children) {
+      target.children = target.children.concat(result.node.children);
+      target.truncated = result.node.truncated;
+    }
+  } catch (err) { S.insp.error = String(err); }
+  S.insp.loading.delete(key);
+  renderLocals(S.lastFx);
+}
+
+function treeHtml(node, path) {
+  if (!node) return "";
+  const key = pathKey(path);
+  const open = S.insp.expanded.has(key);
+  let html = "";
+  if (open && node.children) {
+    html += `<div class="tkids">` + node.children.map(child => {
+      const childPath = path.concat([node.childKind === "attr" ? { t: "a", v: child.label } : { t: "i", v: String(child.index) }]);
+      const childKey = pathKey(childPath), childOpen = S.insp.expanded.has(childKey);
+      const caret = child.hasChildren ? `<span class="caret ${childOpen ? "open" : ""}" data-path="${escAttr(childKey)}">&#9656;</span>` : `<span class="caret"> </span>`;
+      const tip = `${child.label}: ${child.type}${child.extra ? " (" + child.extra + ")" : ""}
+${child.preview}`;
+      return `<div class="tnode"><div class="tline" title="${escAttr(tip)}">${caret}<span class="tlabel">${esc(child.label)}</span>`
+        + `<span class="ttype">${esc(child.type)}${child.extra ? ", " + esc(child.extra) : ""}</span>`
+        + `<span class="tval">${esc(child.preview)}</span></div>`
+        + (S.insp.loading.has(childKey) ? `<div class="tnote tkids">opening...</div>` : treeHtml(child, childPath))
+        + `</div>`;
+    }).join("")
+      + (node.truncated ? `<div class="tmore" data-more="${escAttr(key)}">show more (${node.children.length} of ${node.total})</div>` : "")
+      + `</div>`;
+  }
+  return html;
+}
+
+function inspectHtml(name) {
+  if (!S.insp || S.insp.name !== name || S.insp.key !== inspKey()) return "";
+  if (S.insp.loading.has(pathKey([]))) return `<div class="tree tnote">re-running the test to read this value...</div>`;
+  if (S.insp.error) return `<div class="tree tstale">${esc(S.insp.error)}</div>`;
+  const root = S.insp.root;
+  if (!root) return "";
+  let html = `<div class="tree">`;
+  if (S.insp.stale) html += `<div class="tstale">The re-run reached this step with a different value, so what follows may not match the recording.</div>`;
+  if (!root.hasChildren) html += `<div class="tnote">Nothing to open: ${esc(root.type)} ${esc(root.extra || "")}</div>`;
+  html += treeHtml(root, []) + `</div>`;
+  return html;
+}
+
 function renderLocals(fx) {
+  S.lastFx = fx;
   const run = S.run, s = run.steps[S.step];
   const prevIdx = previousInFrame(S.step), prev = prevIdx >= 0 ? run.steps[prevIdx].v : null;
   const roles = new Map();
@@ -1026,8 +1167,11 @@ function renderLocals(fx) {
     const cls = r ? ["varRow", "io-any", r.mutate ? "ioM" : r.write ? "ioW" : "ioR"] : ["varRow"];
     const badges = r ? [r.read ? `<span class="io r">reads</span>` : "", r.write ? `<span class="io w">writes</span>` : "",
                         r.mutate ? `<span class="io m">changes</span>` : ""].join("") : "";
-    return `<div class="${cls.join(" ")}"><span class="k"><span class="varlink" data-var="${esc(k)}" title="Show how ${esc(k)} is created and used">${esc(k)}</span>${badges ? "<br>" + badges : ""}</span>`
-      + `<span class="v ${changedEarlier ? "changed" : ""}" title="${changedEarlier ? "changed since the previous step in this function" : ""}">${value}</span></div>`;
+    const opened = S.insp && S.insp.name === k && S.insp.key === inspKey();
+    const caret = k in s.v ? `<span class="caret ${opened ? "open" : ""}" data-open="${escAttr(k)}" title="Open this value up">&#9656;</span>` : "";
+    return `<div class="${cls.join(" ")}"><span class="k">${caret}<span class="varlink" data-var="${esc(k)}" title="Show how ${esc(k)} is created and used">${esc(k)}</span>${badges ? "<br>" + badges : ""}</span>`
+      + `<span class="v ${changedEarlier ? "changed" : ""}" title="${changedEarlier ? "changed since the previous step in this function" : ""}">${value}</span></div>`
+      + inspectHtml(k);
   };
 
   const used = names.filter(n => roles.has(n)).sort(order);
@@ -1045,6 +1189,9 @@ function renderLocals(fx) {
     S.flowSel = { type: "var", name: el.dataset.var };
     setView("flow");
   });
+  $("localsCard").querySelectorAll("[data-open]").forEach(el => el.onclick = () => openVariable(el.dataset.open));
+  $("localsCard").querySelectorAll("[data-path]").forEach(el => el.onclick = () => toggleNode(JSON.parse(el.dataset.path)));
+  $("localsCard").querySelectorAll("[data-more]").forEach(el => el.onclick = () => loadMore(JSON.parse(el.dataset.more)));
 }
 
 function renderStack() {

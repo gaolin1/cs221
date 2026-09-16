@@ -118,6 +118,67 @@ def run_test(assignment, test_id, trace, max_steps):
             pass
 
 
+_INSPECT_CACHE = {}
+INSPECT_CACHE_MAX = 200
+
+
+def inspect_value(assignment, test_id, trace, max_steps, step, name, path, offset, expected):
+    """Re-run the test, stop at `step`, and describe `name` (optionally walking into it).
+
+    The recording only keeps a short text of each value, so opening one up means running
+    the test again and looking at the real object. `expected` is the text that was
+    recorded, so a re-run that produces something different can be reported as stale.
+    """
+    key = json.dumps([assignment, test_id, sorted(trace), max_steps, step, name, path, offset], sort_keys=True)
+    if key in _INSPECT_CACHE:
+        return _INSPECT_CACHE[key]
+
+    src = src_dir(assignment)
+    known = {t["id"] for t in list_tests(assignment)}
+    if test_id not in known:
+        raise ValueError(f"Unknown test: {test_id!r}")
+    allowed = set(python_files(assignment))
+    trace = [n for n in trace if n in allowed] or ["submission.py", "grader.py"]
+    spec = {"step": int(step), "name": name, "path": path or [], "offset": int(offset), "depth": 2, "limit": 25}
+
+    spec_handle, spec_path = tempfile.mkstemp(prefix="testbench_spec_", suffix=".json")
+    out_handle, out_path = tempfile.mkstemp(prefix="testbench_insp_", suffix=".json")
+    os.close(spec_handle)
+    os.close(out_handle)
+    try:
+        with open(spec_path, "w", encoding="utf-8") as handle:
+            json.dump(spec, handle)
+        completed = subprocess.run(
+            [sys.executable, RECORDER, "--src", src, "--test", test_id, "--out", out_path,
+             "--max-steps", str(int(max_steps)), "--trace", ",".join(trace), "--inspect", spec_path],
+            cwd=src, capture_output=True, text=True, timeout=RUN_TIMEOUT,
+        )
+        with open(out_path, encoding="utf-8") as handle:
+            content = handle.read()
+        if not content.strip():
+            return {"error": "The re-run produced no output.", "detail": completed.stderr[-400:]}
+        result = json.loads(content)
+    except subprocess.TimeoutExpired:
+        return {"error": f"The re-run exceeded {RUN_TIMEOUT} s."}
+    finally:
+        for path_to_remove in (spec_path, out_path):
+            try:
+                os.remove(path_to_remove)
+            except OSError:
+                pass
+
+    if expected and result.get("rootPreview"):
+        # object reprs carry a memory address that differs on every run, so compare
+        # with addresses blanked out; anything left over is a real difference
+        without_address = lambda text: re.sub(r"0x[0-9a-fA-F]+", "0xADDR", text)
+        if without_address(result["rootPreview"]) != without_address(expected):
+            result["stale"] = True
+    if len(_INSPECT_CACHE) > INSPECT_CACHE_MAX:
+        _INSPECT_CACHE.clear()
+    _INSPECT_CACHE[key] = result
+    return result
+
+
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         sys.stderr.write("[testbench] " + (fmt % args) + "\n")
@@ -172,16 +233,34 @@ class Handler(BaseHTTPRequestHandler):
                                   payload.get("trace", ["submission.py", "grader.py"]),
                                   payload.get("max_steps", 20000))
                 return self._json(result)
+            if url.path == "/api/inspect":
+                return self._json(inspect_value(
+                    payload.get("assignment", ""), payload.get("test", ""),
+                    payload.get("trace", ["submission.py", "grader.py"]), payload.get("max_steps", 20000),
+                    payload.get("step", 0), payload.get("name", ""), payload.get("path", []),
+                    payload.get("offset", 0), payload.get("expected"),
+                ))
             self._json({"error": "not found"}, HTTPStatus.NOT_FOUND)
         except (ValueError, json.JSONDecodeError) as exc:
             self._json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+
+
+class Server(ThreadingHTTPServer):
+    # Windows lets a second process bind the same port when SO_REUSEADDR is on, which
+    # silently leaves an older instance answering some requests. Refuse instead.
+    allow_reuse_address = False
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--port", type=int, default=8765)
     args = parser.parse_args()
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
+    try:
+        server = Server(("127.0.0.1", args.port), Handler)
+    except OSError as exc:
+        print(f"Could not listen on port {args.port}: {exc}")
+        print("Another testbench is probably already running. Stop it, or pass --port.")
+        raise SystemExit(1)
     print(f"Testbench running at http://127.0.0.1:{args.port}  (Ctrl+C to stop)")
     print(f"Assignments found: {', '.join(discover_assignments()) or 'none'}")
     try:
