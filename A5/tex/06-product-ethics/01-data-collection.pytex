@@ -1,0 +1,16 @@
+\item \points{6a} \textbf{Data Collection and Use Policies}
+
+\begin{itemize}
+    \item Browse the company's website (including Terms of Service, privacy FAQ, help center) to locate their explicit policies on user data.
+    \item What are the company's policies for collection of user data? Do they save your data? Can they use it to train models? Can it be sold or shared with third parties?
+    \item Comment on how easy it was to locate the exact company policies governing user data and privacy.
+    \item Does the official privacy policy align with or contradict what you expected based on the product's marketing? (E.g., does the privacy policy permit more data collection than marketing claims suggest?)
+    \item Consider the \textbf{ecosystem view} of AI: AI's impact depends on upstream factors (data, compute, labor, environment) and downstream factors (users, deployment, harm). What can you determine about the upstream data sources used to train this product? What policies govern how training data was collected, and how does this relate to the product's downstream impacts?
+\end{itemize}
+
+\expect{Summarize the company's policies on data collection (storage, model training, data sales/sharing) in 3--5 sentences. Note the ease or difficulty of finding clear policy documentation. Highlight any differences between the product's privacy messaging and the legally binding privacy terms. Additionally, discuss what you can determine about upstream data sources and how data collection policies relate to downstream impacts.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6a(.*?)% <SCPD_SUBMISSION_TAG>_6a', f.read(), re.DOTALL)).group(1))
+🐍

@@ -1,0 +1,19 @@
+\item \points{5b}
+
+We might say that the Minimax agent suffers from an \textbf{alignment} problem: 
+the agent optimizes an objective that we have designed (our state evaluation function), 
+but in some scenarios leads to suboptimal or unintended behavior (e.g. dying instantly). 
+Often the burden is on the designer/programmer to design an objective that more accurately captures the behavior we want from the agent across scenarios. 
+Suggest one potential change to the default state evaluation function $\text{Eval}(s)$ (i.e. |scoreEvaluationFunction|) \textbf{and/or} the default utility 
+function $\text{Utility}(s)$ (i.e. the final game score) that would prevent the minimax agent from dying instantly in the |trappedClassic| environment, 
+and behave more closely to that of the expectimax agent.
+
+\textbf{What we expect: } 1-2 sentences describing a change in the state evaluation/utility function(s) and why it would work. 
+No need to code anything up, verify that the suggested change is actually accessible in the |GameState| object, or give concrete numbers; just describe the 
+hypothetical change in the functions. An answer which suggests changes to how the game score is computed itself 
+(which both $\text{Eval}(s)$ and $\text{Utility}(s)$ depend upon) will also be accepted.
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5b(.*?)% <SCPD_SUBMISSION_TAG>_5b', f.read(), re.DOTALL)).group(1))
+🐍

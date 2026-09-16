@@ -1,0 +1,2095 @@
+{
+  "files": {
+    "welcome.py": "from edtrace import text, image, link, note\n\ndef main():\n    text(\"## Welcome to XCS221 (Artificial Intelligence: Principles and Techniques)\")\n\n    what_is_ai()\n    about_this_course()\n    what_is_this_program()\n\n\ndef what_is_ai():\n    text(\"We have lots of examples of AI all around us:\")\n    text(\"- AI assistants: ChatGPT, Claude, Gemini, Grok\")\n    text(\"- Autonomous vehicles: Waymo, Wayve\")\n    text(\"- Game playing: [Deep Blue](https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)), [AlphaGo](https://en.wikipedia.org/wiki/AlphaGo), [AlphaStar](https://en.wikipedia.org/wiki/AlphaStar_(software))\")\n    text(\"- Competition math and programming: [IMO](https://x.com/OpenAI/status/1946594928945148246), [IOI](https://codeforces.com/blog/entry/134091), [ICPC](https://venturebeat.com/ai/google-and-openais-coding-wins-at-university-competition-show-enterprise-ai)\")\n    text(\"- 3D protein structure prediction: [AlphaFold](https://deepmind.google/science/alphafold/)\")\n\n    text(\"But what exactly **is** AI?\")\n\n    text(\"Artificial intelligence\")\n    text(\"- artificial: runs on a computer (or robot)\")\n    text(\"- intelligence: ???\")\n\n    text(\"We could define **intelligence** in terms of humans...\")\n    text(\"...but we seek a definition from general principles.\")\n\n    text(\"### Ingredients of intelligence\")\n    text(\"What kinds of things should an intelligent agent be able to do?\")\n    image(\"images/perceive-reason-act-learn.png\", width=600)\n\n    text(\"Motivating example: driving\")\n    image(\"images/self-driving-image.png\", width=400)\n\n    text(\"**Perceive**: process raw inputs from the world\")\n    text(\"- visual scene understanding\")\n    text(\"- speech recognition\")\n    text(\"- natural language understanding\")\n\n    text(\"**Reason**: use knowledge + percepts to draw inferences about the world\")\n    text(\"- uniform cost search (in a deterministic world)\")\n    text(\"- value iteration (decision-making under uncertainty)\")\n    text(\"- minimax (for adversarial games)\")\n    text(\"- probabilistic inference (in Bayesian networks)\")\n\n    text(\"**Act**: output actions that affect the world\")\n    text(\"- Text/image generation\")\n    text(\"- Speech synthesis\")\n    text(\"- Robot manipulation\")\n\n    text(\"**Learn**: update agent based on experience\")\n    text(\"- Gradient descent\")\n    text(\"- Q-learning (reinforcement learning)\")\n    text(\"- Expectation maximization (for Bayesian networks)\")\n\n    text(\"...all under **resource constraints**\")\n    text(\"- Computation: running time (also: memory, communication)\")\n    text(\"- Information: data / experience, available inputs in a given situation\")\n\n    text(\"### Goals\")\n    text(\"But what does the **developer** want the agent to achieve?\")\n    text(\"- An agent explicitly or implicitly encodes values / goals / objectives / utility functions\")\n    text(\"- Alignment: how do make these values correspond to what the developer wants?\")\n    text(\"- Example: ChatGPT aims to be informative, avoid hallucinations, refuse harmful queries\")\n\n    text(\"Also what impact **we** want the agent to have on society?\")\n    text(\"- Issues: privacy, copyright, jobs, inequality, geopolitics\")\n    text(\"- This is a deep, **sociotechnical** problem (who's we?)\")\n    text(\"- Fundamental tradeoffs between people's values\")\n    text(\"- Unintended consequences (social media, impact on education)\")\n\n    text(\"### Summary\")\n    text(\"- Ingredients of intelligence: perception, reasoning, action, learning\")\n    text(\"- Resource constraints: computation, information\"), note(\"So we'll want to develop algorithms that are compute and data efficient.\")\n    text(\"- Developer goals: how do we build AI to accomplish something?\")\n    text(\"- Societal goals: how can we develop AI that benefits society?\")\n\n\ndef about_this_course():\n    text(\"Course philosophy\")\n    text(\"- Timeless foundations (e.g., gradient descent)\")\n    text(\"- Modern examples (e.g., GPT-5 solving 12/12 problems at the ICPC)\")\n    text(\"- Learn by doing: grounded in building practical applications\")\n\n    text(\"Changes this year:\")\n    text(\"- Tensor-native: from deep learning to value iteration to Bayesian network inference\")\n    text(\"- Cut constraint satisfaction problems :(\")\n    text(\"- Deep dive into societal impact (e.g., copyright, supply chains, policy)\")\n\n\ndef what_is_this_program():\n    text(\"This is an *executable lecture*, a program whose execution delivers the content of a lecture.\")\n    \n    text(\"We can step through code:\")\n    total = 0  # @inspect total\n    for x in [1, 2, 3]:  # @inspect x\n        total += x  # @inspect total\n\n    text(\"- Lectures inherit the hierarchical structure of code\")\n    text(\"- Code is more precise (than English and also than math)\")\n    text(\"- Need to write code to build AI at the end of the day\")\n    text(\"- Check out the toolbar at the top right (e.g., control display)\")\n\n\nif __name__ == \"__main__\":\n    main()\n"
+  },
+  "hidden_line_numbers": {
+    "welcome.py": []
+  },
+  "steps": [
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 3,
+          "function_name": "main",
+          "code": "def main():"
+        }
+      ],
+      "env": {},
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 4,
+          "function_name": "main",
+          "code": "text(\"## Welcome to XCS221 (Artificial Intelligence: Principles and Techniques)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "## Welcome to XCS221 (Artificial Intelligence: Principles and Techniques)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        }
+      ],
+      "env": {},
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 11,
+          "function_name": "what_is_ai",
+          "code": "def what_is_ai():"
+        }
+      ],
+      "env": {},
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 12,
+          "function_name": "what_is_ai",
+          "code": "text(\"We have lots of examples of AI all around us:\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "We have lots of examples of AI all around us:",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 13,
+          "function_name": "what_is_ai",
+          "code": "text(\"- AI assistants: ChatGPT, Claude, Gemini, Grok\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- AI assistants: ChatGPT, Claude, Gemini, Grok",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 14,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Autonomous vehicles: Waymo, Wayve\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Autonomous vehicles: Waymo, Wayve",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 15,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Game playing: [Deep Blue](https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)), [AlphaGo](https://en.wikipedia.org/wiki/AlphaGo), [AlphaStar](https://en.wikipedia.org/wiki/AlphaStar_(software))\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Game playing: [Deep Blue](https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)), [AlphaGo](https://en.wikipedia.org/wiki/AlphaGo), [AlphaStar](https://en.wikipedia.org/wiki/AlphaStar_(software))",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 16,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Competition math and programming: [IMO](https://x.com/OpenAI/status/1946594928945148246), [IOI](https://codeforces.com/blog/entry/134091), [ICPC](https://venturebeat.com/ai/google-and-openais-coding-wins-at-university-competition-show-enterprise-ai)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Competition math and programming: [IMO](https://x.com/OpenAI/status/1946594928945148246), [IOI](https://codeforces.com/blog/entry/134091), [ICPC](https://venturebeat.com/ai/google-and-openais-coding-wins-at-university-competition-show-enterprise-ai)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 17,
+          "function_name": "what_is_ai",
+          "code": "text(\"- 3D protein structure prediction: [AlphaFold](https://deepmind.google/science/alphafold/)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- 3D protein structure prediction: [AlphaFold](https://deepmind.google/science/alphafold/)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 19,
+          "function_name": "what_is_ai",
+          "code": "text(\"But what exactly **is** AI?\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "But what exactly **is** AI?",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 21,
+          "function_name": "what_is_ai",
+          "code": "text(\"Artificial intelligence\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "Artificial intelligence",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 22,
+          "function_name": "what_is_ai",
+          "code": "text(\"- artificial: runs on a computer (or robot)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- artificial: runs on a computer (or robot)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 23,
+          "function_name": "what_is_ai",
+          "code": "text(\"- intelligence: ???\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- intelligence: ???",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 25,
+          "function_name": "what_is_ai",
+          "code": "text(\"We could define **intelligence** in terms of humans...\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "We could define **intelligence** in terms of humans...",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 26,
+          "function_name": "what_is_ai",
+          "code": "text(\"...but we seek a definition from general principles.\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "...but we seek a definition from general principles.",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 28,
+          "function_name": "what_is_ai",
+          "code": "text(\"### Ingredients of intelligence\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "### Ingredients of intelligence",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 29,
+          "function_name": "what_is_ai",
+          "code": "text(\"What kinds of things should an intelligent agent be able to do?\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "What kinds of things should an intelligent agent be able to do?",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 30,
+          "function_name": "what_is_ai",
+          "code": "image(\"images/perceive-reason-act-learn.png\", width=600)"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "image",
+          "data": "images/perceive-reason-act-learn.png",
+          "style": {
+            "width": 600
+          },
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 32,
+          "function_name": "what_is_ai",
+          "code": "text(\"Motivating example: driving\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "Motivating example: driving",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 33,
+          "function_name": "what_is_ai",
+          "code": "image(\"images/self-driving-image.png\", width=400)"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "image",
+          "data": "images/self-driving-image.png",
+          "style": {
+            "width": 400
+          },
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 35,
+          "function_name": "what_is_ai",
+          "code": "text(\"**Perceive**: process raw inputs from the world\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "**Perceive**: process raw inputs from the world",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 36,
+          "function_name": "what_is_ai",
+          "code": "text(\"- visual scene understanding\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- visual scene understanding",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 37,
+          "function_name": "what_is_ai",
+          "code": "text(\"- speech recognition\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- speech recognition",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 38,
+          "function_name": "what_is_ai",
+          "code": "text(\"- natural language understanding\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- natural language understanding",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 40,
+          "function_name": "what_is_ai",
+          "code": "text(\"**Reason**: use knowledge + percepts to draw inferences about the world\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "**Reason**: use knowledge + percepts to draw inferences about the world",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 41,
+          "function_name": "what_is_ai",
+          "code": "text(\"- uniform cost search (in a deterministic world)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- uniform cost search (in a deterministic world)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 42,
+          "function_name": "what_is_ai",
+          "code": "text(\"- value iteration (decision-making under uncertainty)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- value iteration (decision-making under uncertainty)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 43,
+          "function_name": "what_is_ai",
+          "code": "text(\"- minimax (for adversarial games)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- minimax (for adversarial games)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 44,
+          "function_name": "what_is_ai",
+          "code": "text(\"- probabilistic inference (in Bayesian networks)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- probabilistic inference (in Bayesian networks)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 46,
+          "function_name": "what_is_ai",
+          "code": "text(\"**Act**: output actions that affect the world\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "**Act**: output actions that affect the world",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 47,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Text/image generation\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Text/image generation",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 48,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Speech synthesis\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Speech synthesis",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 49,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Robot manipulation\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Robot manipulation",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 51,
+          "function_name": "what_is_ai",
+          "code": "text(\"**Learn**: update agent based on experience\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "**Learn**: update agent based on experience",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 52,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Gradient descent\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Gradient descent",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 53,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Q-learning (reinforcement learning)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Q-learning (reinforcement learning)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 54,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Expectation maximization (for Bayesian networks)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Expectation maximization (for Bayesian networks)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 56,
+          "function_name": "what_is_ai",
+          "code": "text(\"...all under **resource constraints**\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "...all under **resource constraints**",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 57,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Computation: running time (also: memory, communication)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Computation: running time (also: memory, communication)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 58,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Information: data / experience, available inputs in a given situation\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Information: data / experience, available inputs in a given situation",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 60,
+          "function_name": "what_is_ai",
+          "code": "text(\"### Goals\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "### Goals",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 61,
+          "function_name": "what_is_ai",
+          "code": "text(\"But what does the **developer** want the agent to achieve?\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "But what does the **developer** want the agent to achieve?",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 62,
+          "function_name": "what_is_ai",
+          "code": "text(\"- An agent explicitly or implicitly encodes values / goals / objectives / utility functions\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- An agent explicitly or implicitly encodes values / goals / objectives / utility functions",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 63,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Alignment: how do make these values correspond to what the developer wants?\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Alignment: how do make these values correspond to what the developer wants?",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 64,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Example: ChatGPT aims to be informative, avoid hallucinations, refuse harmful queries\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Example: ChatGPT aims to be informative, avoid hallucinations, refuse harmful queries",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 66,
+          "function_name": "what_is_ai",
+          "code": "text(\"Also what impact **we** want the agent to have on society?\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "Also what impact **we** want the agent to have on society?",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 67,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Issues: privacy, copyright, jobs, inequality, geopolitics\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Issues: privacy, copyright, jobs, inequality, geopolitics",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 68,
+          "function_name": "what_is_ai",
+          "code": "text(\"- This is a deep, **sociotechnical** problem (who's we?)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- This is a deep, **sociotechnical** problem (who's we?)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 69,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Fundamental tradeoffs between people's values\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Fundamental tradeoffs between people's values",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 70,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Unintended consequences (social media, impact on education)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Unintended consequences (social media, impact on education)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 72,
+          "function_name": "what_is_ai",
+          "code": "text(\"### Summary\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "### Summary",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 73,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Ingredients of intelligence: perception, reasoning, action, learning\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Ingredients of intelligence: perception, reasoning, action, learning",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 74,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Resource constraints: computation, information\"), note(\"So we'll want to develop algorithms that are compute and data efficient.\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Resource constraints: computation, information",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        },
+        {
+          "type": "note",
+          "data": "So we'll want to develop algorithms that are compute and data efficient.",
+          "style": null,
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 75,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Developer goals: how do we build AI to accomplish something?\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Developer goals: how do we build AI to accomplish something?",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 76,
+          "function_name": "what_is_ai",
+          "code": "text(\"- Societal goals: how can we develop AI that benefits society?\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Societal goals: how can we develop AI that benefits society?",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 6,
+          "function_name": "main",
+          "code": "what_is_ai()"
+        }
+      ],
+      "env": {},
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 7,
+          "function_name": "main",
+          "code": "about_this_course()"
+        }
+      ],
+      "env": {},
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 7,
+          "function_name": "main",
+          "code": "about_this_course()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 79,
+          "function_name": "about_this_course",
+          "code": "def about_this_course():"
+        }
+      ],
+      "env": {},
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 7,
+          "function_name": "main",
+          "code": "about_this_course()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 80,
+          "function_name": "about_this_course",
+          "code": "text(\"Course philosophy\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "Course philosophy",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 7,
+          "function_name": "main",
+          "code": "about_this_course()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 81,
+          "function_name": "about_this_course",
+          "code": "text(\"- Timeless foundations (e.g., gradient descent)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Timeless foundations (e.g., gradient descent)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 7,
+          "function_name": "main",
+          "code": "about_this_course()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 82,
+          "function_name": "about_this_course",
+          "code": "text(\"- Modern examples (e.g., GPT-5 solving 12/12 problems at the ICPC)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Modern examples (e.g., GPT-5 solving 12/12 problems at the ICPC)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 7,
+          "function_name": "main",
+          "code": "about_this_course()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 83,
+          "function_name": "about_this_course",
+          "code": "text(\"- Learn by doing: grounded in building practical applications\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Learn by doing: grounded in building practical applications",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 7,
+          "function_name": "main",
+          "code": "about_this_course()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 85,
+          "function_name": "about_this_course",
+          "code": "text(\"Changes this year:\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "Changes this year:",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 7,
+          "function_name": "main",
+          "code": "about_this_course()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 86,
+          "function_name": "about_this_course",
+          "code": "text(\"- Tensor-native: from deep learning to value iteration to Bayesian network inference\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Tensor-native: from deep learning to value iteration to Bayesian network inference",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 7,
+          "function_name": "main",
+          "code": "about_this_course()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 87,
+          "function_name": "about_this_course",
+          "code": "text(\"- Cut constraint satisfaction problems :(\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Cut constraint satisfaction problems :(",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 7,
+          "function_name": "main",
+          "code": "about_this_course()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 88,
+          "function_name": "about_this_course",
+          "code": "text(\"- Deep dive into societal impact (e.g., copyright, supply chains, policy)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Deep dive into societal impact (e.g., copyright, supply chains, policy)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 7,
+          "function_name": "main",
+          "code": "about_this_course()"
+        }
+      ],
+      "env": {},
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        }
+      ],
+      "env": {},
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 91,
+          "function_name": "what_is_this_program",
+          "code": "def what_is_this_program():"
+        }
+      ],
+      "env": {},
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 92,
+          "function_name": "what_is_this_program",
+          "code": "text(\"This is an *executable lecture*, a program whose execution delivers the content of a lecture.\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "This is an *executable lecture*, a program whose execution delivers the content of a lecture.",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 94,
+          "function_name": "what_is_this_program",
+          "code": "text(\"We can step through code:\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "We can step through code:",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 95,
+          "function_name": "what_is_this_program",
+          "code": "total = 0  # @inspect total"
+        }
+      ],
+      "env": {
+        "total": {
+          "type": "int",
+          "contents": 0,
+          "dtype": null,
+          "shape": null
+        }
+      },
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 96,
+          "function_name": "what_is_this_program",
+          "code": "for x in [1, 2, 3]:  # @inspect x"
+        }
+      ],
+      "env": {
+        "x": {
+          "type": "int",
+          "contents": 1,
+          "dtype": null,
+          "shape": null
+        }
+      },
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 97,
+          "function_name": "what_is_this_program",
+          "code": "total += x  # @inspect total"
+        }
+      ],
+      "env": {
+        "total": {
+          "type": "int",
+          "contents": 1,
+          "dtype": null,
+          "shape": null
+        }
+      },
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 96,
+          "function_name": "what_is_this_program",
+          "code": "for x in [1, 2, 3]:  # @inspect x"
+        }
+      ],
+      "env": {
+        "x": {
+          "type": "int",
+          "contents": 2,
+          "dtype": null,
+          "shape": null
+        }
+      },
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 97,
+          "function_name": "what_is_this_program",
+          "code": "total += x  # @inspect total"
+        }
+      ],
+      "env": {
+        "total": {
+          "type": "int",
+          "contents": 3,
+          "dtype": null,
+          "shape": null
+        }
+      },
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 96,
+          "function_name": "what_is_this_program",
+          "code": "for x in [1, 2, 3]:  # @inspect x"
+        }
+      ],
+      "env": {
+        "x": {
+          "type": "int",
+          "contents": 3,
+          "dtype": null,
+          "shape": null
+        }
+      },
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 97,
+          "function_name": "what_is_this_program",
+          "code": "total += x  # @inspect total"
+        }
+      ],
+      "env": {
+        "total": {
+          "type": "int",
+          "contents": 6,
+          "dtype": null,
+          "shape": null
+        }
+      },
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 96,
+          "function_name": "what_is_this_program",
+          "code": "for x in [1, 2, 3]:  # @inspect x"
+        }
+      ],
+      "env": {
+        "x": {
+          "type": "int",
+          "contents": 3,
+          "dtype": null,
+          "shape": null
+        }
+      },
+      "renderings": []
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 99,
+          "function_name": "what_is_this_program",
+          "code": "text(\"- Lectures inherit the hierarchical structure of code\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Lectures inherit the hierarchical structure of code",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 100,
+          "function_name": "what_is_this_program",
+          "code": "text(\"- Code is more precise (than English and also than math)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Code is more precise (than English and also than math)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 101,
+          "function_name": "what_is_this_program",
+          "code": "text(\"- Need to write code to build AI at the end of the day\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Need to write code to build AI at the end of the day",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        },
+        {
+          "path": "welcome.py",
+          "line_number": 102,
+          "function_name": "what_is_this_program",
+          "code": "text(\"- Check out the toolbar at the top right (e.g., control display)\")"
+        }
+      ],
+      "env": {},
+      "renderings": [
+        {
+          "type": "markdown",
+          "data": "- Check out the toolbar at the top right (e.g., control display)",
+          "style": {},
+          "external_link": null,
+          "internal_link": null
+        }
+      ]
+    },
+    {
+      "stack": [
+        {
+          "path": "welcome.py",
+          "line_number": 8,
+          "function_name": "main",
+          "code": "what_is_this_program()"
+        }
+      ],
+      "env": {},
+      "renderings": []
+    }
+  ]
+}

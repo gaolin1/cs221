@@ -1,0 +1,16 @@
+\item \points{4b}
+Recall that Modus ponens is not complete, meaning that we can't use it to derive
+everything that's true. Suppose the knowledge base contains the following
+formulas:
+\[\text{KB} = \{ A \vee B, B \to C, (A \vee C) \to D \}.\]
+In this example, Modus ponens cannot be used to derive $D$, even though $D$ is
+entailed by the knowledge base. However, recall that the resolution rule is
+complete.
+
+{\bf Your task:} Convert the knowledge base into CNF and apply the resolution rule repeatedly
+to derive $D$.
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_4b(.*?)% <SCPD_SUBMISSION_TAG>_4b', f.read(), re.DOTALL)).group(1))
+🐍

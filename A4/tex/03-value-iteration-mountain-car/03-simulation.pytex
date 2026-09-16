@@ -1,0 +1,11 @@
+\item \points{3c}
+
+Run |python train.py --agent value-iteration| to train the agent using model based value iteration you implemented above and see the plot of reward per episode.
+Comment on the plot, and discuss when might model based value iteration perform poorly. You can also run |python mountaincar.py --agent value-iteration| to visually observe how the trained agent performs the task now.
+
+\textbf{What we expect: } The plot, 2-3 sentences describing the plot and discussion of when model based value iteration may fail.
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_3c(.*?)% <SCPD_SUBMISSION_TAG>_3c', f.read(), re.DOTALL)).group(1))
+🐍

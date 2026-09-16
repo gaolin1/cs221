@@ -1,0 +1,12 @@
+\item \points{6e} \textbf{Follow-Up Testing or Deeper Analysis}
+
+\begin{itemize}
+    \item Suggest additional tests or analyses that could strengthen or challenge your findings. What else would you examine (or how would you expand your test suite) to more robustly assess product fairness and reliability?
+\end{itemize}
+
+\expect{In 2-3 sentences, propose at least one follow-up experiment or extension to your benchmarking approach, justifying its value.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6e(.*?)% <SCPD_SUBMISSION_TAG>_6e', f.read(), re.DOTALL)).group(1))
+🐍

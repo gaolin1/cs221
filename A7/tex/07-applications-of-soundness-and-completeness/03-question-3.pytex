@@ -1,0 +1,11 @@
+\item \points{7c}
+
+Imagine you are in a setting where you have a separate verifier system that can validate hypotheses (e.g., a human in the loop that inspects the hypotheses). 
+You want to capture as much true information as possible in this setting. Which system would you choose and why? 
+
+\textbf{What we expect:} 2-3 sentences explaining your choice, tying in the definitions of soundness and completeness. 
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_7c(.*?)% <SCPD_SUBMISSION_TAG>_7c', f.read(), re.DOTALL)).group(1))
+🐍

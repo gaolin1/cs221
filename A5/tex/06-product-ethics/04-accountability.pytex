@@ -1,0 +1,13 @@
+\item \points{6d} \textbf{User Empowerment and Accountability Tools}
+
+\begin{itemize}
+    \item What tools are available to regular users to help hold the company accountable for its promises (e.g., user data export, data deletion requests, public transparency dashboards, reporting forms)?
+    \item If you cannot find such tools, propose one (realistic and actionable) that the company could add to give users more power over---or insight into---their data and product interactions.
+\end{itemize}
+
+\expect{List any accountability tools actually implemented by the company. If lacking, describe one practical tool or feature users could be given, with 1--2 sentences explaining its value.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6d(.*?)% <SCPD_SUBMISSION_TAG>_6d', f.read(), re.DOTALL)).group(1))
+🐍

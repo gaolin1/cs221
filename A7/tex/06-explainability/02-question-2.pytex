@@ -1,0 +1,12 @@
+\item \points{6b}
+
+Why might this explanation not be adequate?
+
+\textbf{Hint:} think about model misspecification or framing of the question posed to the logic-based system.
+
+\textbf{What we expect:} 1-2 sentences answering the question. 
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6b(.*?)% <SCPD_SUBMISSION_TAG>_6b', f.read(), re.DOTALL)).group(1))
+🐍

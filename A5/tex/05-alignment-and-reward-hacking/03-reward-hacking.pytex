@@ -1,0 +1,26 @@
+\item \points{5c}
+
+Pacman's behavior above is an example of one \href{https://arxiv.org/abs/1606.06565}{concrete problem in AI alignment} called \textbf{reward hacking}, which occurs when an agent satisfies some objective 
+but may not actually fulfill the designer's intended goals, due e.g. to an imprecise definition of the objective function. As another example, a cleaning robot rewarded 
+for minimizing the number of messes in a given space could optimize its reward function by hiding the messes under the rug. In this case, the agent finds a 
+shortcut to optimize the reward, but the shortcut fails to attain the designer’s goals. 
+For more examples of reward hacking (or "specification gaming"), see this \href{https://www.deepmind.com/blog/specification-gaming-the-flip-side-of-ai-ingenuity}{article from DeepMind} and 
+\href{http://tinyurl.com/specification-gaming}{this list} of concrete examples of reward hacking observed in the AI literature.
+
+
+
+Even if the agent \textit{does} satisfy the designer's goals, another problem can arise (again see \href{https://arxiv.org/abs/1606.06565}{this paper}): 
+the agent's behavior might cause \textbf{negative side effects} that come in conflict with broader values held by society or other stakeholders. 
+For instance, a social media content recommendation system might aim to maximize user engagement, but in doing so, spread disinformation and conspiracy 
+theories (since such posts get the most engagement), which is at odds with societal values.
+
+
+
+Can you think of another example of either of these problems?
+
+\textbf{What we expect: } In 2-5 sentences describe another realistic scenario (outside Pacman) in which a designer might specify an objective, but the objective is either susceptible to reward hacking, or the resulting agent/model causes negative side effects. Please state if your example is an instance of reward hacking or negative side effects (or both) along with a brief justification to receive full credit.
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5c(.*?)% <SCPD_SUBMISSION_TAG>_5c', f.read(), re.DOTALL)).group(1))
+🐍

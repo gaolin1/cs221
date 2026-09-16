@@ -1,0 +1,13 @@
+\item \points{6d} \textbf{User Rights, Feedback, and Fairness}
+
+\begin{itemize}
+    \item What rights or standards of service should users expect when receiving results from generative models, especially if they observe systematic differences?
+    \item Discuss what mechanisms or feedback channels should be available for users to report issues, and how responsive companies should be in addressing these concerns (2--4 sentences).
+\end{itemize}
+
+\expect{In 2-3 sentences, propose at least one user rights standard or feedback guideline, commenting on platform responsibilities.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6d(.*?)% <SCPD_SUBMISSION_TAG>_6d', f.read(), re.DOTALL)).group(1))
+🐍

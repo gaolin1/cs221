@@ -1,0 +1,12 @@
+\item \points{6a} \textbf{Constructing Contrastive Input Sets}
+
+\begin{itemize}
+    \item Design at least \textbf{5} pairs or sets of inputs that differ by a single key attribute (e.g., Western bias, gender bias, racial bias, name-based bias, dialect bias, cultural bias, etc.). For each set, specify which attribute you are testing and briefly explain why you chose it.
+\end{itemize}
+
+\expect{Submit at least five contrastive sets of inputs, each with 1--2 sentences about the attribute being examined. You may draw inspiration from published bias benchmarks or input suites.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6a(.*?)% <SCPD_SUBMISSION_TAG>_6a', f.read(), re.DOTALL)).group(1))
+🐍

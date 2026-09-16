@@ -1,0 +1,12 @@
+\item \points{5a}
+
+The implementation of the Mountain Car MDP you built in the previous questions actually already has velocity constraints in the form of a \texttt{self.max\_speed} parameter.
+Read through OpenAI Gym's \href{https://github.com/openai/gym/blob/master/gym/envs/classic_control/mountain_car.py#L106}{Mountain Car implementation} and explain how \texttt{self.max\_speed} is used. 
+
+\textbf{What we expect:} One sentence on how \texttt{self.max\_speed} parameter is used in \texttt{custom\_mountain\_car.py}
+
+% FIX
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5a(.*?)% <SCPD_SUBMISSION_TAG>_5a', f.read(), re.DOTALL)).group(1))
+🐍

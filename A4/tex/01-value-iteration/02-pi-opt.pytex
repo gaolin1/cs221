@@ -1,0 +1,10 @@
+\item \points{1b}
+
+Using $V^\star_2(\cdot)$, what is the corresponding optimal policy $\pi^\star$ for all non-end states?
+
+\textbf{What we expect: } Optimal policy $\pi^\star(s)$ for each non-end state.
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1b(.*?)% <SCPD_SUBMISSION_TAG>_1b', f.read(), re.DOTALL)).group(1))
+🐍

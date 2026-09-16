@@ -1,0 +1,10 @@
+\item \points{4e}
+
+Despite a slightly worse performance on this problem, why could the function approximation Q-learning outperform the tabular Q-learning in some other environments? Consider the situations where the exploration period is limited, where the state space is very high dimensional and difficult to explore, and/or you have space constraints.
+
+\textbf{What we expect: } 2-3 sentences discussing why |FunctionApproxQLearning| can be better in various scenarios.
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_4e(.*?)% <SCPD_SUBMISSION_TAG>_4e', f.read(), re.DOTALL)).group(1))
+🐍

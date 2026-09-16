@@ -1,0 +1,41 @@
+\item \points{4b}
+
+For Q-learning in continuous states, we need to use function approximation. The first step of function approximation is extracting 
+features from the given state. Feature extractors of different complexities work well with different problems: linear and polynomial feature 
+extractors that work well with simpler problems may not be suitable for other problems. For the mountain car task, we are going to use 
+a Fourier feature extractor. 
+    
+For the Fourier feature extractor, the goal is to approximate Q-value using a sum of sinusoidal components: for state $s = [s_1, \ldots, s_k]$ and maximum coefficient $m$, the feature extractor $\phi$ is:
+$$\phi(s, m) = [\cos(0), \cos(s_1\pi), \ldots, \cos(s_k\pi), \cos(2s_1\pi), \cos((s_1+s_2)\pi), \ldots, \cos((ms_1 + ms_2 + \ldots + ms_k)\pi)]$$
+
+Note that $\phi(s, m) \in \mathbb{R}^{(m+1)^k}$. For those interested, look up Fourier approximation and how effective Fourier features are in different settings.
+
+In the code you implement, there is another variable \texttt{scale} which is applied to different dimensions of the input state. We give you an example of how to compute this Fourier feature with $s = (s_1, s_2)$, \texttt{scale}$=[d_1, d_2]$ and $m=2$. We find all the entries by considering all the combinations of scaled entries of the state as below.
+\begin{table}[h!]
+    \centering
+    \lstDeleteShortInline|                                                
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        & 0 & $d_1 s_1$ & $2 d_1 s_1$ \\
+        \hline
+        0 & 0 & $d_1 s_1$ & $2 d_1 s_1$ \\
+        \hline
+        $d_2 s_2$ & $d_2 s_2$ & $d_1 s_1 + d_2 s_2$ & $2 d_1 s_1 + d_2 s_2$ \\
+        \hline
+        $2 d_2 s_2$ & $2 d_2 s_2$ & $d_1 s_1 + 2 d_2 s_2$ & $2 d_1 s_1 + 2 d_2 s_2$ \\
+        \hline
+    \end{tabular}
+    \lstMakeShortInline|
+\end{table}
+
+From this, our feature extractor will return a numpy array with 9 elements - \\
+$[\cos 0, \cos d_1s_1\pi, \cos 2d_1s_1\pi, \cos d_2s_2\pi, \cos (d_1s_1 + d_2s_2)\pi, \dots, \cos (2d_1s_1 + 2d_2s_2)\pi]$. If there is a third dimension $s_3$, we will repeat the "outer-sum" with the nine entries in the table and $(0, d_3s_3, 2d_3s_3)$, before multiplying by $\pi$ and applying cosine to the resulting 27 elements.
+
+Implement \texttt{fourier\_feature\_extractor} in \texttt{submission.py}. 
+
+Looking at \texttt{util.polynomialFeatureExtractor} may be useful
+for familiarizing oneself with numpy.
+
+\expect{An implementation of \texttt{fourier\_feature\_extractor} in \texttt{submission.py}}
+
+

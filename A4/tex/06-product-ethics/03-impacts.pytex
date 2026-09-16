@@ -1,0 +1,12 @@
+\item \points{6c} \textbf{Analyzing Disparities and Practical Impacts}
+
+\begin{itemize}
+  \item Did you observe any patterns of bias or disparities in the tool’s behavior? Explain what you found and reflect on who might be affected and why it matters.
+\end{itemize}
+
+\expect{In 4-6 sentences, provide a thoughtful analysis of any detected patterns or biases, and discuss their significance and possible user impact. Additionally, identify which demographic or user groups might be disproportionately affected, and propose what monitoring and auditing mechanisms would be needed to address inequality in the product's performance.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6c(.*?)% <SCPD_SUBMISSION_TAG>_6c', f.read(), re.DOTALL)).group(1))
+🐍

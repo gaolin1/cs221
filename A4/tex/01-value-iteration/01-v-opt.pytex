@@ -1,0 +1,13 @@
+\item \points{1a}
+
+What is the value of $V^\star_i(s)$ for each $s \in \text{States}$ after each iteration $i = \{1, 2\}$ of value iteration?
+Recall that
+$\forall s \in \text{States}$, $V^\star_0(s) = 0$ and,
+for any $i$, end state $s_{\text{end}}$, we have $V^\star_i(s_\text{end}) = 0$.
+
+\textbf{What we expect: } The $V^\star_i(s)$ of all 5 states after each iteration. In total, 10 values should be reported. 
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1a(.*?)% <SCPD_SUBMISSION_TAG>_1a', f.read(), re.DOTALL)).group(1))
+🐍

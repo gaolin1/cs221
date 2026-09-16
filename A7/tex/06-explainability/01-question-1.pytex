@@ -1,0 +1,11 @@
+\item \points{6a}
+
+In the context of a general first-order logic system, like the one used in Problem 3’s Liar Puzzle, what does the system return (besides the final answer) 
+that could be considered an explanation?
+
+\textbf{What we expect:} 1-2 sentences answering the question. 
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6a(.*?)% <SCPD_SUBMISSION_TAG>_6a', f.read(), re.DOTALL)).group(1))
+🐍

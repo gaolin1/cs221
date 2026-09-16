@@ -1,0 +1,18 @@
+\item \points{5c}
+
+Consider a different way of setting the constraint where you limit the set of actions the agent can take in the action space. 
+In ConstrainedQLearning, implement constraints on the set of actions the agent can take each step such that \texttt{velocity\_(t+1) < velocity\_threshold}. 
+Remember to handle the case where the set of valid actions is empty. Below is the equation for calculating the velocity at time step t+1. 
+$$\text{velocity}_{t+1} = \text{velocity}_t + (\text{action} - 1) * \text{force} - \cos(3 * \text{position}_t) * \text{gravity}$$
+We've determined that in the mountain car environment, a velocity of 0.065 is considered unsafe. After implementing the velocity constraint,
+run grader test 5c-0-helper to examine the optimal policy for two continuous MDPs running Q-Learning (one with max\_speed of 0.065 and the other with a very large max\_speed constraint).
+Provide 1-2 sentences explaining why the output policies are now different. 
+
+\textbf{What we expect:} Complete the implmentation of \texttt{ConstrainedQLearning} in \texttt{submission.py}, then run \texttt{python grader.py 5c-0-helper}. Include 1-2 sentences explaining why there is a difference between the two scenarios.
+
+
+% FIX
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5c(.*?)% <SCPD_SUBMISSION_TAG>_5c', f.read(), re.DOTALL)).group(1))
+🐍

@@ -1,0 +1,11 @@
+\item \points{5b}
+
+Run Function Approximation Q-Learning without the \texttt{max\_speed} constraint by running \texttt{python train.py --agent function-approximation --max\_speed=100000}. We are changing \texttt{max\_speed} from its original value of 0.07 to a very large float to approximate removing the constraint entirely. Notice that running the MDP unconstrained doesn't really change the output behavior. Explain in 1-2 sentences why this might be the case.
+
+\textbf{What we expect:} One sentence explaining why the Q-Learning result doesn't necessarily change.
+
+% FIX
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5b(.*?)% <SCPD_SUBMISSION_TAG>_5b', f.read(), re.DOTALL)).group(1))
+🐍

@@ -1,0 +1,14 @@
+\item \points{6c} \textbf{Fairness, Transparency, and Accountability in Practice}
+
+\begin{itemize}
+    \item Choose one \textbf{concrete definition} or example each for fairness, transparency, and accountability (e.g., fairness as demographic parity, transparency as publishing model cards, accountability as user appeals of automated decisions).
+    \item How (if at all) does the company implement these concepts? Do they publish technical documentation (model cards, data sheets, safety reports), disclose model/data sources, allow users to contest or appeal outputs, or host public feedback forums?
+    \item Identify any alternatives they could implement, or propose new ideas to improve any of these areas for this product.
+\end{itemize}
+
+\expect{For each of fairness, transparency, and accountability, briefly (in 1-2 sentences) state your chosen definition/example and analyze the company's real-world implementation. Suggest at least one improvement or alternative measure for any area where they appear lacking.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6c(.*?)% <SCPD_SUBMISSION_TAG>_6c', f.read(), re.DOTALL)).group(1))
+🐍

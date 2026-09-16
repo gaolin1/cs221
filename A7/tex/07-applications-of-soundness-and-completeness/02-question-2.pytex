@@ -1,0 +1,14 @@
+\item \points{7b}
+
+For this and next question, imagine you are choosing between two proof-based systems. 
+System A is sound but not complete. System B is complete but not sound. 
+Assume the only difference between System A and System B is the difference between soundness and completeness.
+
+You want to deploy one of these systems in a safety-critical setting, where acting on a false conclusion has severe consequences. Which system would you choose and why? 
+
+\textbf{What we expect:} 2-3 sentences explaining your choice, tying in the definitions of soundness and completeness. 
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_7b(.*?)% <SCPD_SUBMISSION_TAG>_7b', f.read(), re.DOTALL)).group(1))
+🐍

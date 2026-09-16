@@ -1,0 +1,10 @@
+\item \points{6c}
+
+Now, reflect on the four explainability considerations defined in this problem. Are any of these met by the explanations produced by a logic-based system?
+
+\textbf{What we expect:} 2-4 sentences answering the question. 
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6c(.*?)% <SCPD_SUBMISSION_TAG>_6c', f.read(), re.DOTALL)).group(1))
+🐍

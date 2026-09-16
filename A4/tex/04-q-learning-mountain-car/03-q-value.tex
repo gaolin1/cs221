@@ -1,0 +1,5 @@
+\item \points{4c}
+
+Now we can find the Q-value of each |(state, action)| by multiplying the extracted features from this pair with weights. 
+Unlike the tabular Q-learning in which Q-values are updated directly, with function approximation, we are updating weights associated 
+with each feature. Using |fourierFeatureExtractor| from the previous part, complete the implementation of |FunctionApproxQLearning|.

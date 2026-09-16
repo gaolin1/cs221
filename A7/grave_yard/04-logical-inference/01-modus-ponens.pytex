@@ -1,0 +1,22 @@
+\item \points{4a}
+Some inferences that might look like they're outside the scope of Modus ponens
+are actually within reach. Suppose the knowledge base contains the following two
+formulas:
+\[\text{KB} = \{ (A \vee B) \to C, A  \}.\]
+
+{\bf Your task:}
+
+First, convert the knowledge base into conjunctive normal form (CNF). Then apply
+Modus ponens to derive C. Please show how your knowledge base changes as you
+apply derivation rules.
+
+{\em Hint: You may use the fact that $P \to Q$ is equivalent $\neg P \vee Q$.
+
+Remember, this isn't about you as a human being able to arrive at the
+conclusion, but rather about the rote application of a small set of
+transformations (which a computer could execute).}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_4a(.*?)% <SCPD_SUBMISSION_TAG>_4a', f.read(), re.DOTALL)).group(1))
+🐍

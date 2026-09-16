@@ -1,0 +1,28 @@
+\item {\bf Safe Exploration}
+
+We learned about different state exploration policies for RL in order to get information about \texttt{(s,a)}. 
+The method implemented in our MDP code is epsilon-greedy exploration, which balances both exploitation (choosing the action a that 
+maximizes $\hat{Q}_{\text{opt}}(s, a))$ and exploration (choosing the action a randomly).
+$$\pi_{\text{act}}(s) = \begin{cases} \arg\max_{a \in \text{Actions}}\hat{Q}_{\text{opt}}(s,a) & \text{probability } 1 - \epsilon \\ 
+\text{random from Actions}(s) & \text{probability } \epsilon \end{cases}$$
+
+In real-life scenarios when safety is a concern, there might be constraints that need to be set in the state exploration phase. 
+For example, robotic systems that interact with humans should not cause harm to humans during state exploration. 
+\cite{fn-2} in RL is thus a critical research question in the field of AI safety 
+and human-AI interaction. 
+
+Assume there are harmful consequences for the driver of a mountain-car if the car exceeds a certain velocity. 
+One very simple approach of constrained RL is to restrict the set of potential actions that the agent can take at each step. 
+We want to apply this approach to restrict the states that the agent can explore in order to prevent reaching unsafe speeds.
+
+\begin{enumerate}
+
+  \input{05-safe-exploration/01-max-speed}
+
+  \input{05-safe-exploration/02-approx}
+
+  \input{05-safe-exploration/03-constrained}
+
+  \input{05-safe-exploration/04-real-world-context}
+
+\end{enumerate}

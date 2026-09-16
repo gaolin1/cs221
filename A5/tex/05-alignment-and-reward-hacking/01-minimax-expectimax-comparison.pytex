@@ -1,0 +1,13 @@
+\item \points{5a}
+
+Describe why the behavior of the minimax and
+expectimax agents differ. In particular, why does the minimax agent,
+seemingly counterintuitively, always rush the closest ghost (instead of the further ghost), while the
+expectimax agent (occasionally) doesn't?
+
+\textbf{What we expect: } One sentence why the minimax agent always rushes the closest ghost and not the further ghost, and one sentence why the expectimax agent doesn't. Specifically, please state the assumptions made by minimax because of which this phenomenon occurs.
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5a(.*?)% <SCPD_SUBMISSION_TAG>_5a', f.read(), re.DOTALL)).group(1))
+🐍

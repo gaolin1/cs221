@@ -1,0 +1,26 @@
+\item {\bf Value Iteration}
+
+In this problem, you will perform value iteration updates manually on a
+basic game to build your intuitions about solving MDPs.
+The set of possible states in this game is $\text{States} = \{-2, -1, 0, +1, +2\}$ and the set of possible actions is $\text{Actions}(s) = \{a_1, a_2\}$ for all states that are not end states.  The starting state is $0$ and there are two end states, $-2$ and $+2$. Recall that the transition function $T: \text{States} \times \text{Actions} \rightarrow \Delta(\text{States})$ encodes the probability of transitioning to a next state $s'$ after being in state $s$ and taking action $a$ as $T(s' \vert s,a)$. In this MDP, the transition dynamics are given as follows:
+
+$\forall i \in \{-1, 0, 1\} \subseteq \text{States}$,
+
+\begin{itemize}
+  \item $T(i-1 \vert i, a_1) = 0.8$ and $T(i+1 \vert i, a_1) = 0.2$
+  \item $T(i-1 \vert i, a_2) = 0.7$ and $T(i+1 \vert i, a_2) = 0.3$
+\end{itemize}
+
+
+Think of this MDP as a chain formed by states $\{-2, -1, 0, +1, +2\}$. In words, action $a_1$ has a 80\% chance of moving the agent backwards in the chain and a 20\% chance of moving the agent forward. Similarly, action $a_2$ has a 70\% of sending the agent backwards and a 30\% chance of moving the agent forward. We will use a discount factor $\gamma = 1$.
+The reward function for this MDP is
+$$\text{Reward}(s,a,s') = \begin{cases} 10 & \text{if } s' = -2, \\ 50 & \text{if } s' = +2, \\ -5 & \text{otherwise}. \end{cases}$$
+
+
+\begin{enumerate}
+
+  \input{01-value-iteration/01-v-opt}
+
+  \input{01-value-iteration/02-pi-opt}
+
+\end{enumerate}

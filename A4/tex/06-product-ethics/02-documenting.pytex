@@ -1,0 +1,13 @@
+\item \points{6b} \textbf{Running and Documenting Results}
+
+\begin{itemize}
+    \item Run all your contrastive inputs through the AI product.
+    \item Carefully document the outputs (include representative examples in your PDF writeup) and note any differences, disparities, or recurring error types you observe. Summarize overall patterns in 2--3 sentences.
+\end{itemize}
+
+\expect{In 2-3 sentences, include output examples for each input set (in your PDF), and a brief written summary of disparities or patterns discovered.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6b(.*?)% <SCPD_SUBMISSION_TAG>_6b', f.read(), re.DOTALL)).group(1))
+🐍

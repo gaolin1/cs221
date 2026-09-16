@@ -1,0 +1,19 @@
+\item \points{2a}
+
+Suppose we have an MDP with states $S$ and a discount factor $\lambda<1$, but we
+have an MDP solver that can only solve MDPs with discount factor of 1. How can
+we leverage the MDP solver to solve the original MDP?
+
+Let us define a new MDP with states $S'=S \cup{} \{o\}$, where $o$ is a new
+state. Let's use the same actions ($A'(s)=A(s)$), but we need to keep the
+discount $\lambda'=1$. Your job is to define new transition probabilities
+$T'(s,a,s')$ and rewards $R'(s,a,s')$ in terms of the old MDP such that the
+optimal values $V_\text{opt}(s)$ for all $s\in S$ are equal under the original
+MDP and the new MDP.
+
+{\em Hint: What recurrence must the optimal values for each MDP satisfy? You can show that the optimal values for each MDP are the same if these recurrences are equivalent. If you're not sure how to approach this problem, go back to the slide notes from this \href{https://stanford-cs221.github.io/spring2026/modules/module.html#include=mdps/mdp1.js}{MDP lecture} and closely read the slides on convergence toward the end of the deck.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_2a(.*?)% <SCPD_SUBMISSION_TAG>_2a', f.read(), re.DOTALL)).group(1))
+🐍

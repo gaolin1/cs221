@@ -1,0 +1,37 @@
+\item {\bf Value Iteration on Mountain Car}
+
+Now that we have gotten a bit of practice with general-purpose MDP algorithms, let's use them for some control problems.
+Mountain Car is a classic example in robot control \cite{fn-7} where you try to get a car to the goal located on the top of a steep hill by accelerating left or right.
+We will use the implementation provided by The Farama Foundation's Gymnasium, formerly OpenAI Gym.
+
+The state of the environment is provided as a pair (position, velocity).
+The starting position is randomized within a small range at the
+bottom of the hill. At each step, the actions are either to accelerate to the left, to the right, or do nothing, and the transitions are
+determined directly from the physics of a frictionless car on a hill. Every step produces a small negative reward, and reaching the goal provides a large
+positive reward.
+
+To get the feel for the environment, test with an untrained agent which takes random action at each step and see how it performs.
+
+\texttt{python mountaincar.py --agent naive}
+
+You will see the agent struggling, not able to complete the task within the time limit. 
+In this assignment, you will train this agent with different reinforcement learning algorithms so that it can learn to climb the hill.
+As the first step, we have designed two MDPs for this task. The first uses the car's continuous (position, velocity) state as is, and the second discretizes
+the position and velocity into bins and uses indicator vectors.
+
+Carefully examine |ContinuousGymMDP| and |DiscreteGymMDP| classes in |util.py| and make sure you understand.
+
+If we want to apply value iteration to the |DiscreteGymMDP| (think about why we can't apply it to ContinuousGymMDP), 
+we require the transition probabilities $T(s, a, s')$ and rewards $R(s, a, s')$ to be known. But oftentimes in the real world, $T$ and $R$ are unknown, 
+and the gym environments are set up in this way as well, only interfacing through the |.step()| function. One method
+to still determine the optimal policy is model-based value iteration, which runs Monte Carlo simulations to estimate $\hat{T}$ and $\hat{R}$, and then runs value iteration. 
+This is an example of model-based RL. Examine |RLAlgorithm| in |util.py| to understand the |getAction| and |incorporateFeedback| interface 
+and peek into the |simulate| function to see how they are called repeatedly when training over episodes.
+
+\begin{enumerate}
+
+  \input{03-value-iteration-mountain-car/01-implement-value-iteration}
+  \input{03-value-iteration-mountain-car/02-implement-mbmc}
+  \input{03-value-iteration-mountain-car/03-simulation}
+
+\end{enumerate}

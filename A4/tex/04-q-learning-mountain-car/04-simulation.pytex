@@ -1,0 +1,11 @@
+\item \points{4d}
+
+Run |python train.py --agent tabular| and |python train.py --agent function-approximation| to see the plots for how the TabularQLearning and FunctionApproxQLearning work respectively, and comment on the plots. You should expect to see that tabular Q-learning performs better than function approximation Q-learning on this task. What might be some of the reasons? You can also run |python mountaincar.py --agent tabular| and |python mountaincar.py --agent function-approximation| to visualize the agent trained with discrete and continuous MDP respectively.
+
+\textbf{What we expect: } Plots and 2-3 sentences comparing the performances of |TabularQLearning| and \\
+|FunctionApproxQLearning|, discussing possible reasons as well.
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_4d(.*?)% <SCPD_SUBMISSION_TAG>_4d', f.read(), re.DOTALL)).group(1))
+🐍

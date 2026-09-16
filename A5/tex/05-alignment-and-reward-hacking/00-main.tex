@@ -1,0 +1,42 @@
+\item {\bf AI (Mis)Alignment and Reward Hacking}
+
+
+Before diving into the problem, it would be beneficial to refer to the AI alignment module to gain deeper insights and context:
+
+
+\begin{itemize}
+  \item \href{https://www.youtube.com/watch?v=5WHObJWE1FE&t=5s}{Video}
+  \item \href{https://stanford-cs221.github.io/autumn2023-extra/modules/games/ai-alignment-problem.pdf}{PDF}
+\end{itemize}
+
+
+In this problem we'll revisit the differences between our minimax and expectimax agents, and 
+reflect upon the broader consequences of \textbf{AI misalignment:} when our agents don't do what we want them to do, or
+technically do, but cause unintended consequences along the way. Going back to Problem 4, consider the following runs of the
+minimax and expectimax agents on the small
+|trappedClassic| environment:
+
+\begin{lstlisting}
+  python pacman.py -p MinimaxAgent -l trappedClassic -a depth=3
+  python pacman.py -p ExpectimaxAgent -l trappedClassic -a depth=3
+\end{lstlisting}
+
+\textbf{Be sure to run each command a few times}, as there is some
+randomness in the environment and the agents' behaviors, and pay attention, as
+the episode lengths can be quite short. What you should see is that the minimax
+agent will always rush towards the closest ghost, while the expectimax agent
+will occasionally be able to pick up all of the pellets and win the episode.
+(If you don't see this behavior, your implementations could be incorrect!)
+
+Then answer the following questions:
+
+
+\begin{enumerate}
+
+  \input{05-alignment-and-reward-hacking/01-minimax-expectimax-comparison}
+
+  \input{05-alignment-and-reward-hacking/02-alignment}
+
+  \input{05-alignment-and-reward-hacking/03-reward-hacking}
+  
+\end{enumerate}

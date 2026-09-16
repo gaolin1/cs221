@@ -1,0 +1,22 @@
+\item \points{5d}
+
+Thus far, we have illustrated how to achieve safe exploration via constrained RL, such as limiting maximum velocity or restricting the action space in the Mountain Car environment. These ideas are also highly relevant in real-world contexts, where RL agents learn through trial and error, often in environments with real human consequences.
+  
+Imagine a company is developing autonomous vehicles using RL and wants to test them on public roads in residential neighborhoods. These environments include pedestrians, other vehicles, and traffic signals, and the car’s onboard sensors (e.g., cameras) can detect these features.
+
+Design two Markov Decision Processes (MDPs) MDP A and MDP B, and associated exploration strategies for each MDP, that capture the aforementioned scenario of autonomous vehicles (as the agent) learning to drive on public roads through reinforcement learning, with the following requirements.
+
+\begin{itemize}
+    \item MDP A: Define an MDP and exploration policy for the MDP where the autonomous car could cause harm in the aforementioned context (e.g. the autonomous car endangers pedestrians, breaks traffic laws, etc.).
+    \item MDP B: Modify your design of MDP A to reduce or avoid the harm identified in MDP A.
+\end{itemize}
+
+For each MDP, include: States, Actions (as a function of the current state $s$), and Reward (as a function of the current state, action taken, and next state $(s, a, s')$), a state exploration policy, and a brief (1-2 sentence) ethical explanation of how the design could lead to or mitigate harm.
+
+\textbf{What we expect: } Definitions of two MDPs A and B (specifically define States, Actions($s$), and Reward($s, a, s'$)), their corresponding state exploration policies, and 1-2 sentence explanation of how their design could cause or mitigate harm.
+
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_5d(.*?)% <SCPD_SUBMISSION_TAG>_5d', f.read(), re.DOTALL)).group(1))
+🐍

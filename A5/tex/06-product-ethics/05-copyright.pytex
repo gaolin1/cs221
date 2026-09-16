@@ -1,0 +1,14 @@
+\item \points{6e} \textbf{Copyright and Fair Use}
+
+\begin{itemize}
+    \item Research whether the company has disclosed information about the training data used for this product. Have there been any lawsuits, controversies, or public discussions about copyright, fair use, or data licensing related to this product or similar AI systems?
+    \item Clearly distinguish between \textbf{memorization} and \textbf{extraction} in AI models: \textbf{memorization} occurs when the model outputs exact copies of training data (for example, an unaltered paragraph or image from its training set), while \textbf{extraction} is when the model generates outputs that closely resemble or reconstruct substantial portions of copyrighted content—even if not copied word-for-word—due to patterns it learned during training. Based on your use of the product, have you encountered any outputs that appear to result from either memorization (exact reproduction) or extraction (near-verbatim or substantial portions) of copyrighted material, and would these raise copyright concerns?
+    \item How does the company address copyright and fair use in their terms of service or documentation? What policies govern how users can use outputs that might contain copyrighted material?
+\end{itemize}
+
+\expect{Summarize any copyright-related controversies, lawsuits, or policies you found related to this product in 4-6 sentences. Discuss the company's approach to fair use, data licensing, and user rights regarding potentially copyrighted outputs. If you observed any outputs that might raise copyright concerns, describe them briefly.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6e(.*?)% <SCPD_SUBMISSION_TAG>_6e', f.read(), re.DOTALL)).group(1))
+🐍

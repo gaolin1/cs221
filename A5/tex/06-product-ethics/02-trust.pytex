@@ -1,0 +1,15 @@
+\item \points{6b} \textbf{Transparency and Trust Analysis}
+
+\begin{itemize}
+    \item After reviewing company documentation (terms of service, privacy policies, safety pages), identify any aspects of their data transparency specifically intended to build user trust (e.g., plain-language explanations, user-accessible logs, opt-out features).
+    \item Similarly, identify any practices that might undermine user trust (e.g., vague or shifting policies, difficult opt-out procedures, nontransparent data resale practices). Provide examples if possible.
+    \item If you did not find transparency measures, propose at least one realistic feature or policy that would increase user trust for this product.
+    \item Consider the concept of \textbf{openness \& transparency}: transparency is often seen as a prerequisite for safety, and there's a spectrum of openness (from fully closed proprietary systems to fully open-source). Where does this product fall on the openness spectrum? Does the company publish model cards, data sheets, or other transparency documentation? How does the level of transparency (or lack thereof) relate to safety and accountability?
+\end{itemize}
+
+\expect{Provide concrete examples (if any) of transparency and trust-building measures, and at least one element that could undermine user trust. If measures are lacking, suggest an actionable improvement. Additionally, in 2-3 sentences, analyze where the product falls on the openness spectrum and discuss how transparency (or its absence) relates to safety and accountability.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_6b(.*?)% <SCPD_SUBMISSION_TAG>_6b', f.read(), re.DOTALL)).group(1))
+🐍
