@@ -1,0 +1,1129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testbench</title>
+<style>
+  :root {
+    --bg: #1e1f22; --panel: #2b2d30; --panel2: #25272a; --border: #3c3f41;
+    --text: #dfe1e5; --muted: #8a8f98; --accent: #4e8fdd;
+    --cur: rgba(78,143,221,.24); --band: rgba(255,255,255,.035);
+    --pass: #5fb865; --fail: #e05555; --err: #e0a040; --skip: #7d8ca8;
+    --kw: #cf8e6d; --str: #6aab73; --num: #2aacb8; --com: #7a7e85; --fn: #56a8f5; --bi: #c77dbb; --selfc: #b389c5;
+    --mono: "JetBrains Mono", "Cascadia Code", Consolas, "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { background: var(--bg); color: var(--text); font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+         display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; }
+  button, select, input { font: inherit; color: inherit; }
+  button { background: var(--panel); border: 1px solid var(--border); border-radius: 5px; padding: 4px 10px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--accent); }
+  button:disabled { opacity: .45; cursor: default; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  select, input[type=number], input[type=search] { background: var(--panel2); border: 1px solid var(--border); border-radius: 5px; padding: 4px 8px; }
+  kbd { font: 11px var(--mono); border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; color: var(--muted); }
+
+  /* header */
+  header { display: flex; align-items: center; gap: 14px; padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  header h1 { font-size: 14px; margin: 0; letter-spacing: .3px; }
+  .group { display: flex; align-items: center; gap: 6px; }
+  .label { color: var(--muted); font-size: 12px; }
+  #traceFiles label { display: inline-flex; align-items: center; gap: 3px; margin-right: 6px; font: 12px var(--mono); cursor: pointer; }
+  #maxSteps { width: 88px; }
+  .spacer { flex: 1; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+  .pill.pass { background: rgba(95,184,101,.18); color: var(--pass); }
+  .pill.fail { background: rgba(224,85,85,.18); color: var(--fail); }
+  .pill.error { background: rgba(224,160,64,.18); color: var(--err); }
+  .pill.skipped { background: rgba(125,140,168,.2); color: var(--skip); }
+  .pill.idle { background: var(--panel2); color: var(--muted); }
+  .spinner { width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.25); border-top-color: #fff; border-radius: 50%; display: inline-block; animation: spin .7s linear infinite; vertical-align: -2px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* main three-pane layout */
+  /* minmax(0, 1fr) stops a long source line from widening the middle column past the
+     window and pushing the right pane off screen */
+  body { grid-template-columns: minmax(0, 1fr); }
+  main { display: grid; grid-template-columns: 270px minmax(0, 1fr) 360px; min-height: 0; }
+  aside, section { min-height: 0; min-width: 0; display: flex; flex-direction: column; }
+  aside.left { border-right: 1px solid var(--border); background: var(--panel2); }
+  aside.right { border-left: 1px solid var(--border); background: var(--panel2); overflow: auto; }
+  .paneTitle { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); padding: 10px 12px 6px; }
+
+  #testFilter { margin: 0 10px 8px; }
+  #testList { overflow: auto; padding-bottom: 10px; }
+  .qHead { font: 600 11px var(--mono); color: var(--muted); padding: 8px 12px 3px; }
+  .test { padding: 5px 12px 5px 14px; cursor: pointer; border-left: 2px solid transparent; }
+  .test:hover { background: rgba(255,255,255,.04); }
+  .test.sel { background: var(--cur); border-left-color: var(--accent); }
+  .test .tid { font: 12px var(--mono); display: flex; align-items: center; gap: 6px; }
+  .test .desc { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .badge { font: 600 9.5px system-ui; text-transform: uppercase; letter-spacing: .4px; padding: 0 5px; border-radius: 3px; }
+  .badge.hidden { background: rgba(125,140,168,.25); color: var(--skip); }
+  .badge.basic { background: rgba(78,143,221,.18); color: var(--accent); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: auto; }
+  .dot.pass { background: var(--pass); } .dot.fail { background: var(--fail); } .dot.error { background: var(--err); } .dot.skipped { background: var(--skip); }
+
+  /* code area */
+  .tabbar { display: flex; background: var(--panel2); border-bottom: 1px solid var(--border); }
+  .tabs { display: flex; overflow-x: auto; flex: 1; min-width: 0; }
+  .viewToggle { display: flex; gap: 4px; align-items: center; padding: 3px 8px; border-left: 1px solid var(--border); }
+  .viewToggle button { padding: 3px 10px; font-size: 12px; }
+  .viewToggle button.on { border-color: var(--accent); background: rgba(78,143,221,.25); color: #fff; }
+  #code.off { display: none; }
+
+  /* variable flow */
+  #flowWrap { flex: 1; display: none; flex-direction: column; min-height: 0; }
+  #flowWrap.on { display: flex; }
+  .flowHead { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-bottom: 1px solid var(--border); flex-wrap: wrap; font-size: 12px; }
+  .legend { display: flex; gap: 11px; color: var(--muted); font-size: 11.5px; flex-wrap: wrap; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
+  .legend i.sq { border-radius: 2px; }
+  #flow { flex: 1; overflow: auto; position: relative; }
+  .flowInner { display: flex; position: relative; }
+  .laneLabels { position: sticky; left: 0; z-index: 3; background: var(--panel2); border-right: 1px solid var(--border); flex: 0 0 auto; box-sizing: border-box; }
+  .laneLabel { font: 12px var(--mono); padding: 0 10px; display: flex; align-items: center; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .laneLabel:hover { color: #fff; background: rgba(255,255,255,.05); }
+  .laneLabel.sel { color: #ffd479; background: rgba(255,212,121,.08); }
+  .colLbl { fill: #5a5e66; font: 10px var(--mono); }
+  .fnode { cursor: pointer; }
+  .flowTip { position: fixed; z-index: 50; pointer-events: none; background: #111214; border: 1px solid var(--border); border-radius: 6px; padding: 7px 9px; font: 12px/1.45 var(--mono); max-width: 470px; white-space: pre-wrap; word-break: break-word; box-shadow: 0 6px 22px rgba(0,0,0,.55); display: none; }
+  .varlink { cursor: pointer; text-decoration: underline dotted rgba(255,255,255,.3); text-underline-offset: 3px; }
+  .varlink:hover { color: #ffd479; }
+  .tab { padding: 7px 14px; font: 12px var(--mono); color: var(--muted); cursor: pointer; border-right: 1px solid var(--border); white-space: nowrap; }
+  .tab.on { color: var(--text); background: var(--bg); box-shadow: inset 0 2px 0 var(--accent); }
+  .tab .count { color: var(--muted); font-size: 10.5px; margin-left: 5px; }
+  #code { flex: 1; overflow: auto; font: 12.5px/1.6 var(--mono); padding: 6px 0 40vh; tab-size: 4; }
+  .row { display: flex; white-space: pre; }
+  .row.band { background: var(--band); }
+  .row.cur { background: var(--cur); }
+  .row.failline { background: rgba(224,85,85,.14); }
+  .row.cur.failline { background: rgba(224,85,85,.3); }
+  .gut { flex: 0 0 70px; text-align: right; padding-right: 8px; color: #5a5e66; user-select: none; position: relative; cursor: pointer; }
+  .row.cur .gut { color: var(--text); }
+  .gut .hit { position: absolute; left: 20px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; border-radius: 50%; background: rgba(95,184,101,.55); }
+  .gut .bp { position: absolute; left: 4px; top: 50%; width: 11px; height: 11px; margin-top: -5.5px; border-radius: 50%; background: var(--fail); }
+  .gut .bp.miss { background: transparent; border: 2px solid var(--fail); opacity: .75; }
+  .gut:not(.hasbp):hover::before { content: ""; position: absolute; left: 4px; top: 50%; width: 11px; height: 11px; margin-top: -5.5px; border-radius: 50%; background: rgba(224,85,85,.35); }
+  .gut .arrow { position: absolute; left: 3px; color: var(--accent); font-weight: 700; z-index: 2; text-shadow: 0 0 3px #000; }
+  .gut.hasbp .arrow { color: #fff; }
+  .row.failline .gut .arrow { color: var(--fail); }
+  .gut.hasbp.failhere .arrow, .row.failline .gut.hasbp .arrow { color: #fff; }
+  .bpItem { font: 12px var(--mono); padding: 3px 6px; border-radius: 4px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .bpItem:hover { background: rgba(255,255,255,.05); }
+  .bpItem .bpdot { width: 9px; height: 9px; border-radius: 50%; background: var(--fail); flex: 0 0 auto; }
+  .bpItem .bpdot.miss { background: transparent; border: 2px solid var(--fail); }
+  .bpItem .hits { color: var(--muted); margin-left: auto; }
+  .bpItem .x { color: var(--muted); padding: 0 4px; border-radius: 3px; }
+  .bpItem .x:hover { color: var(--fail); background: rgba(224,85,85,.12); }
+  .linkish { background: none; border: none; color: var(--accent); padding: 0; font-size: 12px; cursor: pointer; }
+  .flash { color: var(--err) !important; }
+  .src { padding-left: 10px; padding-right: 20px; }
+  .kw { color: var(--kw); } .str { color: var(--str); } .num { color: var(--num); } .com { color: var(--com); font-style: italic; }
+  .fnname { color: var(--fn); } .bi { color: var(--bi); } .selfw { color: var(--selfc); }
+  .empty { color: var(--muted); padding: 30px; text-align: center; }
+
+  /* transport */
+  .transport { display: flex; align-items: center; gap: 6px; padding: 7px 10px; background: var(--panel); border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .transport input[type=range] { flex: 1; min-width: 160px; accent-color: var(--accent); }
+  #stepCounter { font: 12px var(--mono); color: var(--muted); min-width: 118px; text-align: right; }
+  .evt { font: 600 10.5px var(--mono); padding: 1px 6px; border-radius: 3px; background: var(--panel2); color: var(--muted); }
+  .evt.call { color: var(--fn); } .evt.return { color: var(--pass); } .evt.exception { color: var(--fail); background: rgba(224,85,85,.15); }
+
+  /* right pane cards */
+  .card { padding: 4px 12px 12px; border-bottom: 1px solid var(--border); }
+  .kv { display: grid; grid-template-columns: max-content 1fr; gap: 2px 10px; font: 12px var(--mono); }
+  .kv .k { color: var(--muted); }
+  .kv .v { word-break: break-word; white-space: pre-wrap; }
+  .kv .v.changed { color: #ffd479; }
+
+  /* what the current line works on: tokens in the code and rows in the Variables panel */
+  .tokRead, .tokWrite, .tokMutate { border-radius: 3px; padding: 0 1px; margin: 0 -1px; }
+  .tokRead { background: rgba(120,170,240,.38); box-shadow: 0 0 0 1px #8ab8f2; color: #fff; }
+  .tokWrite { background: rgba(95,184,101,.32); box-shadow: 0 0 0 1px rgba(95,184,101,.7); }
+  .tokMutate { background: rgba(224,160,64,.32); box-shadow: 0 0 0 1px rgba(224,160,64,.7); }
+  .subhead { font-size: 10.5px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin: 8px 0 4px; }
+  .subhead:first-child { margin-top: 0; }
+  .varRow { display: grid; grid-template-columns: minmax(96px, max-content) 1fr; gap: 1px 10px; padding: 3px 6px 3px 7px; margin: 0 -6px 2px; border-left: 3px solid transparent; border-radius: 3px; font: 12px var(--mono); }
+  .varRow .k { color: var(--muted); }
+  .varRow .v { word-break: break-word; white-space: pre-wrap; }
+  .varRow .v.changed { color: #ffd479; }
+  .varRow.ioR { border-left-color: #4e8fdd; background: rgba(78,143,221,.09); }
+  .varRow.ioW { border-left-color: #5fb865; background: rgba(95,184,101,.10); }
+  .varRow.ioM { border-left-color: #e0a040; background: rgba(224,160,64,.10); }
+  .varRow.io-any .k { color: var(--text); }
+  .io { font: 700 9px system-ui; text-transform: uppercase; letter-spacing: .4px; padding: 0 4px; border-radius: 3px; margin: 2px 4px 0 0; display: inline-block; }
+  .io.r { color: #7fb0ec; background: rgba(78,143,221,.2); }
+  .io.w { color: #8fd494; background: rgba(95,184,101,.2); }
+  .io.m { color: #f0c070; background: rgba(224,160,64,.2); }
+  .beforev { color: var(--muted); text-decoration: line-through; text-decoration-color: rgba(255,255,255,.35); }
+  .arrowv { color: var(--muted); }
+  .afterv { color: #e8f3e6; }
+  .newv { color: #8fd494; font-style: italic; }
+  .ioLegend { color: var(--muted); font-size: 11px; margin-top: 6px; }
+  .ioLegend b { font-weight: 600; }
+  .msg { font: 12px var(--mono); white-space: pre-wrap; word-break: break-word; margin-top: 6px; }
+  .note { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .warn { color: var(--err); font-size: 12px; margin-top: 4px; }
+  .stackItem { font: 12px var(--mono); padding: 3px 6px; border-radius: 4px; cursor: pointer; display: flex; gap: 8px; }
+  .stackItem:hover { background: rgba(255,255,255,.05); }
+  .stackItem.top { background: var(--cur); }
+  .stackItem .where { color: var(--muted); margin-left: auto; }
+  .retval { font: 12px var(--mono); margin-top: 6px; padding: 6px 8px; border-radius: 4px; background: rgba(95,184,101,.1); white-space: pre-wrap; word-break: break-word; }
+  .retval.exc { background: rgba(224,85,85,.12); color: #f0a0a0; }
+
+  /* bottom drawer */
+  footer { border-top: 1px solid var(--border); background: var(--panel2); }
+  footer summary { cursor: pointer; padding: 6px 14px; color: var(--muted); font-size: 12px; user-select: none; }
+  footer pre { margin: 0; padding: 8px 14px 12px; max-height: 26vh; overflow: auto; font: 12px/1.5 var(--mono); white-space: pre-wrap; }
+  .kbdHelp { color: var(--muted); font-size: 11.5px; padding: 0 14px 6px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Testbench</h1>
+  <div class="group"><span class="label">Assignment</span><select id="assignment"></select></div>
+  <div class="group"><span class="label">Record</span><span id="traceFiles"></span></div>
+  <div class="group"><span class="label">Max steps</span><input id="maxSteps" type="number" min="100" max="200000" step="1000" value="20000"></div>
+  <div class="spacer"></div>
+  <span id="status" class="pill idle">no run yet</span>
+  <button id="runBtn" class="primary" disabled>Run test</button>
+</header>
+
+<main>
+  <aside class="left">
+    <div class="paneTitle">Tests</div>
+    <input id="testFilter" type="search" placeholder="Filter tests...">
+    <div id="testList"></div>
+  </aside>
+
+  <section>
+    <div class="tabbar">
+      <div class="tabs" id="tabs"></div>
+      <div class="viewToggle">
+        <button id="vCode" class="on" title="Source code (V)">Code</button>
+        <button id="vFlow" title="How variables are created and used in this function (V)">Variable flow</button>
+      </div>
+    </div>
+    <div id="code"><div class="empty">Pick a test on the left, then press <b>Run test</b>.</div></div>
+    <div id="flowWrap">
+      <div class="flowHead">
+        <span id="flowTitle">Run a test to see how its variables are created and used.</span>
+        <span class="spacer"></span>
+        <span class="legend">
+          <span><i style="background:#56a8f5"></i>parameter</span>
+          <span><i style="background:#5fb865"></i>created</span>
+          <span><i style="background:#3f9b4d"></i>reassigned</span>
+          <span><i style="background:#e0a040"></i>mutated</span>
+          <span><i style="background:#8a8f98;width:6px;height:6px"></i>read</span>
+          <span><i class="sq" style="background:#b389c5"></i>returned</span>
+          <span><i class="sq" style="background:#e05555"></i>raised</span>
+        </span>
+        <button id="zoomOut" title="Narrower">&minus;</button>
+        <button id="zoomIn" title="Wider">+</button>
+        <button id="flowClear" title="Clear the highlight (Esc)">clear</button>
+      </div>
+      <div id="flow"></div>
+    </div>
+    <div class="flowTip" id="flowTip"></div>
+    <div class="transport">
+      <button id="bFirst" title="First step (Home)">|&lt;</button>
+      <button id="bBackOver" title="Back over (Shift+Left)">&lt;&lt;</button>
+      <button id="bPrev" title="Step back (Left)">&lt;</button>
+      <button id="bNext" title="Step (Right)">&gt;</button>
+      <button id="bOver" title="Step over (Shift+Right)">&gt;&gt;</button>
+      <button id="bOut" title="Step out (Up)">out</button>
+      <button id="bLast" title="Last step (End)">&gt;|</button>
+      <button id="bContBack" title="Continue back to the previous breakpoint hit (Shift+F8)">&#9664; bp</button>
+      <button id="bCont" title="Continue to the next breakpoint hit (F8)">bp &#9654;</button>
+      <input id="slider" type="range" min="0" max="0" value="0">
+      <span id="evt" class="evt">-</span>
+      <span id="stepCounter">step - / -</span>
+      <button id="bSub" title="Next line in submission.py (N)">next in submission</button>
+      <button id="bFail" title="Jump to failure (F)">failure</button>
+    </div>
+  </section>
+
+  <aside class="right">
+    <div class="paneTitle">Result</div>
+    <div class="card" id="resultCard"><div class="note">Nothing run yet.</div></div>
+    <div class="paneTitle">This step</div>
+    <div class="card" id="stepCard"><div class="note">-</div></div>
+    <div class="paneTitle">Variables</div>
+    <div class="card" id="localsCard"><div class="note">-</div></div>
+    <div class="paneTitle">Call stack</div>
+    <div class="card" id="stackCard"><div class="note">-</div></div>
+    <div class="paneTitle">Breakpoints</div>
+    <div class="card" id="bpCard"><div class="note">Click a line number to add one.</div></div>
+  </aside>
+</main>
+
+<footer>
+  <details id="drawer">
+    <summary>Output and traceback</summary>
+    <div class="kbdHelp"><kbd>Left</kbd>/<kbd>Right</kbd> step &middot; <kbd>Shift</kbd>+arrows step over &middot; <kbd>Up</kbd> step out &middot; <kbd>Home</kbd>/<kbd>End</kbd> &middot; <kbd>N</kbd> next in submission &middot; <kbd>F</kbd> failure &middot; click a line number or <kbd>B</kbd> to toggle a breakpoint &middot; <kbd>F8</kbd>/<kbd>Shift</kbd>+<kbd>F8</kbd> continue forward/back &middot; <kbd>V</kbd> code / variable flow &middot; <kbd>Esc</kbd> clear flow highlight &middot; <kbd>Ctrl</kbd>+<kbd>Enter</kbd> run</div>
+    <pre id="output">-</pre>
+  </details>
+</footer>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("testbench." + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("testbench." + k, JSON.stringify(v)); } catch {} },
+};
+
+const S = {
+  assignment: null, tests: [], pyFiles: [], selected: null,
+  run: null, step: 0, fileId: null,
+  preview: {},          // name -> source, for browsing before a run
+  previewName: null,
+  results: {},          // test id -> last status, for the list dots
+  coverage: {},         // fileId -> Map(line -> hits)
+  renderedKey: null,
+  breakpoints: {},      // file name -> Set(line); keyed by name so they survive re-runs
+  viewName: null,       // file name currently painted in the code view
+};
+
+/* ---------------- breakpoints ---------------- */
+function loadBreakpoints(assignment) {
+  const saved = store.get("bps." + assignment, {});
+  S.breakpoints = {};
+  for (const [name, lines] of Object.entries(saved)) S.breakpoints[name] = new Set(lines);
+}
+function saveBreakpoints() {
+  const out = {};
+  for (const [name, set] of Object.entries(S.breakpoints)) if (set.size) out[name] = [...set].sort((a, b) => a - b);
+  store.set("bps." + S.assignment, out);
+}
+function hasBreakpoint(name, line) { return !!(S.breakpoints[name] && S.breakpoints[name].has(line)); }
+function fileName(fid) { const f = S.run && S.run.files.find(x => x.id === fid); return f ? f.name : null; }
+function isBreakpointStep(step) {
+  // line and call events only: a return event lands on the same line and would stop twice
+  return (step.e === "line" || step.e === "call") && hasBreakpoint(fileName(step.f), step.l);
+}
+function breakpointHits(name, line) {
+  if (!S.run) return null;
+  const hits = [];
+  S.run.steps.forEach((s, i) => { if ((s.e === "line" || s.e === "call") && s.l === line && fileName(s.f) === name) hits.push(i); });
+  return hits;
+}
+function toggleBreakpoint(name, line) {
+  if (!name) return;
+  if (!S.breakpoints[name]) S.breakpoints[name] = new Set();
+  const set = S.breakpoints[name];
+  if (set.has(line)) set.delete(line); else set.add(line);
+  saveBreakpoints();
+  if (S.viewName === name) refreshGutter(line);
+  recountBreakpointHits(); renderBreakpoints(); updateTransport();
+}
+function continueForward() {
+  const steps = S.run.steps;
+  for (let j = S.step + 1; j < steps.length; j++) if (isBreakpointStep(steps[j])) return goTo(j);
+  flashCounter("no later breakpoint hit");
+}
+function continueBack() {
+  const steps = S.run.steps;
+  for (let j = S.step - 1; j >= 0; j--) if (isBreakpointStep(steps[j])) return goTo(j);
+  flashCounter("no earlier breakpoint hit");
+}
+function flashCounter(text) {
+  const el = $("stepCounter");
+  el.textContent = text; el.classList.add("flash");
+  setTimeout(() => { el.classList.remove("flash"); updateTransport(); }, 1100);
+}
+function renderBreakpoints() {
+  const entries = [];
+  for (const name of Object.keys(S.breakpoints).sort())
+    for (const line of [...S.breakpoints[name]].sort((a, b) => a - b)) entries.push([name, line]);
+  if (!entries.length) { $("bpCard").innerHTML = `<div class="note">Click a line number to add one.</div>`; return; }
+  let html = entries.map(([name, line]) => {
+    const hits = breakpointHits(name, line);
+    const label = hits === null ? "run to see hits" : hits.length ? `${hits.length} hit${hits.length > 1 ? "s" : ""}` : "not reached";
+    const miss = hits !== null && !hits.length;
+    return `<div class="bpItem" data-name="${esc(name)}" data-line="${line}" title="Jump to the next hit">
+      <span class="bpdot ${miss ? "miss" : ""}"></span><span>${esc(name)}:${line}</span>
+      <span class="hits">${label}</span><span class="x" data-remove="1" title="Remove">&times;</span></div>`;
+  }).join("");
+  html += `<div style="margin-top:6px"><button class="linkish" id="bpClear">Clear all</button></div>`;
+  $("bpCard").innerHTML = html;
+  $("bpCard").querySelectorAll(".bpItem").forEach(el => el.onclick = (e) => {
+    const name = el.dataset.name, line = Number(el.dataset.line);
+    if (e.target.dataset.remove) return toggleBreakpoint(name, line);
+    const hits = breakpointHits(name, line);
+    if (hits && hits.length) {
+      const next = hits.find(i => i > S.step);
+      goTo(next !== undefined ? next : hits[0]);
+    } else if (!S.run && S.previewName !== name) {
+      showPreview(name, line);
+    }
+  });
+  $("bpClear").onclick = () => { S.breakpoints = {}; saveBreakpoints(); repaintGutters(); recountBreakpointHits(); renderBreakpoints(); updateTransport(); };
+}
+
+/* ---------------- variable flow ---------------- */
+const FLOW = { LABELW: 160, TOP: 30, ROWH: 30, MAXCOLS: 600 };
+Object.assign(S, { view: "code", flowModel: null, flowSel: null, flowColW: store.get("flowColW", 30),
+                   flowDrawnKey: null, flowWin: null, runId: 0, srcLines: {} });
+
+const KIND_STYLE = {
+  param:     { r: 6, fill: "#56a8f5", label: "parameter" },
+  create:    { r: 7, fill: "#5fb865", label: "created" },
+  assign:    { r: 6, fill: "#3f9b4d", label: "reassigned" },
+  mutate:    { r: 6, fill: "#e0a040", label: "mutated" },
+  read:      { r: 3, fill: "#8a8f98", label: "read" },
+  return:    { r: 6, fill: "#b389c5", label: "returned", square: true },
+  exception: { r: 6, fill: "#e05555", label: "raised", square: true },
+};
+const RETURN_LANE = "↩ return", RAISE_LANE = "⚠ raised";
+
+function frameBounds(i) {
+  // the function call containing step i: from its call event to its return event
+  const steps = S.run.steps, depth = steps[i].d, start = frameStart(i);
+  let end = steps.length - 1;
+  for (let j = start + 1; j < steps.length; j++) {
+    if (steps[j].d < depth) { end = j - 1; break; }
+    if (steps[j].d === depth && steps[j].e === "return") { end = j; break; }
+    if (steps[j].d === depth && steps[j].e === "call") { end = j - 1; break; }
+  }
+  return { start, end, depth };
+}
+
+function buildFlow(b) {
+  const steps = S.run.steps, call = steps[b.start];
+  const file = S.run.files.find(f => f.id === call.f);
+  const lines = (file && file.lines) || {};
+  const lanes = [], laneOf = new Map(), nodes = [], edges = [], edgeSeen = new Set();
+  const current = new Map();                       // variable -> node id of its latest value
+  const specials = [];
+  const addNode = (name, step, kind, extra) => {
+    if (!laneOf.has(name)) { laneOf.set(name, lanes.length); lanes.push(name); }
+    const node = Object.assign({ id: nodes.length, name, step, kind, lane: laneOf.get(name) }, extra);
+    nodes.push(node); return node;
+  };
+  const link = (from, to) => { const k = from + ">" + to; if (from !== to && !edgeSeen.has(k)) { edgeSeen.add(k); edges.push({ from, to }); } };
+
+  const frame = [];
+  for (let j = b.start; j <= b.end; j++) if (steps[j].d === b.depth) frame.push(j);
+
+  for (const name of Object.keys(call.v)) current.set(name, addNode(name, b.start, "param", { value: call.v[name] }).id);
+
+  for (let p = 0; p < frame.length; p++) {
+    const k = frame[p], s = steps[k];
+    // a line event shows the state BEFORE the line runs, so a line's result is visible at
+    // the next step in this same function (after any nested calls have returned)
+    const after = p + 1 < frame.length ? steps[frame[p + 1]] : null;
+    if (s.e === "line") {
+      const info = lines[s.l] || { s: [], m: [], r: [], k: "" };
+      const sources = [];
+      for (const name of info.r) {
+        if (!(name in s.v) || !current.has(name)) continue;   // globals and builtins are not locals
+        sources.push(current.get(name));
+        addNode(name, k, "read", { value: s.v[name], of: current.get(name) });
+      }
+      const writes = info.s.map(n => [n, "assign"]).concat(info.m.map(n => [n, "mutate"]));
+      const written = new Set();
+      for (const [name, kind0] of writes) {
+        if (!after || !(name in after.v)) continue;
+        const value = after.v[name];
+        const existed = current.has(name);
+        // a for loop's header runs once more on exit without assigning anything new
+        if (kind0 === "assign" && existed && info.k === "For" && nodes[current.get(name)].value === value) continue;
+        const node = addNode(name, k, existed ? kind0 : "create", { value });
+        sources.forEach(src => link(src, node.id));
+        if (kind0 === "mutate" && existed) link(current.get(name), node.id);
+        current.set(name, node.id); written.add(name);
+      }
+      if (after) {
+        for (const name of Object.keys(after.v)) {
+          if (written.has(name)) continue;
+          if (!current.has(name)) {
+            // appeared without a write we recognised, e.g. "except E as err"
+            const node = addNode(name, k, "create", { value: after.v[name] });
+            sources.forEach(src => link(src, node.id)); current.set(name, node.id);
+          } else if (name in s.v && s.v[name] !== after.v[name]) {
+            // changed without being written on this line: a call modified it in place
+            const node = addNode(name, k, "mutate", { value: after.v[name], side: true });
+            link(current.get(name), node.id); current.set(name, node.id);
+          }
+        }
+      }
+    } else if (s.e === "return") {
+      const info = lines[s.l];
+      specials.push({ lane: RETURN_LANE, step: k, kind: "return", value: s.r,
+                      from: info ? info.r.filter(n => current.has(n) && n in s.v).map(n => current.get(n)) : [] });
+    } else if (s.e === "exception") {
+      specials.push({ lane: RAISE_LANE, step: k, kind: "exception", value: s.x, from: [] });
+    }
+  }
+  for (const sp of specials) {
+    const node = addNode(sp.lane, sp.step, sp.kind, { value: sp.value });
+    sp.from.forEach(src => link(src, node.id));
+  }
+  return { start: b.start, end: b.end, depth: b.depth, runId: S.runId, lanes, nodes, edges, fn: call.fn, fileName: file ? file.name : "?", callLine: call.l };
+}
+
+function related(M, seeds) {
+  const out = new Map(), inn = new Map();
+  for (const e of M.edges) {
+    if (!out.has(e.from)) out.set(e.from, []); out.get(e.from).push(e.to);
+    if (!inn.has(e.to)) inn.set(e.to, []); inn.get(e.to).push(e.from);
+  }
+  const seen = new Set(seeds);
+  for (const adj of [out, inn]) {
+    const stack = [...seeds], visited = new Set(seeds);
+    while (stack.length) {
+      const n = stack.pop();
+      for (const m of adj.get(n) || []) if (!visited.has(m)) { visited.add(m); stack.push(m); seen.add(m); }
+    }
+  }
+  for (const n of M.nodes) if (n.kind === "read" && seen.has(n.of)) seen.add(n.id);
+  return seen;
+}
+
+function flowX(col) { return col * S.flowColW + S.flowColW / 2 + 12; }
+function flowY(lane) { return FLOW.TOP + lane * FLOW.ROWH + FLOW.ROWH / 2; }
+
+function drawFlow(M, cols, colIndex, rel) {
+  const W = S.flowColW, H = FLOW.ROWH, T = FLOW.TOP;
+  const width = cols.length * W + 40, height = T + M.lanes.length * H + 12;
+  const parts = [`<svg id="flowSvg" width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`,
+    `<defs>` +
+    `<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6b7078"/></marker>` +
+    `<marker id="arrHi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4e8fdd"/></marker>` +
+    `</defs>`];
+  M.lanes.forEach((_, i) => { if (i % 2) parts.push(`<rect x="0" y="${T + i * H}" width="${width}" height="${H}" fill="rgba(255,255,255,.028)"/>`); });
+  if (W >= 22) cols.forEach((st, c) => parts.push(`<text class="colLbl" x="${flowX(c)}" y="18" text-anchor="middle">${S.run.steps[st].l}</text>`));
+  parts.push(`<line id="flowCursor" x1="0" x2="0" y1="${T - 8}" y2="${height}" stroke="#4e8fdd" stroke-width="1.5" stroke-dasharray="4 3"/>`);
+  for (const e of M.edges) {
+    const a = M.nodes[e.from], b = M.nodes[e.to];
+    if (!colIndex.has(a.step) || !colIndex.has(b.step)) continue;
+    const x1 = flowX(colIndex.get(a.step)), y1 = flowY(a.lane), x2 = flowX(colIndex.get(b.step)), y2 = flowY(b.lane);
+    let d;
+    if (a.lane === b.lane) {
+      const lift = Math.min(H * 0.85, 8 + Math.abs(x2 - x1) * 0.18);
+      d = `M${x1},${y1 - 5} Q${(x1 + x2) / 2},${y1 - lift - 6} ${x2 - 2},${y2 - 7}`;
+    } else {
+      const dx = Math.max(10, (x2 - x1) * 0.5);
+      d = `M${x1 + 5},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2 - 8},${y2}`;
+    }
+    const hi = rel && rel.has(e.from) && rel.has(e.to);
+    parts.push(`<path d="${d}" fill="none" stroke="${hi ? "#4e8fdd" : "#5d6168"}" stroke-width="${hi ? 1.9 : 1.1}" opacity="${rel && !hi ? 0.1 : 0.9}" marker-end="url(#${hi ? "arrHi" : "arr"})"/>`);
+  }
+  for (const n of M.nodes) {
+    if (!colIndex.has(n.step)) continue;
+    const st = KIND_STYLE[n.kind], cx = flowX(colIndex.get(n.step)), cy = flowY(n.lane);
+    const attrs = `class="fnode" data-node="${n.id}" opacity="${rel && !rel.has(n.id) ? 0.2 : 1}"`;
+    if (st.square) parts.push(`<rect ${attrs} x="${cx - st.r}" y="${cy - st.r}" width="${st.r * 2}" height="${st.r * 2}" rx="2" fill="${st.fill}"/>`);
+    else parts.push(`<circle ${attrs} cx="${cx}" cy="${cy}" r="${st.r}" fill="${st.fill}"${n.side ? ` stroke="#fff" stroke-width="1" stroke-dasharray="2 2"` : ""}/>`);
+  }
+  parts.push(`<circle id="flowRing" r="10.5" fill="none" stroke="#fff" stroke-width="2" style="display:none"/></svg>`);
+  const sel = S.flowSel && S.flowSel.type === "var" ? S.flowSel.name : null;
+  const labels = M.lanes.map(name =>
+    `<div class="laneLabel ${name === sel ? "sel" : ""}" data-var="${esc(name)}" style="height:${H}px" title="Highlight what ${esc(name)} depends on and feeds">${esc(name)}</div>`).join("");
+  $("flow").innerHTML = M.lanes.length
+    ? `<div class="flowInner" style="height:${height}px"><div class="laneLabels" style="width:${FLOW.LABELW}px;padding-top:${T}px">${labels}</div><div style="position:relative">${parts.join("")}</div></div>`
+    : `<div class="empty">This function has no local variables.</div>`;
+}
+
+function renderFlow() {
+  if (!S.run || !S.run.steps.length) {
+    $("flowTitle").textContent = "Run a test to see how its variables are created and used.";
+    $("flow").innerHTML = ""; S.flowDrawnKey = null; return;
+  }
+  const b = frameBounds(S.step);
+  if (!S.flowModel || S.flowModel.start !== b.start || S.flowModel.end !== b.end || S.flowModel.runId !== S.runId) {
+    S.flowModel = buildFlow(b);
+    if (S.flowSel && S.flowSel.type === "node") S.flowSel = null;   // node ids belong to one function call
+  }
+  const M = S.flowModel;
+  const allCols = [...new Set(M.nodes.map(n => n.step))].sort((x, y) => x - y);
+  let cur = -1;
+  for (let k = 0; k < allCols.length; k++) { if (allCols[k] <= S.step) cur = k; else break; }
+  let lo = 0, hi = allCols.length;
+  if (allCols.length > FLOW.MAXCOLS) {
+    const w = S.flowWin;
+    if (w && w.start === b.start && w.runId === S.runId && cur >= w.lo + 40 && cur < w.hi - 40) { lo = w.lo; hi = w.hi; }
+    else { lo = Math.max(0, Math.min(cur - FLOW.MAXCOLS / 2, allCols.length - FLOW.MAXCOLS)); hi = lo + FLOW.MAXCOLS; }
+  }
+  S.flowWin = { start: b.start, runId: S.runId, lo, hi };
+  const cols = allCols.slice(lo, hi), colIndex = new Map(cols.map((st, c) => [st, c]));
+  const selKey = S.flowSel ? S.flowSel.type + ":" + (S.flowSel.type === "var" ? S.flowSel.name : S.flowSel.id) : "";
+  const key = [S.runId, b.start, b.end, lo, S.flowColW, selKey].join("|");
+  if (S.flowDrawnKey !== key) {
+    let rel = null;
+    if (S.flowSel && S.flowSel.type === "var") rel = related(M, M.nodes.filter(n => n.name === S.flowSel.name && n.kind !== "read").map(n => n.id));
+    else if (S.flowSel && S.flowSel.type === "node" && M.nodes[S.flowSel.id]) rel = related(M, [S.flowSel.id]);
+    drawFlow(M, cols, colIndex, rel);
+    S.flowDrawnKey = key;
+  }
+  const windowNote = allCols.length > FLOW.MAXCOLS ? ` &middot; showing events ${lo + 1}-${hi} of ${allCols.length}` : "";
+  $("flowTitle").innerHTML = `<b>${esc(M.fn)}()</b> <span style="color:var(--muted)">${esc(M.fileName)}:${M.callLine} &middot; steps ${b.start + 1}-${b.end + 1} &middot; ${M.lanes.length} lanes &middot; ${M.edges.length} links${windowNote}</span>`;
+  updateFlowCursor(cols, colIndex, cur - lo);
+}
+
+function updateFlowCursor(cols, colIndex, col) {
+  const line = $("flowCursor"), ring = $("flowRing");
+  if (!line) return;
+  const px = col < 0 ? 4 : flowX(col);
+  line.setAttribute("x1", px); line.setAttribute("x2", px);
+  const here = S.flowModel.nodes.find(n => n.step === S.step && n.kind !== "read" && colIndex.has(n.step));
+  if (here) { ring.style.display = ""; ring.setAttribute("cx", px); ring.setAttribute("cy", flowY(here.lane)); }
+  else ring.style.display = "none";
+  const box = $("flow"), left = px + FLOW.LABELW;
+  if (left < box.scrollLeft + FLOW.LABELW + 30 || left > box.scrollLeft + box.clientWidth - 40)
+    box.scrollLeft = Math.max(0, left - FLOW.LABELW - (box.clientWidth - FLOW.LABELW) / 2);
+}
+
+function setView(v) {
+  S.view = v; store.set("view", v);
+  $("code").classList.toggle("off", v === "flow");
+  $("flowWrap").classList.toggle("on", v === "flow");
+  $("vCode").classList.toggle("on", v === "code");
+  $("vFlow").classList.toggle("on", v === "flow");
+  $("flowTip").style.display = "none";
+  if (v === "flow") { S.flowDrawnKey = null; renderFlow(); }
+  else if (S.run && S.run.steps.length) markCurrent(S.run.steps[S.step].l, lineEffects(S.step));
+}
+
+function sourceLine(fid, line) {
+  if (!S.srcLines[fid]) { const f = S.run.files.find(x => x.id === fid); S.srcLines[fid] = f ? f.source.split("\n") : []; }
+  return (S.srcLines[fid][line - 1] || "").trim();
+}
+
+$("vCode").onclick = () => setView("code");
+$("vFlow").onclick = () => setView("flow");
+$("zoomIn").onclick = () => { S.flowColW = Math.min(90, S.flowColW + 6); store.set("flowColW", S.flowColW); renderFlow(); };
+$("zoomOut").onclick = () => { S.flowColW = Math.max(12, S.flowColW - 6); store.set("flowColW", S.flowColW); renderFlow(); };
+$("flowClear").onclick = () => { S.flowSel = null; renderFlow(); };
+$("flow").addEventListener("mousemove", (e) => {
+  const tip = $("flowTip"), target = e.target.closest ? e.target.closest(".fnode") : null;
+  if (!target || !S.flowModel) { tip.style.display = "none"; return; }
+  const n = S.flowModel.nodes[Number(target.getAttribute("data-node"))];
+  if (!n) { tip.style.display = "none"; return; }
+  const s = S.run.steps[n.step], file = S.run.files.find(f => f.id === s.f), st = KIND_STYLE[n.kind];
+  tip.innerHTML = `<b>${esc(n.name)}</b> <span style="color:${st.fill}">${st.label}${n.side ? " by a call, in place" : ""}</span>\n`
+    + `<span style="color:var(--muted)">step ${n.step + 1} &middot; ${esc(file ? file.name : "?")}:${s.l}</span>\n`
+    + `<span style="color:#cfd3da">${esc(sourceLine(s.f, s.l))}</span>\n\n${esc(n.value == null ? "" : String(n.value))}`;
+  tip.style.display = "block";
+  tip.style.left = Math.max(8, Math.min(e.clientX + 14, window.innerWidth - 490)) + "px";
+  tip.style.top = Math.min(e.clientY + 14, window.innerHeight - 160) + "px";
+});
+$("flow").addEventListener("mouseleave", () => { $("flowTip").style.display = "none"; });
+$("flow").addEventListener("click", (e) => {
+  const label = e.target.closest(".laneLabel");
+  if (label) {
+    const name = label.getAttribute("data-var");
+    S.flowSel = S.flowSel && S.flowSel.type === "var" && S.flowSel.name === name ? null : { type: "var", name };
+    renderFlow(); return;
+  }
+  const target = e.target.closest(".fnode");
+  if (target) {
+    const id = Number(target.getAttribute("data-node"));
+    S.flowSel = { type: "node", id };
+    goTo(S.flowModel.nodes[id].step);
+  }
+});
+$("flow").addEventListener("dblclick", (e) => { if (e.target.closest(".fnode")) setView("code"); });
+
+/* ---------------- syntax highlighting ---------------- */
+const KEYWORDS = new Set("False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield match case".split(" "));
+const BUILTINS = new Set("abs all any bool dict enumerate filter float getattr hasattr int isinstance len list map max min next print range repr reversed round set sorted str sum super tuple type zip open iter object Exception ValueError TypeError KeyError IndexError AssertionError NotImplementedError".split(" "));
+function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function wrap(cls, text) {
+  // never let a span cross a newline, so the result can be split into lines
+  return text.split("\n").map(p => p ? `<span class="${cls}">${esc(p)}</span>` : "").join("\n");
+}
+function highlight(src) {
+  const re = /([rRbBuUfF]{0,2}(?:"""[\s\S]*?"""|'''[\s\S]*?'''))|([rRbBuUfF]{0,2}(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'))|(#[^\n]*)|(\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b)|([A-Za-z_]\w*)|(\n)|([^\w\n"'#]+|.)/g;
+  let out = "", m, pendingName = false, lineStart = 0;
+  while ((m = re.exec(src)) !== null) {
+    const [tok, tri, str, com, num, ident, nl] = m;
+    if (tri) out += wrap("str", tri);
+    else if (str) out += wrap("str", str);
+    else if (com) out += wrap("com", com);
+    else if (num) out += wrap("num", num);
+    else if (ident) {
+      // data-c is the name's column, which lines up with the recorder's per-token roles
+      const col = m.index - lineStart;
+      if (pendingName) { out += wrap("fnname", ident); pendingName = false; }
+      else if (KEYWORDS.has(ident)) { out += wrap("kw", ident); pendingName = ident === "def" || ident === "class"; }
+      else if (BUILTINS.has(ident)) out += `<span class="bi" data-c="${col}">${esc(ident)}</span>`;
+      else out += `<span class="${ident === "self" ? "selfw" : "id"}" data-c="${col}">${esc(ident)}</span>`;
+    }
+    else if (nl) out += "\n";
+    else out += esc(tok);
+    const lastNewline = tok.lastIndexOf("\n");
+    if (lastNewline >= 0) lineStart = m.index + lastNewline + 1;
+  }
+  return out.split("\n");
+}
+
+/* ---------------- data loading ---------------- */
+async function api(path, body) {
+  const res = await fetch(path, body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {});
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+}
+
+async function init() {
+  const { assignments } = await api("/api/assignments");
+  const sel = $("assignment");
+  sel.innerHTML = assignments.map(a => `<option>${esc(a)}</option>`).join("");
+  const last = store.get("assignment", assignments[assignments.length - 1]);
+  sel.value = assignments.includes(last) ? last : assignments[assignments.length - 1];
+  sel.onchange = () => loadAssignment(sel.value);
+  await loadAssignment(sel.value);
+  setView(store.get("view", "code"));
+}
+
+async function loadAssignment(name) {
+  S.assignment = name; S.run = null; S.selected = null; S.preview = {}; S.results = store.get("results." + name, {});
+  store.set("assignment", name);
+  loadBreakpoints(name);
+  const { tests, files } = await api("/api/tests?assignment=" + encodeURIComponent(name));
+  S.tests = tests; S.pyFiles = files;
+  renderTraceChoices();
+  renderTests();
+  resetPanels();
+  const lastTest = store.get("test." + name, null);
+  if (lastTest && tests.some(t => t.id === lastTest)) selectTest(lastTest); else await showPreview("submission.py");
+}
+
+function renderTraceChoices() {
+  const saved = store.get("trace." + S.assignment, ["submission.py", "grader.py"]);
+  $("traceFiles").innerHTML = S.pyFiles.map(f =>
+    `<label><input type="checkbox" value="${esc(f)}" ${saved.includes(f) ? "checked" : ""}>${esc(f)}</label>`).join("");
+  $("traceFiles").onchange = () => store.set("trace." + S.assignment, traceSelection());
+}
+function traceSelection() { return [...$("traceFiles").querySelectorAll("input:checked")].map(i => i.value); }
+
+function renderTests() {
+  const q = $("testFilter").value.trim().toLowerCase();
+  const groups = new Map();
+  for (const t of S.tests) {
+    if (q && !(t.id.toLowerCase().includes(q) || t.description.toLowerCase().includes(q))) continue;
+    if (!groups.has(t.question)) groups.set(t.question, []);
+    groups.get(t.question).push(t);
+  }
+  let html = "";
+  for (const [question, list] of groups) {
+    html += `<div class="qHead">${esc(question)}</div>`;
+    for (const t of list) {
+      const status = S.results[t.id];
+      html += `<div class="test ${S.selected === t.id ? "sel" : ""}" data-id="${esc(t.id)}" title="${esc(t.description)}">
+        <div class="tid">${esc(t.id)} <span class="badge ${t.hidden ? "hidden" : "basic"}">${esc(t.kind || (t.hidden ? "hidden" : "basic"))}</span>
+          ${status ? `<span class="dot ${status}"></span>` : ""}</div>
+        <div class="desc">${esc(t.description || "(no description)")}</div></div>`;
+    }
+  }
+  $("testList").innerHTML = html || `<div class="empty">No tests match.</div>`;
+  $("testList").querySelectorAll(".test").forEach(el => {
+    el.onclick = () => selectTest(el.dataset.id);
+    el.ondblclick = () => { selectTest(el.dataset.id); runTest(); };
+  });
+}
+
+function currentTest() { return S.tests.find(t => t.id === S.selected); }
+
+async function selectTest(id) {
+  S.selected = id; store.set("test." + S.assignment, id);
+  $("runBtn").disabled = false;
+  renderTests();
+  if (!S.run || S.run.test !== id) {
+    S.run = null; resetPanels();
+    await showPreview("grader.py", currentTest().start);
+  }
+}
+
+/* ---------------- preview (before a run) ---------------- */
+async function showPreview(name, scrollLine) {
+  if (!S.preview[name]) {
+    const { source } = await api(`/api/source?assignment=${encodeURIComponent(S.assignment)}&name=${encodeURIComponent(name)}`);
+    S.preview[name] = source;
+  }
+  S.previewName = name;
+  const names = ["submission.py", "grader.py"].filter(n => S.pyFiles.includes(n));
+  $("tabs").innerHTML = names.map(n => `<div class="tab ${n === name ? "on" : ""}" data-name="${esc(n)}">${esc(n)}</div>`).join("")
+    + `<div class="tab" style="cursor:default;color:var(--muted)">preview, not yet run</div>`;
+  $("tabs").querySelectorAll(".tab[data-name]").forEach(el => el.onclick = () => showPreview(el.dataset.name));
+  const t = currentTest();
+  const band = (name === "grader.py" && t) ? [t.start, t.end] : null;
+  paintCode(highlight(S.preview[name]), { band, key: "preview:" + name, name });
+  if (scrollLine) scrollToLine(scrollLine, "start");
+}
+
+/* ---------------- running ---------------- */
+async function runTest() {
+  if (!S.selected) return;
+  const btn = $("runBtn");
+  btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Recording...`;
+  setStatus("idle", "running " + S.selected);
+  try {
+    const result = await api("/api/run", {
+      assignment: S.assignment, test: S.selected, trace: traceSelection(),
+      max_steps: Number($("maxSteps").value) || 20000,
+    });
+    S.results[S.selected] = result.status; store.set("results." + S.assignment, S.results);
+    setupRun(result);
+  } catch (err) {
+    setStatus("error", "request failed");
+    $("resultCard").innerHTML = `<div class="msg" style="color:var(--fail)">${esc(String(err))}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = "Run test";
+    renderTests();
+  }
+}
+
+function setStatus(cls, text) { const el = $("status"); el.className = "pill " + cls; el.textContent = text; }
+
+function setupRun(run) {
+  S.run = run; S.renderedKey = null;
+  S.runId++; S.flowModel = null; S.flowDrawnKey = null; S.srcLines = {};
+  if (S.flowSel && S.flowSel.type === "node") S.flowSel = null;
+  S.coverage = {};
+  run.steps.forEach(s => {
+    if (!S.coverage[s.f]) S.coverage[s.f] = new Map();
+    const m = S.coverage[s.f]; m.set(s.l, (m.get(s.l) || 0) + 1);
+  });
+  const n = run.steps.length;
+  $("slider").max = Math.max(0, n - 1);
+  renderResult();
+  $("output").textContent = [run.stdout ? "---- output ----\n" + run.stdout : "", run.traceback ? "---- traceback ----\n" + run.traceback : ""].filter(Boolean).join("\n") || "(no output)";
+  if (run.status === "fail" || run.status === "error") $("drawer").open = true;
+  recountBreakpointHits();
+  renderBreakpoints();
+  if (!n) {
+    $("tabs").innerHTML = "";
+    $("code").innerHTML = `<div class="empty">No steps were recorded.${run.message ? "<br><br>" + esc(run.message) : ""}</div>`;
+    updateTransport();
+    if (S.view === "flow") renderFlow();
+    return;
+  }
+  // Like a debugger, stop at the first breakpoint hit if there is one; otherwise show the failure.
+  const failStep = run.failure && run.failure.step != null ? run.failure.step : null;
+  const firstBreak = run.steps.findIndex(isBreakpointStep);
+  goTo(firstBreak >= 0 ? firstBreak : (failStep != null ? failStep : 0));
+}
+
+function recountBreakpointHits() {
+  S.anyBreakpointHit = !!(S.run && S.run.steps.some(isBreakpointStep));
+}
+
+/* ---------------- stepping ---------------- */
+function goTo(i) {
+  const run = S.run; if (!run || !run.steps.length) return;
+  i = Math.max(0, Math.min(run.steps.length - 1, i));
+  S.step = i;
+  const step = run.steps[i];
+  if (S.fileId !== step.f || S.renderedKey !== "run:" + step.f) showRunFile(step.f);
+  const fx = lineEffects(i);
+  markCurrent(step.l, fx);
+  renderStep(); renderLocals(fx); renderStack(); updateTransport();
+  if (S.view === "flow") renderFlow();
+}
+
+function showRunFile(fid) {
+  const run = S.run;
+  S.fileId = fid;
+  $("tabs").innerHTML = run.files.map(f => {
+    const hits = S.coverage[f.id] ? [...S.coverage[f.id].values()].reduce((a, b) => a + b, 0) : 0;
+    return `<div class="tab ${f.id === fid ? "on" : ""}" data-id="${f.id}">${esc(f.name)}<span class="count">${hits}</span></div>`;
+  }).join("");
+  $("tabs").querySelectorAll(".tab").forEach(el => el.onclick = () => {
+    const target = Number(el.dataset.id);
+    // jump to the latest step at or before the current one in that file, or the first one after
+    let j = -1;
+    for (let k = S.step; k >= 0; k--) if (run.steps[k].f === target) { j = k; break; }
+    if (j < 0) j = run.steps.findIndex(s => s.f === target);
+    if (j >= 0) goTo(j); else { S.fileId = target; showRunFile(target); }
+  });
+  const file = run.files.find(f => f.id === fid);
+  const t = currentTest();
+  const band = (file && file.name === "grader.py" && t) ? [t.start, t.end] : null;
+  const failLine = run.failure && run.failure.f === fid ? run.failure.l : null;
+  paintCode(highlight(file ? file.source : ""), {
+    band, key: "run:" + fid, coverage: S.coverage[fid] || new Map(), failLine, name: file ? file.name : null,
+  });
+}
+
+function gutterParts(n) {
+  const cov = S.viewCoverage;            // a Map after a run, undefined in preview
+  const hit = cov && cov.get(n);
+  const bp = hasBreakpoint(S.viewName, n);
+  const miss = bp && cov !== undefined && !hit;
+  return {
+    cls: "gut" + (bp ? " hasbp" : ""),
+    html: (bp ? `<span class="bp ${miss ? "miss" : ""}" title="Breakpoint${miss ? ", not reached in this run" : ""}. Click to remove."></span>` : "")
+        + (hit ? `<span class="hit" title="${hit} hit${hit > 1 ? "s" : ""}"></span>` : "")
+        + n,
+  };
+}
+
+function paintCode(lines, { band, key, coverage, failLine, name }) {
+  S.viewName = name; S.viewCoverage = coverage;
+  const rows = lines.map((html, idx) => {
+    const n = idx + 1;
+    const cls = ["row"];
+    if (band && n >= band[0] && n <= band[1]) cls.push("band");
+    if (failLine === n) cls.push("failline");
+    const g = gutterParts(n);
+    return `<div class="${cls.join(" ")}" data-line="${n}"><span class="${g.cls}" title="Click to toggle a breakpoint">${g.html}</span><span class="src">${html || " "}</span></div>`;
+  });
+  $("code").innerHTML = rows.join("");
+  S.renderedKey = key;
+}
+
+function refreshGutter(line) {
+  const row = $("code").querySelector(`.row[data-line="${line}"]`);
+  if (!row) return;
+  const g = row.querySelector(".gut"), parts = gutterParts(line);
+  const hadArrow = !!g.querySelector(".arrow");
+  g.className = parts.cls; g.innerHTML = parts.html;
+  if (hadArrow) g.insertAdjacentHTML("afterbegin", `<span class="arrow">&#9656;</span>`);
+}
+function repaintGutters() { $("code").querySelectorAll(".row[data-line]").forEach(r => refreshGutter(Number(r.dataset.line))); }
+
+$("code").addEventListener("click", (e) => {
+  const g = e.target.closest(".gut");
+  if (!g) return;
+  toggleBreakpoint(S.viewName, Number(g.closest(".row").dataset.line));
+});
+
+function lineEffects(i) {
+  // What the line at step i works on: the local variables it reads, rebinds and changes in
+  // place, and the state after it runs. A line event records the state BEFORE the line, so
+  // "after" is the next step in the same function, once any calls it made have returned.
+  const run = S.run, s = run.steps[i];
+  if (!s || s.e !== "line") return null;
+  const file = run.files.find(f => f.id === s.f);
+  const info = file && file.lines ? file.lines[s.l] : null;
+  if (!info) return null;
+  let after = null;
+  for (let j = i + 1; j < run.steps.length; j++) {
+    if (run.steps[j].d < s.d) break;
+    if (run.steps[j].d === s.d) { after = run.steps[j]; break; }
+  }
+  const isLocal = (name) => name in s.v || (after && name in after.v);
+  // a for loop's header runs once more on exit without assigning anything
+  const loopExit = info.k === "For" && after && info.s.every(n => n in s.v && s.v[n] === after.v[n]);
+  const writes = loopExit ? [] : info.s.filter(isLocal);
+  const tokens = (info.t || []).filter(t => isLocal(t[3]) && !(loopExit && t[2] === "w"));
+  return { reads: info.r.filter(isLocal), writes, mutates: info.m.filter(isLocal), tokens, after, loopExit };
+}
+
+function markCurrent(line, fx) {
+  const code = $("code");
+  code.querySelectorAll(".row.cur").forEach(r => { r.classList.remove("cur"); const a = r.querySelector(".arrow"); if (a) a.remove(); });
+  code.querySelectorAll(".tokRead, .tokWrite, .tokMutate").forEach(t => t.classList.remove("tokRead", "tokWrite", "tokMutate"));
+  const row = code.querySelector(`.row[data-line="${line}"]`);
+  if (!row) return;
+  row.classList.add("cur");
+  row.querySelector(".gut").insertAdjacentHTML("afterbegin", `<span class="arrow">&#9656;</span>`);
+  if (fx) {
+    for (const [ln, col, role] of fx.tokens) {
+      const token = code.querySelector(`.row[data-line="${ln}"] [data-c="${col}"]`);
+      if (token) token.classList.add(role === "m" ? "tokMutate" : role === "w" ? "tokWrite" : "tokRead");
+    }
+  }
+  scrollToLine(line, "center");
+}
+
+function scrollToLine(line, where) {
+  const row = $("code").querySelector(`.row[data-line="${line}"]`);
+  if (!row) return;
+  const box = $("code"), r = row.getBoundingClientRect(), b = box.getBoundingClientRect();
+  if (where === "start") { box.scrollTop += r.top - b.top - 40; return; }
+  if (r.top < b.top + 40 || r.bottom > b.bottom - 40) box.scrollTop += r.top - b.top - box.clientHeight / 2;
+}
+
+function updateTransport() {
+  const run = S.run, n = run ? run.steps.length : 0, has = n > 0;
+  ["bFirst", "bBackOver", "bPrev", "bNext", "bOver", "bOut", "bLast", "bSub"].forEach(id => $(id).disabled = !has);
+  $("bFail").disabled = !(run && run.failure && run.failure.step != null);
+  $("bCont").disabled = $("bContBack").disabled = !(has && S.anyBreakpointHit);
+  $("slider").disabled = !has;
+  if (!has) { $("stepCounter").textContent = "step - / -"; $("evt").textContent = "-"; $("evt").className = "evt"; return; }
+  $("slider").value = S.step;
+  $("stepCounter").textContent = `step ${S.step + 1} / ${n}`;
+  const e = run.steps[S.step].e;
+  $("evt").textContent = e; $("evt").className = "evt " + e;
+}
+
+/* ---------------- right pane ---------------- */
+function renderResult() {
+  const run = S.run, t = currentTest();
+  const labels = { pass: "PASS", fail: "FAIL", error: "ERROR", skipped: "RAN (hidden)" };
+  setStatus(run.status, (labels[run.status] || run.status) + "  " + run.test);
+  let html = `<div><span class="pill ${run.status}">${labels[run.status] || run.status}</span> <span style="font:12px var(--mono)">${esc(run.test)}</span></div>`;
+  if (t && t.description) html += `<div class="note">${esc(t.description)}</div>`;
+  if (run.status === "skipped") html += `<div class="note">Hidden tests run your code but are not scored locally.</div>`;
+  if (run.message && run.status !== "skipped") html += `<div class="msg" style="color:${run.status === "pass" ? "var(--pass)" : "var(--fail)"}">${esc(run.message)}</div>`;
+  if (run.elapsed != null) {
+    const limit = run.timeout != null ? run.timeout : (t && t.timeout);
+    html += `<div class="note">${run.elapsed.toFixed(3)} s while recording${limit ? ` &middot; limit ${limit} s unrecorded` : ""}</div>`;
+  }
+  html += `<div class="note">${run.steps.length.toLocaleString()} steps recorded from ${run.files.map(f => esc(f.name)).join(", ")}</div>`;
+  if (run.truncated) html += `<div class="warn">Stopped recording at ${run.max_steps.toLocaleString()} steps. The test still ran to the end; raise Max steps or record fewer files to see more.</div>`;
+  if (run.failure && run.failure.step == null && (run.status === "fail" || run.status === "error"))
+    html += `<div class="warn">The failing line is outside the recorded files. See the traceback below.</div>`;
+  $("resultCard").innerHTML = html;
+}
+
+function frameStart(i) {
+  // index of the call step that opened the frame containing step i
+  const steps = S.run.steps, d = steps[i].d;
+  for (let j = i; j >= 0; j--) if (steps[j].e === "call" && steps[j].d === d) return j;
+  return 0;
+}
+
+function previousInFrame(i) {
+  const steps = S.run.steps, d = steps[i].d, start = frameStart(i);
+  for (let j = i - 1; j >= start; j--) if (steps[j].d === d) return j;
+  return -1;
+}
+
+function renderStep() {
+  const run = S.run, s = run.steps[S.step], file = run.files.find(f => f.id === s.f);
+  let html = `<div class="kv"><span class="k">event</span><span class="v">${esc(s.e)}</span>
+    <span class="k">function</span><span class="v">${esc(s.fn)}</span>
+    <span class="k">location</span><span class="v">${esc(file ? file.name : "?")}:${s.l}</span>
+    <span class="k">depth</span><span class="v">${s.d}</span></div>`;
+  if (s.e === "call") html += `<div class="note">Entering <b>${esc(s.fn)}</b>. The variables below are the arguments it was called with.</div>`;
+  if (s.e === "return") html += `<div class="retval">returned ${esc(s.r)}</div>`;
+  if (s.e === "exception") html += `<div class="retval exc">raised ${esc(s.x)}</div>`;
+  if (run.failure && run.failure.step === S.step) html += `<div class="warn">This is the line the test failed on.</div>`;
+  $("stepCard").innerHTML = html;
+}
+
+function renderLocals(fx) {
+  const run = S.run, s = run.steps[S.step];
+  const prevIdx = previousInFrame(S.step), prev = prevIdx >= 0 ? run.steps[prevIdx].v : null;
+  const roles = new Map();
+  const mark = (list, key) => (list || []).forEach(n => { if (!roles.has(n)) roles.set(n, {}); roles.get(n)[key] = true; });
+  if (fx) { mark(fx.reads, "read"); mark(fx.writes, "write"); mark(fx.mutates, "mutate"); }
+
+  const names = Object.keys(s.v);
+  // a variable this line creates does not exist yet at this step, so add it from "after"
+  if (fx && fx.after) for (const n of fx.writes) if (!(n in s.v) && n in fx.after.v) names.push(n);
+  if (!names.length) { $("localsCard").innerHTML = `<div class="note">No local variables.</div>`; return; }
+  const order = (a, b) => (a === "self" ? -1 : b === "self" ? 1 : 0);
+
+  const row = (k) => {
+    const r = roles.get(k);
+    const before = s.v[k], after = fx && fx.after ? fx.after.v[k] : undefined;
+    const changes = r && (r.write || r.mutate) && after !== undefined && after !== before;
+    let value;
+    if (changes && before === undefined) value = `<span class="newv">new</span> <span class="arrowv">&rarr;</span> <span class="afterv">${esc(after)}</span>`;
+    else if (changes) value = `<span class="beforev">${esc(before)}</span>\n<span class="arrowv">&rarr;</span> <span class="afterv">${esc(after)}</span>`;
+    else value = esc(before === undefined ? "" : before);
+    const changedEarlier = !r && prev && prev[k] !== s.v[k];
+    const cls = r ? ["varRow", "io-any", r.mutate ? "ioM" : r.write ? "ioW" : "ioR"] : ["varRow"];
+    const badges = r ? [r.read ? `<span class="io r">reads</span>` : "", r.write ? `<span class="io w">writes</span>` : "",
+                        r.mutate ? `<span class="io m">changes</span>` : ""].join("") : "";
+    return `<div class="${cls.join(" ")}"><span class="k"><span class="varlink" data-var="${esc(k)}" title="Show how ${esc(k)} is created and used">${esc(k)}</span>${badges ? "<br>" + badges : ""}</span>`
+      + `<span class="v ${changedEarlier ? "changed" : ""}" title="${changedEarlier ? "changed since the previous step in this function" : ""}">${value}</span></div>`;
+  };
+
+  const used = names.filter(n => roles.has(n)).sort(order);
+  const rest = names.filter(n => !roles.has(n)).sort(order);
+  let html = "";
+  if (used.length) {
+    html += `<div class="subhead">This line works on</div>` + used.map(row).join("");
+    if (fx.after && (fx.writes.length || fx.mutates.length)) html += `<div class="ioLegend">Crossed-out values are before the line runs; the arrow shows the result.</div>`;
+  } else if (fx && fx.loopExit) {
+    html += `<div class="note">The loop header runs once more here and exits without assigning.</div>`;
+  }
+  if (rest.length) html += `<div class="subhead">${used.length ? "Other variables" : "Variables"}</div>` + rest.map(row).join("");
+  $("localsCard").innerHTML = html;
+  $("localsCard").querySelectorAll(".varlink").forEach(el => el.onclick = () => {
+    S.flowSel = { type: "var", name: el.dataset.var };
+    setView("flow");
+  });
+}
+
+function renderStack() {
+  const run = S.run, steps = run.steps, cur = steps[S.step];
+  const frames = [];
+  let want = cur.d;
+  for (let j = S.step; j >= 0 && want >= 1; j--) {
+    if (steps[j].d === want) { frames.push(j); want--; }
+    else if (steps[j].d < want) { frames.push(j); want = steps[j].d - 1; }
+  }
+  $("stackCard").innerHTML = frames.map((j, idx) => {
+    const s = steps[j], file = run.files.find(f => f.id === s.f);
+    return `<div class="stackItem ${idx === 0 ? "top" : ""}" data-step="${j}"><span>${esc(s.fn)}</span><span class="where">${esc(file ? file.name : "?")}:${s.l}</span></div>`;
+  }).join("") || `<div class="note">-</div>`;
+  $("stackCard").querySelectorAll(".stackItem").forEach(el => el.onclick = () => goTo(Number(el.dataset.step)));
+}
+
+function resetPanels() {
+  setStatus("idle", S.selected ? "not run" : "no run yet");
+  $("resultCard").innerHTML = `<div class="note">${S.selected ? "Press Run test to record " + esc(S.selected) + "." : "Nothing run yet."}</div>`;
+  ["stepCard", "localsCard", "stackCard"].forEach(id => $(id).innerHTML = `<div class="note">-</div>`);
+  $("output").textContent = "-";
+  $("slider").max = 0;
+  recountBreakpointHits();
+  renderBreakpoints();
+  updateTransport();
+  if (S.view === "flow") renderFlow();
+}
+
+/* ---------------- navigation helpers ---------------- */
+function stepOver() { const st = S.run.steps, d = st[S.step].d; for (let j = S.step + 1; j < st.length; j++) if (st[j].d <= d) return goTo(j); goTo(st.length - 1); }
+function backOver() { const st = S.run.steps, d = st[S.step].d; for (let j = S.step - 1; j >= 0; j--) if (st[j].d <= d) return goTo(j); goTo(0); }
+function stepOut()  { const st = S.run.steps, d = st[S.step].d; for (let j = S.step + 1; j < st.length; j++) if (st[j].d < d) return goTo(j); goTo(st.length - 1); }
+function toggleAtCurrent() {
+  const s = S.run.steps[S.step];
+  toggleBreakpoint(fileName(s.f), s.l);
+}
+function nextInSubmission() {
+  const run = S.run, sub = run.files.find(f => f.name === "submission.py"); if (!sub) return;
+  for (let j = S.step + 1; j < run.steps.length; j++) if (run.steps[j].f === sub.id && run.steps[j].e === "line") return goTo(j);
+}
+
+$("runBtn").onclick = runTest;
+$("testFilter").oninput = renderTests;
+$("slider").oninput = (e) => goTo(Number(e.target.value));
+$("bFirst").onclick = () => goTo(0);
+$("bLast").onclick = () => goTo(S.run.steps.length - 1);
+$("bPrev").onclick = () => goTo(S.step - 1);
+$("bNext").onclick = () => goTo(S.step + 1);
+$("bOver").onclick = stepOver;
+$("bBackOver").onclick = backOver;
+$("bOut").onclick = stepOut;
+$("bSub").onclick = nextInSubmission;
+$("bFail").onclick = () => { if (S.run && S.run.failure && S.run.failure.step != null) goTo(S.run.failure.step); };
+$("bCont").onclick = continueForward;
+$("bContBack").onclick = continueBack;
+
+document.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); runTest(); return; }
+  const tag = (e.target.tagName || "").toLowerCase();
+  if (tag === "input" && e.target.type !== "range" || tag === "select") return;
+  if (e.key === "v" || e.key === "V") { e.preventDefault(); setView(S.view === "flow" ? "code" : "flow"); return; }
+  if (e.key === "Escape" && S.view === "flow" && S.flowSel) { S.flowSel = null; renderFlow(); return; }
+  if (!S.run || !S.run.steps.length) return;
+  const keys = {
+    ArrowRight: () => e.shiftKey ? stepOver() : goTo(S.step + 1),
+    ArrowLeft: () => e.shiftKey ? backOver() : goTo(S.step - 1),
+    ArrowUp: stepOut,
+    Home: () => goTo(0),
+    End: () => goTo(S.run.steps.length - 1),
+    n: nextInSubmission, N: nextInSubmission,
+    f: () => $("bFail").click(), F: () => $("bFail").click(),
+    F8: () => e.shiftKey ? continueBack() : continueForward(),
+    b: toggleAtCurrent, B: toggleAtCurrent,
+  };
+  if (keys[e.key]) { e.preventDefault(); keys[e.key](); }
+});
+
+init().catch(err => { $("code").innerHTML = `<div class="empty">Could not reach the testbench server.<br><br>${esc(String(err))}</div>`; });
+</script>
+</body>
+</html>
