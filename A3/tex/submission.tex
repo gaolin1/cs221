@@ -198,6 +198,15 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_2c
 \begin{answer}
   % ### START CODE HERE ###
+  If everyone plans with the same system, the users all get sent down the same shortest path, and
+  the congestion that creates never shows up in the cost, because the cost is only distance. The
+  people who do not use it are hit whenever their own route intersects that optimal path, so quiet
+  side streets that were never built for through traffic end up carrying it, and they get none of
+  the benefit since they never opted in. The mismatch is that the model prices an edge as a fixed
+  number when the real price depends on how many people are on it at the time, and the system has no
+  way of knowing that its own advice is what put them there. One way to reduce that is to put actual
+  speed into the cost rather than distance alone, so a road that is slow or already saturated costs
+  more and the system spreads people out instead of funnelling them all onto one route.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2c
@@ -258,6 +267,16 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3d
 \begin{answer}
   % ### START CODE HERE ###
+  Between a drop-off and the next pick-up I would insert a rest waypoint, tagged for a restroom,
+  food, or somewhere to park for ten minutes, in the same way problem 4c joins a fake node to every
+  end location at zero cost so the search finds whichever one is nearest. Here the cost would be
+  small rather than zero, so a break is cheap enough that the route takes one but not so free that
+  the driver is sent miles out of the way for it. To pick sensible waypoints I would want the
+  driver's age and years of driving experience, since a new driver and a driver in their seventies
+  do not need the same break pattern or the same length of shift. Those same two fields are exactly
+  what a company could turn against them: knowing a driver's age lets dispatch quietly stop sending
+  work to older drivers, which is age discrimination dressed up as routing, and it never has to be
+  written down anywhere because it only shows up as fewer jobs.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3d
