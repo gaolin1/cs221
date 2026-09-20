@@ -52,10 +52,10 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   \]
 
   \medskip
-  Every step is priced by the $x$ coordinate of the location being left, whatever the direction.
-  The $n$ north steps each cost exactly 1 if they are taken while $x = 0$, contributing $n$. The $m$
-  east steps have to leave from $x = 0, 1, \dots, m-1$ in turn, costing $1, 2, \dots, m$, which sums
-  to $m(m+1)/2$.
+  \textbf{Derivation.} The cost only depends on the $x$ being left, so take all $n$ north
+  steps while still at $x = 0$, where each costs 1 and they total $n$, then the $m$ east steps
+  leave from $x = 0, 1, \dots, m-1$ in turn and cost $1, 2, \dots, m$. Writing that series
+  forwards and backwards pairs it into $m$ columns of $m+1$, so it sums to $m(m+1)/2$.
 
   \medskip
   \textbf{Path.} Take all $n$ steps north from the origin first, then all $m$ steps east.
@@ -158,6 +158,42 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_2b
 \begin{answer}
   % ### START CODE HERE ###
+  % Working notes, kept for reference, not rendered:
+  %  - amenity=food is on only 4 locations on the whole map: cantor_arts_center,
+  %    stanford_stadium, tressider, coupa_green_library/green_library.
+  %  - Gates -> amenity=food lands on Cantor at 659.2 m. Gates -> tressider is 965.9 m.
+  %  - crossings counted along each path: 2 on the EVGR route, 10 on the Gates route.
+  %  - node spacing on the EVGR route runs from 1.85 m up to 98.8 m on one edge.
+  \textbf{Setting 1, the useful one.} Start at EVGR-A, end tag
+  \texttt{landmark=green\_library}. 606.0 m over 38 locations.
+
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{images/2b-evgr-green-library.png}
+  \end{center}
+
+  \textbf{Setting 2, the one that goes wrong.} Start at Gates, end tag
+  \texttt{amenity=food}. 659.2 m, and it finishes at the Cantor Arts Center.
+
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{images/2b-gates-food.png}
+  \end{center}
+
+  \textbf{(i) What I learned.} The cost is pure distance, so everything that actually
+  slows a walk down is free. My EVGR-A to Green Library route is 606.0 m and passes 2
+  marked crossings; the Gates route is almost the same length at 659.2 m but passes 10
+  crossings and a bus stop. In practice the second walk takes noticeably longer, and the
+  search has no way to tell the two apart. I also found the locations are spaced very
+  unevenly, from 1.85 m to 98.8 m apart on the same path, so the number of steps in a
+  path says nothing about how far it is.
+
+  \textbf{(ii) What is wrong.} Asking Gates for the nearest \texttt{amenity=food} returns
+  the Cantor Arts Center at 659.2 m, while Tressider, which is the actual food court, sits
+  at 965.9 m and never gets picked. Only four locations on the entire map carry
+  \texttt{amenity=food}, and two of them are the art museum and the football stadium. The
+  tag is attached to the landmark's own OSM node, so one cafe inside a large building ends
+  up labelling the whole building as food. The modelling assumption that breaks is that a
+  tag on a single node stands for the whole place, and that a place I can reach is a place
+  that is open and serving.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2b
@@ -195,6 +231,31 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3c
 \begin{answer}
   % ### START CODE HERE ###
+  % Working notes, not rendered:
+  %  - order UCS picked: EVGR-A -> tressider at 991.5 m -> memorial_church at
+  %    1464.8 m -> green_library at 1815.6 m, 130 locations.
+  %  - direct EVGR-A -> green_library with no waypoints is 606.0 m, so the two
+  %    waypoints cost me exactly 3x the trip.
+  \textbf{Waypoint tags.} \texttt{landmark=memorial\_church} and
+  \texttt{landmark=tressider}. Start at EVGR-A, end tag
+  \texttt{landmark=green\_library}. Total 1815.6 m over 130 locations.
+
+  \begin{center}
+    \includegraphics[width=0.92\textwidth]{images/3c-church-tressider-library.png}
+  \end{center}
+
+  The order surprised me. I listed the church first, but the search went to Tressider at
+  991.5 m, then the church at 1464.8 m, then the library at 1815.6 m. That is the point of
+  leaving the waypoints unordered: I do not have to guess the ordering, and here my guess
+  would have been the more expensive one. What did match my expectation is the cost. The
+  same trip with no waypoints is 606.0 m, so adding two stops tripled it, which is what you
+  get when the stops sit off the straight line between start and end.
+
+  What the path fails to capture is anything other than metres. It has no idea that
+  Tressider closes in the evening, that the church is worth more time than a junction, or
+  that I would rather eat before settling into the library than after. It is also one way,
+  so it never accounts for getting home. A route that is optimal in distance can still be
+  the wrong plan for the day.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3c

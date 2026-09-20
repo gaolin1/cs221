@@ -80,10 +80,17 @@ def getStanfordShortestPathProblem() -> ShortestPathProblem:
     # Or, if you would rather use a custom map, you can uncomment the following!
     # cityMap = createCustomMap("data/custom.pbf", "data/custom-landmarks".json")
 
-    startLocation, endTag = "2411240427", "landmark=bookstore"
-
     # ### START CODE HERE ###
-    # stanfordShortest = ShortestPathProblem(startLocation, endTag, cityMap)
+    # Two settings are discussed in the write-up. The first is the useful one: the
+    # walk from my dorm at EVGR-A across campus to Green Library. The second is the
+    # one that goes wrong: asking Gates for the nearest amenity=food sends you to the
+    # Cantor Arts Center (659 m) rather than Tressider (966 m), because the food tag
+    # sits on the museum's own node.
+    startLocation = locationFromTag(makeTag("landmark", "evgr_a"), cityMap)
+    endTag = makeTag("landmark", "green_library")
+
+    # startLocation = locationFromTag(makeTag("landmark", "gates"), cityMap)
+    # endTag = makeTag("amenity", "food")
     # ### END CODE HERE ###
     return ShortestPathProblem(startLocation, endTag, cityMap)
 
@@ -157,13 +164,15 @@ def getStanfordWaypointsShortestPathProblem() -> WaypointsShortestPathProblem:
     """
     cityMap = createStanfordMap()
 
-    startTag = None
-    startLocation = None
-    waypointTags = None
-    endTag = None
-
-    pass
     # ### START CODE HERE ###
+    # An evening loop from my dorm: stop at Memorial Church and grab food at
+    # Tressider, in whichever order is cheaper, then settle in at Green Library.
+    startLocation = locationFromTag(makeTag("landmark", "evgr_a"), cityMap)
+    waypointTags = [
+        makeTag("landmark", "memorial_church"),
+        makeTag("landmark", "tressider"),
+    ]
+    endTag = makeTag("landmark", "green_library")
     # ### END CODE HERE ###
     return WaypointsShortestPathProblem(startLocation, waypointTags, endTag, cityMap)
 
