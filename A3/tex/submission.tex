@@ -411,6 +411,46 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_6d
 \begin{answer}
   % ### START CODE HERE ###
+  % TODO: paste the reply to query 2 and how long each one took to come back.
+  Both queries went through the support messenger at support.claude.com.
+
+  \medskip
+  Query 1, sent about Claude Code:
+
+  \begin{quote}
+  I use Claude Code on a Max plan and I'd like to know whether it can be pointed at a different
+  model endpoint. I know Bedrock and Vertex are supported. Is there any supported way to use an
+  OpenAI-compatible or OpenRouter endpoint, and if not, is that something on the roadmap? I'm asking
+  because I want to compare outputs on the same repo without changing tools.
+  \end{quote}
+
+  The reply drew a distinction I had not made myself, that gateway compatibility is about reaching
+  Claude models through a supported API format and not about routing to other providers, and it
+  named the specific configuration that does exist, Bedrock, Vertex, Microsoft Foundry and a custom
+  \texttt{ANTHROPIC\_BASE\_URL}. It also said plainly that it had no information about future
+  multi-model plans rather than deflecting the question or inventing an answer, which I would rather
+  have than a vague maybe.
+
+  \medskip
+  Query 2, sent about Claude itself:
+
+  \begin{quote}
+  I'm using Claude to learn the maths for a machine learning course, and I want it to tutor me
+  rather than solve things for me. The problem I keep hitting is that when I'm deriving something,
+  Claude already knows the final form and reasons backwards toward it, which looks like a derivation
+  but doesn't help, because the answer is the one thing I don't have. Telling it to stop works for a
+  few messages and then it drifts back. Where is the best place to put an instruction like that so
+  it holds for a whole session, Project instructions, a custom style, or something else? And is
+  there a recommended way to phrase it?
+  \end{quote}
+
+  This one came back with something I could act on rather than an acknowledgement: it pointed at
+  Project instructions as the place that persists across every chat in a project, gave me a phrasing
+  to paste in, and explained that project instructions layer on top of the account-wide ones under
+  Settings, so general preferences and the tutoring rules can sit at different levels. What it does
+  not do is promise the behaviour will hold, which is fair, because the underlying issue is steering
+  a model rather than flipping a setting, and the answer puts the work of writing a good instruction
+  back on me.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_6d
