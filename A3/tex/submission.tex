@@ -87,21 +87,20 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   %    the goal", which is true. The justification is written out so the tie
   %    argument is visible.
   \begin{enumerate}
-    \item False. The state space is infinite, but UCS processes states in order of past
-    cost and every step costs at least 1, so a state with past cost below the goal's cost is within
-    that many steps of the origin. There are only finitely many such states, so UCS reaches the goal
-    and terminates.
+    \item False. The states go on forever, but UCS takes them in cost order and every step costs at
+    least 1, so anything cheaper than the goal is only so many steps out from the origin. There are
+    only so many of those, so it gets to the goal and stops.
 
-    \item False. UCS returns the minimum-cost path, but it explores outside the rectangle:
-    $(-1, 0)$ and $(0, -1)$ each cost 1 to reach, which is cheaper than any goal beyond the origin, so
-    they are processed even though they lie outside $0 \le x \le m$, $0 \le y \le n$.
+    \item False. It does give back the minimum cost path, but it looks outside the box on the way.
+    $(-1, 0)$ and $(0, -1)$ both cost 1 to get to, which is cheaper than most goals, so they get
+    processed even though they sit outside $0 \le x \le m$, $0 \le y \le n$.
 
-    \item False. UCS does return the minimum-cost path, but it can explore locations whose
-    past cost \emph{equals} the minimum rather than being strictly less than it. When several states
-    tie for the lowest cost, the queue's tie-break decides the order. For the goal $(1, 0)$, which costs
-    1, the states $(-1, 0)$, $(0, -1)$ and $(0, 1)$ also have past cost 1 and are popped before the goal.
+    \item False. It returns the minimum cost path, but it can also look at places costing exactly
+    the same as the minimum rather than less. When things tie, the queue decides who goes first. For
+    the goal $(1, 0)$, which costs 1, the states $(-1, 0)$, $(0, -1)$ and $(0, 1)$ also cost 1 and
+    come out before it.
   \end{enumerate}
-  % ### END CODE HERE ###
+% ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1b
 \clearpage
@@ -125,22 +124,21 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   %    flip. One graph where the path stays the same proves nothing; one graph
   %    where it changes proves False.
   \begin{enumerate}
-    \item True. Adding a connection only adds paths and never removes one, so the minimum
-    over the larger set of paths cannot exceed the minimum over the smaller set. The distance either
-    drops, if the best path through the new connection is cheaper, or stays the same.
+    \item True. Adding a connection only gives you more paths, it never takes one away, so the
+    minimum can drop or stay where it is but it cannot go up.
 
-    \item False. An action out of a state that the start cannot reach lies on no path from
-    the start to the goal, however small its cost. For example, with $A \xrightarrow{5} C$ as the only
-    route from start $A$ to goal $C$ and a separate component $D \xrightarrow{-1000} E$, the cheap action
-    never appears in the minimum-cost path. The same holds for an action leading into a dead end.
+    \item False. An action coming out of a state the start cannot get to is not on any path from
+    start to goal, however cheap it is. Say $A \xrightarrow{5} C$ is the only way from start $A$ to
+    goal $C$, and $D \xrightarrow{-1000} E$ sits off on its own, then that cheap action never shows
+    up. Same if it leads into a dead end.
 
-    \item False. Adding 1 to every action raises a path's cost by its number of edges, so paths
-    with more edges are penalised more and the ranking can change. Take route 1, $A \xrightarrow{10} Z$
-    with one edge, and route 2, $A \xrightarrow{2} B \xrightarrow{2} C \xrightarrow{2} D \xrightarrow{2} Z$
-    with four. Before the change route 1 costs 10 and route 2 costs 8, so route 2 is the minimum. After
-    adding 1 to every action, route 1 costs 11 and route 2 costs 12, so route 1 becomes the minimum-cost path.
+    \item False. Adding 1 to every action charges a path by how many edges it has, so the longer
+    ones get hit harder and the order can flip. Route 1 is $A \xrightarrow{10} Z$ with one edge,
+    route 2 is $A \xrightarrow{2} B \xrightarrow{2} C \xrightarrow{2} D \xrightarrow{2} Z$ with
+    four. Before, route 1 costs 10 and route 2 costs 8, so route 2 wins. After, route 1 costs 11 and
+    route 2 costs 12, so route 1 wins.
   \end{enumerate}
-  % ### END CODE HERE ###
+% ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1c
 \clearpage
@@ -159,34 +157,35 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   %  - crossings counted along each path: 2 on the EVGR route, 10 on the Gates route.
   %  - node spacing on the EVGR route runs from 1.85 m up to 98.8 m on one edge.
   The first setting is the useful one: start at EVGR-A with end tag
-  \texttt{landmark=green\_library}, which comes out at 606.0 m over 38 locations.
+  \texttt{landmark=green\_library}, which comes out around 606 m over 38 locations.
 
   \begin{center}
     \includegraphics[width=0.92\textwidth]{images/2b-evgr-green-library.png}
   \end{center}
 
-  The second is the one where the answer is not desirable: start at Gates with end tag
-  \texttt{amenity=food}, 659.2 m, finishing at the Cantor Arts Center.
+  The second is the one that does not really work: start at Gates with end tag
+  \texttt{amenity=food}, about 659 m, and it finishes at the Cantor Arts Center.
 
   \begin{center}
     \includegraphics[width=0.92\textwidth]{images/2b-gates-food.png}
   \end{center}
 
-  What I learned is that the cost is pure distance, so everything that actually slows a walk down
-  is free. My EVGR-A to Green Library route is 606.0 m and passes 2 marked crossings, while the
-  Gates route is almost the same length at 659.2 m but passes 10 crossings and a bus stop, so in
-  practice the second walk takes noticeably longer and the search has no way to tell the two apart.
-  I also found the locations are spaced very unevenly, from 1.85 m to 98.8 m apart on the same path,
-  so the number of steps in a path says nothing about how far it is.
+  What I got out of it is that the cost is just distance, so anything that actually slows a walk
+  down is free as far as the search is concerned. My EVGR-A route is around 606 m and goes through
+  a couple of marked crossings, while the Gates one is roughly the same length but goes through
+  about ten of them plus a bus stop, so the second walk takes a fair bit longer in practice and the
+  search has no way to tell them apart. The locations are also spaced pretty unevenly, anywhere from
+  under 2 m to nearly 100 m apart on the same path, so the number of steps does not say much about
+  how far it is.
 
-  What is wrong is that asking Gates for the nearest \texttt{amenity=food} returns the Cantor Arts
-  Center at 659.2 m, while Tressider, which is the actual food court, sits at 965.9 m and never gets
-  picked. Only four locations on the entire map carry \texttt{amenity=food}, and two of them are the
-  art museum and the football stadium, because the tag is attached to the landmark's own OSM node, so
-  one cafe inside a large building ends up labelling the whole building as food. The modelling
-  assumption that breaks is that a tag on a single node stands for the whole place, and that a place
-  I can reach is a place that is open and serving.
-  % ### END CODE HERE ###
+  What seems wrong is that asking Gates for the nearest \texttt{amenity=food} sends you to the
+  Cantor Arts Center, while Tressider, which is where you would actually go, is further out and
+  never gets picked. There are only a handful of locations on the map with \texttt{amenity=food} at
+  all, and a couple of them are the art museum and the football stadium, which happens because the
+  tag is sitting on the landmark's own node, so one cafe somewhere inside a big building ends up
+  labelling the whole thing as food. The assumption that breaks is that a tag on one node stands for
+  the whole place, and that somewhere you can walk to is somewhere that is open.
+% ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2b
 
