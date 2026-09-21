@@ -245,25 +245,23 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   %  - direct EVGR-A -> green_library with no waypoints is 606.0 m, so the two
   %    waypoints cost me exactly 3x the trip.
   The waypoint tags are \texttt{landmark=memorial\_church} and \texttt{landmark=tressider}, starting
-  at EVGR-A with end tag \texttt{landmark=green\_library}, and the path comes out at 1815.6 m over
-  130 locations.
+  at EVGR-A and ending at \texttt{landmark=green\_library}. It comes out around 1800 m over 130
+  locations.
 
   \begin{center}
     \includegraphics[width=0.92\textwidth]{images/3c-church-tressider-library.png}
   \end{center}
 
-  The order surprised me. I listed the church first, but the search went to Tressider at 991.5 m,
-  then the church at 1464.8 m, then the library at 1815.6 m, which is the point of leaving the
-  waypoints unordered: I do not have to guess the ordering, and here my guess would have been the
-  more expensive one. What did match my expectation is the cost, since the same trip with no
-  waypoints is 606.0 m, so adding two stops tripled it, which is what you get when the stops sit off
-  the straight line between start and end.
+  The order was not what I expected. I listed the church first but it went to Tressider first, then
+  the church, then the library. That is the point of the waypoints being unordered, I do not have to
+  pick the order myself, and my order would have cost more. The cost was about what I expected
+  though. The same trip with no waypoints is around 600 m, so two stops made it roughly three times
+  longer, which makes sense when the stops sit off to the side.
 
-  What the path fails to capture is anything other than metres. It has no idea that Tressider closes
-  in the evening, that the church is worth more time than a junction, or that I would rather eat
-  before settling into the library than after, and it is one way, so it never accounts for getting
-  home. A route that is optimal in distance can still be the wrong plan for the day.
-  % ### END CODE HERE ###
+  What it misses is everything that is not distance. It does not know Tressider closes in the
+  evening, or that I would want to eat before the library and not after. It also only goes one way,
+  so getting home is not counted at all.
+% ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3c
 
