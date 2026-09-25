@@ -33,6 +33,41 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1a
 \begin{answer}
   % ### START CODE HERE ###
+  With $V^\star_0(s) = 0$ for all $s$ and $V^\star_i(s_\text{end}) = 0$ for all $i$, applying
+  $$V^\star_i(s) = \max_a \sum_{s'} T(s'\vert s,a)\big[\text{Reward}(s,a,s') + \gamma V^\star_{i-1}(s')\big], \quad \gamma = 1$$
+  gives, for iteration $i=1$ (using $V^\star_0 \equiv 0$):
+  \begin{align*}
+    Q_1(-1,a_1) &= 0.8(10) + 0.2(-5) = 7, &
+    Q_1(-1,a_2) &= 0.7(10) + 0.3(-5) = 5.5 \\
+    Q_1(0,a_1) &= 0.8(-5) + 0.2(-5) = -5, &
+    Q_1(0,a_2) &= 0.7(-5) + 0.3(-5) = -5 \\
+    Q_1(1,a_1) &= 0.8(-5) + 0.2(50) = 6, &
+    Q_1(1,a_2) &= 0.7(-5) + 0.3(50) = 11.5
+  \end{align*}
+  so $V^\star_1(-1) = 7$, $V^\star_1(0) = -5$, $V^\star_1(1) = 11.5$, and $V^\star_1(-2) = V^\star_1(2) = 0$.
+
+  For iteration $i=2$ (using $V^\star_1$ above):
+  \begin{align*}
+    Q_2(-1,a_1) &= 0.8(10+0) + 0.2(-5-5) = 6, &
+    Q_2(-1,a_2) &= 0.7(10+0) + 0.3(-5-5) = 4 \\
+    Q_2(0,a_1) &= 0.8(-5+7) + 0.2(-5+11.5) = 2.9, &
+    Q_2(0,a_2) &= 0.7(-5+7) + 0.3(-5+11.5) = 3.35 \\
+    Q_2(1,a_1) &= 0.8(-5-5) + 0.2(50+0) = 2, &
+    Q_2(1,a_2) &= 0.7(-5-5) + 0.3(50+0) = 8
+  \end{align*}
+  so $V^\star_2(-1) = 6$, $V^\star_2(0) = 3.35$, $V^\star_2(1) = 8$, and $V^\star_2(-2) = V^\star_2(2) = 0$.
+
+  \begin{center}
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    $s$ & $-2$ & $-1$ & $0$ & $1$ & $2$ \\
+    \hline
+    $V^\star_1(s)$ & $0$ & $7$ & $-5$ & $11.5$ & $0$ \\
+    \hline
+    $V^\star_2(s)$ & $0$ & $6$ & $3.35$ & $8$ & $0$ \\
+    \hline
+  \end{tabular}
+  \end{center}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1a
@@ -45,6 +80,8 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1b
 \begin{answer}
   % ### START CODE HERE ###
+  Reading off the action attaining the max $Q_2(s,a)$ computed in 1a for each non-end state:
+  $$\pi^\star(-1) = a_1, \qquad \pi^\star(0) = a_2, \qquad \pi^\star(1) = a_2.$$
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1b
