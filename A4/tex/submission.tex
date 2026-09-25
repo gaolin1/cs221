@@ -94,6 +94,21 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_2a
 \begin{answer}
   % ### START CODE HERE ###
+  The optimal values of the original MDP satisfy
+  $$V_\text{opt}(s) = \max_a \sum_{s'} T(s,a,s')\big[\text{Reward}(s,a,s') + \lambda\, V_\text{opt}(s')\big], \qquad \forall s \in S. \tag{$\star$}$$
+  Define the new MDP with $S' = S \cup \{o\}$, $A'(s) = A(s)$, $\lambda' = 1$, and
+  $$T'(s,a,s') = \lambda\, T(s,a,s'), \qquad R'(s,a,s') = \frac{\text{Reward}(s,a,s')}{\lambda} \qquad \text{for } s' \in S,$$
+  $$T'(s,a,o) = 1-\lambda,$$
+  with $o$ a new end state ($V_\text{opt}'(o) = 0$ by the usual convention for terminal states). This is a valid
+  distribution since $\sum_{s' \in S} T(s,a,s') = 1$, so $\sum_{s' \in S} T'(s,a,s') + T'(s,a,o) = \lambda + (1-\lambda) = 1$.
+
+  Since $\lambda' = 1$ and $V'_\text{opt}(o) = 0$, the new MDP's optimal values satisfy
+  $$V'_\text{opt}(s) = \max_a \sum_{s' \in S} T'(s,a,s')\big[R'(s,a,s') + V'_\text{opt}(s')\big]
+    = \max_a \sum_{s' \in S} \lambda\, T(s,a,s')\left[\frac{\text{Reward}(s,a,s')}{\lambda} + V'_\text{opt}(s')\right].$$
+  Distributing the $\lambda$ gives
+  $$V'_\text{opt}(s) = \max_a \sum_{s' \in S} T(s,a,s')\big[\text{Reward}(s,a,s') + \lambda\, V'_\text{opt}(s')\big],$$
+  which is exactly recurrence $(\star)$ with $V'_\text{opt}$ in place of $V_\text{opt}$. Both recurrences have a unique
+  fixed point (value iteration converges to it), so $V'_\text{opt}(s) = V_\text{opt}(s)$ for all $s \in S$.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2a
