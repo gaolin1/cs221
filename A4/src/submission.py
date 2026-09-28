@@ -147,19 +147,19 @@ class ModelBasedMonteCarlo(util.RLAlgorithm):
         # explore on, check prob to give choice
             random_pick = random.random()
             if random_pick < explorationProb:
-                new_action = np.random.choice(self.actions)
+                new_action = int(np.random.choice(self.actions))
         # if falls to follow, check, otherwise give random
             else:
                 if state in self.pi.keys():
                     new_action = self.pi[state]
                 else:
-                    new_action = np.random.choice(self.actions)            
+                    new_action = int(np.random.choice(self.actions))            
         else:
         # if not explore, check policy first
             if state in self.pi.keys():
                 new_action = self.pi[state]
             else:
-                new_action = np.random.choice(self.actions)
+                new_action = int(np.random.choice(self.actions))
         return new_action
         # ### END CODE HERE ###
 
@@ -221,6 +221,31 @@ class TabularQLearning(util.RLAlgorithm):
             explorationProb = explorationProb / math.log(self.numIters - 100000 + 1)
 
         # ### START CODE HERE ###
+        if explore:
+            random_pick = random.random()
+            if random_pick < explorationProb:
+                newAction = int(np.random.choice(self.actions))
+            else:
+                if len(self.Q.keys()) > 0:
+                    max_q_values = float("-inf")
+                    for current_action in self.actions:
+                        current_q_value = self.Q[(state, current_action)]
+                        if current_q_value > max_q_values:
+                            newAction = current_action
+                            max_q_values = current_q_value
+                else:
+                    newAction = int(np.random.choice(self.actions))
+        else:
+            if len(self.Q.keys()) > 0:
+                max_q_values = float("-inf")
+                for current_action in self.actions:
+                    current_q_values = self.Q[(state, current_action)]
+                    if current_q_values > max_q_values:
+                        newAction = current_action
+                        max_q_values = current_q_values
+            else:
+                newAction = int(np.random.choice(self.actions))
+        return newAction
         # ### END CODE HERE ###
 
     # Call this function to get the step size to update the Q-values.
@@ -231,8 +256,18 @@ class TabularQLearning(util.RLAlgorithm):
     # Note that if s' is a terminal state, then terminal will be True.  Remember to check for this.
     # You should update the Q values using self.getStepSize()
     def incorporateFeedback(self, state: StateT, action: ActionT, reward: float, nextState: StateT, terminal: bool) -> None:
-        pass
         # ### START CODE HERE ###
+        if terminal:
+            self.Q[(state, action)] += self.getStepSize() * (reward - self.Q[(state, action)])
+        else:
+            max_q_value = float("-inf")
+            for next_action in self.actions:
+                next_q_value = self.Q[(nextState, next_action)]
+                if next_q_value > max_q_value:
+                    new_action = next_action
+                    max_q_value = next_q_value
+            utility = reward + self.discount * self.Q[(nextState, new_action)]
+            self.Q[(state, action)] += self.getStepSize() * (utility - self.Q[(state, action)])
         # ### END CODE HERE ###
 
 ############################################################
@@ -262,6 +297,15 @@ def fourierFeatureExtractor(
     # doing efficient arithmetic broadcasting in numpy.
 
     # ### START CODE HERE ###
+    # calculates 0, d0s0...max_coeff(d0s0)
+    initial_d_s = state[0] * scale[0] * np.arange(0, maxCoeff + 1)
+    combined_d_s = initial_d_s
+    for i in range(1, len(state)):
+    # calcualtes 0, d1s1...max_coeff(d1s1)
+        new_d_s = state[i] * scale[i] * np.arange(0, maxCoeff + 1)
+        combined_d_s = np.add.outer(combined_d_s, new_d_s)
+        combined_d_s = combined_d_s.flatten()
+    features = np.cos(np.pi * combined_d_s)
     # ### END CODE HERE ###
 
     return features
@@ -288,8 +332,11 @@ class FunctionApproxQLearning(util.RLAlgorithm):
         self.numIters = 0
 
     def getQ(self, state: np.ndarray, action: int) -> float:
-        pass
         # ### START CODE HERE ###
+        action_weights = self.W[:, action]
+        features = self.featureExtractor(state, action)
+        action_and_weights = action_weights * features
+        return np.sum(action_and_weights)
         # ### END CODE HERE ###
 
     # This algorithm will produce an action given a state.
@@ -308,6 +355,25 @@ class FunctionApproxQLearning(util.RLAlgorithm):
             explorationProb = explorationProb / math.log(self.numIters - 100000 + 1)
 
         # ### START CODE HERE ###
+        if explore:
+            random_pick = random.random()
+            if random_pick < explorationProb:
+                new_action = int(np.random.choice(self.actions))
+            else:
+                max_q_value = float("-inf")
+                for current_action in self.actions:
+                    current_q_value = self.getQ(state, current_action)
+                    if current_q_value > max_q_value:
+                        new_action = current_action
+                        max_q_value = current_q_value
+        else:
+            max_q_value = float("-inf")
+            for current_action in self.actions:
+                current_q_value = self.getQ(state, current_action)
+                if current_q_value > max_q_value:
+                    new_action = current_action
+                    max_q_value = current_q_value
+        return new_action
         # ### END CODE HERE ###
 
     # Call this function to get the step size to update the weights.
@@ -318,8 +384,25 @@ class FunctionApproxQLearning(util.RLAlgorithm):
     # Note that if s' is a terminal state, then terminal will be True.  Remember to check for this.
     # You should update W using self.getStepSize()
     def incorporateFeedback(self, state: np.ndarray, action: int, reward: float, nextState: np.ndarray, terminal: bool) -> None:
-        pass
         # ### START CODE HERE ###
+        if terminal:
+        # at terminal, we already know the truth, which is the award
+            self.W[:, action] += self.getStepSize() * (reward -  self.getQ(state, action)) * self.featureExtractor(state, action)
+        else:
+        # get max q action get feedback on that, environment returns the reward and next state and if terminal
+            max_q_value = float("-inf")
+            for current_action in self.actions:
+                current_q_value = self.getQ(nextState, current_action)
+                if current_q_value > max_q_value:
+                    next_action = current_action
+                    max_q_value = current_q_value
+        # then we get our bootstrapped best estimated target
+            target = reward + self.discount * self.getQ(nextState, next_action)
+        # then we get how far off we are
+            predicted_error = target - self.getQ(state, action)
+        # then get the value to nudge towards estimated target
+            update_value = self.getStepSize() * self.featureExtractor(state, action) * predicted_error
+            self.W[:, action] += update_value
         # ### END CODE HERE ###
 
 ############################################################
@@ -352,6 +435,25 @@ class ConstrainedQLearning(FunctionApproxQLearning):
             explorationProb = explorationProb / math.log(self.numIters - 100000 + 1)
 
         # ### START CODE HERE ###
+        if explore:
+            random_pick = random.random()
+            if random_pick < explorationProb:
+                new_action = int(np.random.choice(self.actions))
+            else:
+                max_q_value = float("-inf")
+                for action in self.actions:
+                    current_q_value = self.getQ(state, action)
+                    if current_q_value > max_q_value:
+                        new_action = action
+                        max_q_value = current_q_value                
+        else:
+            max_q_value = float("-inf")
+            for action in self.actions:
+                current_q_value = self.getQ(state, action)
+                if current_q_value > max_q_value:
+                    new_action = action
+                    max_q_value = current_q_value
+        return new_action
         # ### END CODE HERE ###
 
 ############################################################
