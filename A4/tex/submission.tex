@@ -33,6 +33,42 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1a
 \begin{answer}
   % ### START CODE HERE ###
+  With $V^\star_0(s) = 0$ for all $s$ and $V^\star_i(s_\text{end}) = 0$ for all $i$, applying
+  $$V^\star_i(s) = \max_a \sum_{s'} T(s'\vert s,a)\big[\text{Reward}(s,a,s') + \gamma V^\star_{i-1}(s')\big], \quad \gamma = 1$$
+  gives, for iteration $i=1$ (using $V^\star_0 \equiv 0$):
+  \begin{align*}
+    Q_1(-1,a_1) &= 0.8(10) + 0.2(-5) = 7, &
+    Q_1(-1,a_2) &= 0.7(10) + 0.3(-5) = 5.5 \\
+    Q_1(0,a_1) &= 0.8(-5) + 0.2(-5) = -5, &
+    Q_1(0,a_2) &= 0.7(-5) + 0.3(-5) = -5 \\
+    Q_1(1,a_1) &= 0.8(-5) + 0.2(50) = 6, &
+    Q_1(1,a_2) &= 0.7(-5) + 0.3(50) = 11.5
+  \end{align*}
+  so $V^\star_1(-1) = 7$, $V^\star_1(0) = -5$, $V^\star_1(1) = 11.5$, and $V^\star_1(-2) = V^\star_1(2) = 0$.
+
+  For iteration $i=2$ (using $V^\star_1$ above):
+  \begin{align*}
+    Q_2(-1,a_1) &= 0.8(10+0) + 0.2(-5-5) = 6, &
+    Q_2(-1,a_2) &= 0.7(10+0) + 0.3(-5-5) = 4 \\
+    Q_2(0,a_1) &= 0.8(-5+7) + 0.2(-5+11.5) = 2.9, &
+    Q_2(0,a_2) &= 0.7(-5+7) + 0.3(-5+11.5) = 3.35 \\
+    Q_2(1,a_1) &= 0.8(-5-5) + 0.2(50+0) = 2, &
+    Q_2(1,a_2) &= 0.7(-5-5) + 0.3(50+0) = 8
+  \end{align*}
+  so $V^\star_2(-1) = 6$, $V^\star_2(0) = 3.35$, $V^\star_2(1) = 8$, and $V^\star_2(-2) = V^\star_2(2) = 0$.
+
+  \begin{center}
+  \lstDeleteShortInline|
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    $s$ & $-2$ & $-1$ & $0$ & $1$ & $2$ \\
+    \hline
+    $V^\star_1(s)$ & $0$ & $7$ & $-5$ & $11.5$ & $0$ \\
+    \hline
+    $V^\star_2(s)$ & $0$ & $6$ & $3.35$ & $8$ & $0$ \\
+    \hline
+  \end{tabular}
+  \end{center}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1a
@@ -45,6 +81,8 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1b
 \begin{answer}
   % ### START CODE HERE ###
+  Reading off the action attaining the max $Q_2(s,a)$ computed in 1a for each non-end state:
+  $$\pi^\star(-1) = a_1, \qquad \pi^\star(0) = a_2, \qquad \pi^\star(1) = a_2.$$
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1b
@@ -57,6 +95,25 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_2a
 \begin{answer}
   % ### START CODE HERE ###
+  The optimal values of the original MDP satisfy
+  \begin{equation}
+  V_\text{opt}(s) = \max_a \sum_{s'} T(s,a,s')\big[\text{Reward}(s,a,s') + \lambda\, V_\text{opt}(s')\big], \qquad \forall s \in S. \tag{$\star$}
+  \end{equation}
+  Define the new MDP with $S' = S \cup \{o\}$, $A'(s) = A(s)$, $\lambda' = 1$, and
+  $$T'(s,a,s') = \lambda\, T(s,a,s'), \qquad R'(s,a,s') = \frac{\text{Reward}(s,a,s')}{\lambda} \qquad \text{for } s' \in S,$$
+  $$T'(s,a,o) = 1-\lambda,$$
+  with $o$ a new end state ($V_\text{opt}'(o) = 0$ by the usual convention for terminal states). This is a valid
+  distribution since $\sum_{s' \in S} T(s,a,s') = 1$, so $\sum_{s' \in S} T'(s,a,s') + T'(s,a,o) = \lambda + (1-\lambda) = 1$.
+
+  Since $\lambda' = 1$ and $V'_\text{opt}(o) = 0$, the new MDP's optimal values satisfy
+  \begin{align*}
+  V'_\text{opt}(s) &= \max_a \sum_{s' \in S} T'(s,a,s')\big[R'(s,a,s') + V'_\text{opt}(s')\big] \\
+    &= \max_a \sum_{s' \in S} \lambda\, T(s,a,s')\left[\frac{\text{Reward}(s,a,s')}{\lambda} + V'_\text{opt}(s')\right].
+  \end{align*}
+  Distributing the $\lambda$ gives
+  $$V'_\text{opt}(s) = \max_a \sum_{s' \in S} T(s,a,s')\big[\text{Reward}(s,a,s') + \lambda\, V'_\text{opt}(s')\big],$$
+  which is exactly recurrence $(\star)$ with $V'_\text{opt}$ in place of $V_\text{opt}$. Both recurrences have a unique
+  fixed point (value iteration converges to it), so $V'_\text{opt}(s) = V_\text{opt}(s)$ for all $s \in S$.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2a

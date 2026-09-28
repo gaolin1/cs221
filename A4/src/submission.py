@@ -26,14 +26,27 @@ def valueIteration(succAndRewardProb: Dict[Tuple[StateT, ActionT], List[Tuple[St
 
     def computeQ(V: Dict[StateT, float], state: StateT, action: ActionT) -> float:
         # Return Q(state, action) based on V(state)
-        pass
         # ### START CODE HERE ###
+        Q_value = 0
+        for nextState, probability, reward in succAndRewardProb[(state, action)]:
+            reward_and_previous_value = reward + discount * V[nextState]
+            Q_value += probability * reward_and_previous_value
+        return Q_value
         # ### END CODE HERE ###
 
     def computePolicy(V: Dict[StateT, float]) -> Dict[StateT, ActionT]:
         # Return the policy given V.
-        pass
         # ### START CODE HERE ###
+        optimal_policy = dict()
+        for current_state in V.keys():
+            optimal_action = []
+            for current_action in stateActions[current_state]:
+                current_q = computeQ(V, current_state, current_action)
+                optimal_action.append(current_q)
+                max_q = max(optimal_action)
+                if current_q == max_q:
+                    optimal_policy[current_state] = current_action
+        return optimal_policy
         # ### END CODE HERE ###
 
     print('Running valueIteration...')
@@ -44,6 +57,17 @@ def valueIteration(succAndRewardProb: Dict[Tuple[StateT, ActionT], List[Tuple[St
         # update V values using the computeQ function above.
         # repeat until the V values for all states converge (changes between iterations are less than epsilon).
         # ### START CODE HERE ###
+        state_diff = []
+        for state in stateActions.keys():
+            Q_action_value = []
+            for action in stateActions[state]:
+                Q_value = computeQ(V, state, action)
+                Q_action_value.append(Q_value)
+            max_Q_value = max(Q_action_value)
+            newV[state] = max_Q_value
+            state_diff.append(abs(max_Q_value - V[state]))
+        if max(state_diff) < epsilon:
+            break
         # ### END CODE HERE ###
         V = newV
         numIters += 1
@@ -119,6 +143,24 @@ class ModelBasedMonteCarlo(util.RLAlgorithm):
         elif self.numIters > 1e6: # Lower the exploration probability by a logarithmic factor.
             explorationProb = explorationProb / math.log(self.numIters - 100000 + 1)
         # ### START CODE HERE ###
+        if explore:
+        # explore on, check prob to give choice
+            random_pick = random.random()
+            if random_pick < explorationProb:
+                new_action = np.random.choice(self.actions)
+        # if falls to follow, check, otherwise give random
+            else:
+                if state in self.pi.keys():
+                    new_action = self.pi[state]
+                else:
+                    new_action = np.random.choice(self.actions)            
+        else:
+        # if not explore, check policy first
+            if state in self.pi.keys():
+                new_action = self.pi[state]
+            else:
+                new_action = np.random.choice(self.actions)
+        return new_action
         # ### END CODE HERE ###
 
     # We will call this function with (s, a, r, s'), which is used to update tCounts and rTotal.
@@ -133,6 +175,16 @@ class ModelBasedMonteCarlo(util.RLAlgorithm):
             # Then run valueIteration and update self.pi.
             succAndRewardProb = defaultdict(list)
             # ### START CODE HERE ###
+            for countState, countAction in self.tCounts.keys():
+            # succAndRewardProb: Dictionary mapping tuples of (state, action) to a list of (nextState, prob, reward) Tuples.
+                total_state_action = sum(self.tCounts[(countState, countAction)].values())
+                for countNextState in self.tCounts[(countState, countAction)].keys():
+                    next_state_count = self.tCounts[(countState, countAction)][countNextState]
+                    probability = next_state_count/total_state_action
+                    average_reward = self.rTotal[(countState, countAction)][countNextState]/next_state_count
+                    succAndRewardProb[(countState, countAction)].append([countNextState, probability, average_reward])
+            optimal_policy = valueIteration(succAndRewardProb, self.discount)
+            self.pi = optimal_policy
             # ### END CODE HERE ###
 
 ############################################################
