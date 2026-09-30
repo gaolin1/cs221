@@ -45,3 +45,20 @@ A3/tex/06-product-ethics/04-support.tex
 A3/tex/py-macros.tex
 
 *.log
+
+# A5 tex generated from .pytex by py2tex.py
+A5/tex/00-instructions/00-main.tex
+A5/tex/00-instructions/02-submission.tex
+A5/tex/00-instructions/04-autograder.tex
+A5/tex/00-outro.tex
+A5/tex/01-minimax/01-piecewise.tex
+A5/tex/03-expectimax/01-recurrence.tex
+A5/tex/05-alignment-and-reward-hacking/01-minimax-expectimax-comparison.tex
+A5/tex/05-alignment-and-reward-hacking/02-alignment.tex
+A5/tex/05-alignment-and-reward-hacking/03-reward-hacking.tex
+A5/tex/06-product-ethics/01-data-collection.tex
+A5/tex/06-product-ethics/02-trust.tex
+A5/tex/06-product-ethics/03-fairness.tex
+A5/tex/06-product-ethics/04-accountability.tex
+A5/tex/06-product-ethics/05-copyright.tex
+A5/tex/py-macros.tex

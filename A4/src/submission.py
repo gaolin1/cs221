@@ -400,7 +400,7 @@ class FunctionApproxQLearning(util.RLAlgorithm):
             target = reward + self.discount * self.getQ(nextState, next_action)
         # then we get how far off we are
             predicted_error = target - self.getQ(state, action)
-        # then get the value to nudge towards estimated target
+        # then get the value to nudge towards estimated target into to weight (e.g. feature) shape
             update_value = self.getStepSize() * self.featureExtractor(state, action) * predicted_error
             self.W[:, action] += update_value
         # ### END CODE HERE ###
