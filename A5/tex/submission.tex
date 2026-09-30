@@ -69,6 +69,25 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3a
 \begin{answer}
   % ### START CODE HERE ###
+  \[
+    V_{\text{exptmax}}(s, d) =
+    \begin{cases}
+      \text{Utility}(s)
+        & \text{if } \text{IsEnd}(s) \\
+      \text{Eval}(s)
+        & \text{if } d = 0 \\
+      \max_{a \in \text{Actions}(s)} V_{\text{exptmax}}(\text{Succ}(s, a), d)
+        & \text{if } \text{Player}(s) = a_0 \\
+      \dfrac{1}{\lvert \text{Actions}(s) \rvert} \sum_{a \in \text{Actions}(s)} V_{\text{exptmax}}(\text{Succ}(s, a), d)
+        & \text{if } \text{Player}(s) = a_i,\ 1 \le i < n \\
+      \dfrac{1}{\lvert \text{Actions}(s) \rvert} \sum_{a \in \text{Actions}(s)} V_{\text{exptmax}}(\text{Succ}(s, a), d - 1)
+        & \text{if } \text{Player}(s) = a_n
+    \end{cases}
+  \]
+
+  Same as 1a except the ghosts take the average of their successors instead of the min, since
+  each ghost picks every legal move with the same probability $1 / \lvert \text{Actions}(s) \rvert$. Pac-Man
+  still takes the max, and $d$ still only drops after the last ghost moves.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3a
