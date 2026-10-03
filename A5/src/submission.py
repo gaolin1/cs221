@@ -166,37 +166,54 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     # ### START CODE HERE ###
     # recursive loop to get nested list of all states on a ghost index
-    def getGhostChildren(num_agents, input_state, input_idx: int = 1):
+    def getGhostChildren(num_agents, input_state, input_depth, input_idx: int = 1):
       states = []
       input_actions = input_state.getLegalActions(input_idx)
-      if input_idx == num_agents - 1:
-        for input_action in input_actions:
-          new_state = input_state.generateSuccessor(input_idx, input_action)
-          agent_score = self.evaluationFunction(new_state)
-          states.append(agent_score)
-        return states
+      # if no further actions then return the current states' score
+      if input_actions:
+        if input_idx == num_agents - 1:
+          if input_depth - 1 == 0:
+            # we are at the end, get the scores
+            for input_action in input_actions:
+              new_state = input_state.generateSuccessor(input_idx, input_action)
+              agent_score = self.evaluationFunction(new_state)
+              states.append(agent_score)
+            return states
+          else:
+            input_depth -= 1
+            input_idex = 0
+            for input_action in input_actions:
+              new_agent_state = input_state.generateSuccessor(input_idx, input_action)
+              states.append(getMiniMaxScore(getGhostChildren(num_agents, new_agent_state, input_depth, input_idex), "max"))
+        else:
+          for input_action in input_actions:
+            new_state = input_state.generateSuccessor(input_idx, input_action)
+            states.append(getMiniMaxScore(getGhostChildren(num_agents, new_state, input_depth, input_idx + 1)))
       else:
-        for input_action in input_actions:
-          new_state = input_state.generateSuccessor(input_idx, input_action)
-          states.append(getGhostChildren(num_agents, new_state, input_idx + 1))
+        states.append(self.evaluationFunction(input_state))
       return states
+    # recursive helper on applying min for all nested ghost scores
+    def getMiniMaxScore(scores_list, operation: str = "min"):
+      if operation == "max":
+        return max(scores_list)
+      else:
+        return min(scores_list)
+    
     # gets action
     ghost_state_scores = []
     num_agents = gameState.getNumAgents()
     # loop through all possible actions and get a nested list of all scores
-    allowed_agent_actions = gameState.getLegalActions(0)
+
+    allowed_agent_actions = gameState.getLegalActions(self.index)
     for agent_action in allowed_agent_actions:
       initial_ghost_state = gameState.generateSuccessor(0, agent_action)
-      ghost_scores = getGhostChildren(num_agents, initial_ghost_state)
-      ghost_state_scores.append(ghost_scores)
+      ghost_scores = getGhostChildren(num_agents, initial_ghost_state, self.depth)
+      ghost_min_score = getMiniMaxScore(ghost_scores)
+      ghost_state_scores.append(ghost_min_score)
 
-        #if ghost_idx == num_agents - 1:
-          #action_score = self.evaluationFunction(successor_state)
-          #ghost_scores.append(action_score)
-        #current_state = successor_state
-
+    action_index = ghost_state_scores.index(max(ghost_state_scores))
+    best_agent_action = allowed_agent_actions[action_index]
     
-    best_agent_action = ""
     return best_agent_action
     # ### END CODE HERE ###
 
