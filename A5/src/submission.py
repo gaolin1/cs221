@@ -164,38 +164,39 @@ class MinimaxAgent(MultiAgentSearchAgent):
         The depth to which search should continue
 
     """
-    
     # ### START CODE HERE ###
+    # recursive loop to get nested list of all states on a ghost index
+    def getGhostChildren(num_agents, input_state, input_idx: int = 1):
+      states = []
+      input_actions = input_state.getLegalActions(input_idx)
+      if input_idx == num_agents - 1:
+        for input_action in input_actions:
+          new_state = input_state.generateSuccessor(input_idx, input_action)
+          agent_score = self.evaluationFunction(new_state)
+          states.append(agent_score)
+        return states
+      else:
+        for input_action in input_actions:
+          new_state = input_state.generateSuccessor(input_idx, input_action)
+          states.append(getGhostChildren(num_agents, new_state, input_idx + 1))
+      return states
     # gets action
-    best_agent_action = ""
+    ghost_state_scores = []
     num_agents = gameState.getNumAgents()
-    ghost_action_score = {}
-    # start from idx 1 (ghost 1)...idx n (ghost n) 
-    for ghost_idx in range(1, num_agents):
-      allowed_actions = gameState.getLegalActions(ghost_idx)
-      for action in allowed_actions:
-        best_score = float("inf")
-        successor_state = gameState.generateSuccessor(ghost_idx, action)
-        action_score = self.evaluationFunction(successor_state)
-        if action_score < best_score:
-            ghost_action_score[ghost_idx] = action
-            best_score = action_score
+    # loop through all possible actions and get a nested list of all scores
+    allowed_agent_actions = gameState.getLegalActions(0)
+    for agent_action in allowed_agent_actions:
+      initial_ghost_state = gameState.generateSuccessor(0, agent_action)
+      ghost_scores = getGhostChildren(num_agents, initial_ghost_state)
+      ghost_state_scores.append(ghost_scores)
 
-    ghost_scores = []
-    for ghost in ghost_action_score.keys():
-      ghost_action = ghost_action_score[ghost]
-      ghost_state = gameState.generateSuccessor(ghost, ghost_action)
-      current_action_score = self.evaluationFunction(ghost_state)
-      ghost_scores.append(current_action_score)
+        #if ghost_idx == num_agents - 1:
+          #action_score = self.evaluationFunction(successor_state)
+          #ghost_scores.append(action_score)
+        #current_state = successor_state
+
     
-    best_action_score = max(ghost_scores)
-    allowed_actions = gameState.getLegalActions(0)
-    for agent_action in allowed_actions:
-      next_state = gameState.generateSuccessor(0, agent_action)
-      agent_action_score = self.evaluationFunction(next_state)
-      if agent_action_score == best_action_score:
-        best_agent_action = agent_action
-    
+    best_agent_action = ""
     return best_agent_action
     # ### END CODE HERE ###
 
