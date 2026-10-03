@@ -206,7 +206,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
     allowed_agent_actions = gameState.getLegalActions(self.index)
     for agent_action in allowed_agent_actions:
-      initial_ghost_state = gameState.generateSuccessor(0, agent_action)
+      initial_ghost_state = gameState.generateSuccessor(self.index, agent_action)
       ghost_scores = getGhostChildren(num_agents, initial_ghost_state, self.depth)
       ghost_min_score = getMiniMaxScore(ghost_scores)
       ghost_state_scores.append(ghost_min_score)
@@ -229,8 +229,108 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     """
       Returns the minimax action using self.depth and self.evaluationFunction
     """
-    pass
+    
     # ### START CODE HERE ###
+    # for min (ghost nodes) we prune if it's less than alpha
+    # for max (agent nodes) we prune if it's higher than beta
+    def getGhostChildren(num_agents, alpha: float, beta: float, input_state, input_depth, input_idx: int = 1):
+      states = []
+      input_actions = input_state.getLegalActions(input_idx)
+      # if no further actions then return the current states' score
+      if input_actions:
+        if input_idx == num_agents - 1:
+          if input_depth - 1 == 0:
+            # we are at the end, get the scores for ghost leaf node
+            for input_action in input_actions:
+              new_state = input_state.generateSuccessor(input_idx, input_action)
+              agent_score = self.evaluationFunction(new_state)
+              states.append(agent_score)
+              beta = updateAlphaBeta(agent_score, beta)
+              if earlyPrune(agent_score, alpha):
+                break
+            return states
+          else:
+            # later ghost to pacman depth transition nodes
+            input_depth -= 1
+            input_idex = 0
+            for input_action in input_actions:
+              new_agent_state = input_state.generateSuccessor(input_idx, input_action)
+              new_ghost_to_agent_score = getMiniMaxScore(getGhostChildren(num_agents, alpha, beta, new_agent_state, input_depth, input_idex), "max")
+              states.append(new_ghost_to_agent_score)
+              beta = updateAlphaBeta(new_ghost_to_agent_score, beta)
+              if earlyPrune(new_ghost_to_agent_score, alpha):
+                break
+              
+        else:
+          # non last layer nodes
+          max_node = False
+          for input_action in input_actions:
+            new_state = input_state.generateSuccessor(input_idx, input_action)
+            new_score = getMiniMaxScore(getGhostChildren(num_agents, alpha, beta, new_state, input_depth, input_idx + 1))
+            states.append(new_score)
+            if input_idx == 0:
+              max_node = True
+            # determine if it's a max or min node
+            if max_node:
+              alpha = updateAlphaBeta(new_score, alpha, "alpha")
+              if earlyPrune(new_score, beta, "beta"):
+                break
+            else:
+              beta = updateAlphaBeta(new_score, beta)
+              if earlyPrune(new_score, alpha):
+                break
+      else:
+        states.append(self.evaluationFunction(input_state))
+      return states
+    
+    def getMiniMaxScore(scores_list: list, operation: str = "min"):
+      if operation == "max":
+        return max(scores_list)
+      else:
+        return min(scores_list)
+
+    def updateAlphaBeta(value: float, threshold: float, type: str = "beta"):
+      new_threshold = threshold
+      if type == "alpha":
+        if value > threshold:
+          new_threshold = value
+      elif type == "beta":
+        if value < threshold:
+          new_threshold = value
+      return new_threshold
+
+    def earlyPrune(value: float, threshold: float, type: str = "alpha") -> bool:
+      if value == threshold:
+        return True
+      if type == "beta":
+        if value > threshold:
+          return True
+      elif type == "alpha":
+        if value < threshold:
+          return True
+      return False
+        
+    # initializes the search layer
+    ghost_state_scores = []
+    num_agents = gameState.getNumAgents()
+    alpha = float("-inf")
+    ghost_beta = float("inf")
+
+    allowed_agent_actions = gameState.getLegalActions(self.index)
+    for action_index, agent_action in enumerate(allowed_agent_actions):
+      ghost_move = gameState.generateSuccessor(self.index, agent_action)
+      if action_index == 0:
+        agent_alpha = alpha
+      ghost_scores = getGhostChildren(num_agents, agent_alpha, ghost_beta, ghost_move, self.depth)
+      ghost_min_score = getMiniMaxScore(ghost_scores)
+      ghost_state_scores.append(ghost_min_score)
+      if max(ghost_state_scores) > agent_alpha:
+        agent_alpha = max(ghost_state_scores)
+
+    action_index = ghost_state_scores.index(max(ghost_state_scores))
+    best_action = allowed_agent_actions[action_index]
+    
+    return best_action
     # ### END CODE HERE ###
 
 ######################################################################################
