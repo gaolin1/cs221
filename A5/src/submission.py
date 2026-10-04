@@ -417,14 +417,17 @@ def betterEvaluationFunction(currentGameState):
   
   # ### START CODE HERE ###
   oldScore = currentGameState.getScore()
+  capsules = currentGameState.getCapsules()
   # - log d from distance to food, food feature
-  food_weight = 10
+  food_weight = 4
   # get agent position
   agent_position = currentGameState.getPacmanPosition()
   food = currentGameState.getFood()
   num_food = currentGameState.getNumFood()
+  #unused_capsule_penalty = 0
   if num_food == 0:
-    food_feature = 1
+    food_feature = 0
+  #  unused_capsule_penalty = 250 * len(capsules)
   else:
     nearest_food = None
     position_x, position_y = agent_position
@@ -446,7 +449,7 @@ def betterEvaluationFunction(currentGameState):
 
   # ghost feature to maximize chance to eat ghost
   #danger_weight = 100
-  catch_weight = 50
+  catch_weight = 100
   ghost_states = currentGameState.getGhostStates()
   #danger_penalty = 0
   catch_award = 0
@@ -458,13 +461,16 @@ def betterEvaluationFunction(currentGameState):
       scared = True
       if ghost.scaredTimer > disance_to_ghost:
         catch_award += 1 / (1 + disance_to_ghost)
+        if num_food == 0:
+          catch_award -= 8.5
+
     #elif disance_to_ghost <= 2:
     #    danger_penalty += 1 / (1 + disance_to_ghost)
 
   # capsule rewards, for pushing for capsule
   capsule_distances = []
-  capsule_weight = 20
-  capsules = currentGameState.getCapsules()
+  capsule_weight = 22
+  capsules_count = len(capsules)
   if not scared:
     for capsule in capsules:
       capsule_distance = manhattanDistance(agent_position, capsule)
@@ -474,8 +480,7 @@ def betterEvaluationFunction(currentGameState):
   else:
     capsule_feature = 1
   
-  better = oldScore + (food_weight * food_feature) + (catch_weight * catch_award)  + (capsule_weight * capsule_feature) - (20 * num_food) - (50 * len(capsules))
-  return better
+  return oldScore + (food_weight * food_feature) + (catch_weight * catch_award)  + (capsule_weight * capsule_feature) - (19 * num_food) - (50 * len(capsules))
   # ### END CODE HERE ###
 
 # Abbreviation
