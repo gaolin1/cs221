@@ -1,6 +1,7 @@
 from util import manhattanDistance
 from game import Directions
 import random, util
+import math
 
 from game import Agent
 # BEGIN_HIDE
@@ -348,7 +349,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
       All ghosts should be modeled as choosing uniformly at random from their
       legal moves.
     """
-    pass
+
     # ### START CODE HERE ###
     # recursive loop to get nested list of all states on a ghost index
     def getGhostChildren(num_agents, input_state, input_depth, input_idx: int = 1):
@@ -413,8 +414,68 @@ def betterEvaluationFunction(currentGameState):
 
     DESCRIPTION: <write something here so we know what you did>
   """
-  pass
+  
   # ### START CODE HERE ###
+  oldScore = currentGameState.getScore()
+  # - log d from distance to food, food feature
+  food_weight = 10
+  # get agent position
+  agent_position = currentGameState.getPacmanPosition()
+  food = currentGameState.getFood()
+  num_food = currentGameState.getNumFood()
+  if num_food == 0:
+    food_feature = 1
+  else:
+    nearest_food = None
+    position_x, position_y = agent_position
+    for radius in range(1, food.width + food.height):
+      for dx in range(-radius, radius + 1):
+        dy = radius - abs(dx)
+        x = position_x + dx
+        if not (0 <= x < food.width):
+          continue
+        for y in {position_y + dy, position_y - dy}:
+          if 0 <= y < food.height and food[x][y]:
+              nearest_food = radius
+              break
+        if nearest_food:
+          break
+      if nearest_food:
+        break
+    food_feature = 1 / (1 + nearest_food)
+
+  # ghost feature to maximize chance to eat ghost
+  #danger_weight = 100
+  catch_weight = 50
+  ghost_states = currentGameState.getGhostStates()
+  #danger_penalty = 0
+  catch_award = 0
+  scared = False
+  for ghost in ghost_states:
+    ghost_position = ghost.getPosition()
+    disance_to_ghost = manhattanDistance(agent_position, ghost_position)
+    if ghost.scaredTimer > 0:
+      scared = True
+      if ghost.scaredTimer > disance_to_ghost:
+        catch_award += 1 / (1 + disance_to_ghost)
+    #elif disance_to_ghost <= 2:
+    #    danger_penalty += 1 / (1 + disance_to_ghost)
+
+  # capsule rewards, for pushing for capsule
+  capsule_distances = []
+  capsule_weight = 20
+  capsules = currentGameState.getCapsules()
+  if not scared:
+    for capsule in capsules:
+      capsule_distance = manhattanDistance(agent_position, capsule)
+      capsule_distances.append(capsule_distance)
+  if capsule_distances:
+    capsule_feature = 1 / (1 + min(capsule_distances))
+  else:
+    capsule_feature = 1
+  
+  better = oldScore + (food_weight * food_feature) + (catch_weight * catch_award)  + (capsule_weight * capsule_feature) - (20 * num_food) - (50 * len(capsules))
+  return better
   # ### END CODE HERE ###
 
 # Abbreviation
