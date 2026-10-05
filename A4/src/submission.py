@@ -435,20 +435,38 @@ class ConstrainedQLearning(FunctionApproxQLearning):
             explorationProb = explorationProb / math.log(self.numIters - 100000 + 1)
 
         # ### START CODE HERE ###
+        def findAllowedActions(state, actions_list: List[int] = self.actions) -> list:
+            current_position = state[0]
+            current_velocity = state[1]
+            allowed_actions = []
+            speeds_list = {}
+            if self.max_speed is None:
+                return actions_list
+            for action in actions_list:
+                new_velocity = current_velocity + ((action - 1) * self.force) - (np.cos(3 * current_position) * self.gravity)
+                speeds_list[action] = new_velocity
+                if new_velocity < self.max_speed:
+                    allowed_actions.append(action)
+            if allowed_actions == []:
+                lowest_speed_action = min(speeds_list, key=speeds_list.get)
+                allowed_actions.append(lowest_speed_action)
+            return allowed_actions
+
+        safe_actions = findAllowedActions(state)
         if explore:
             random_pick = random.random()
             if random_pick < explorationProb:
-                new_action = int(np.random.choice(self.actions))
+                new_action = int(np.random.choice(safe_actions))
             else:
                 max_q_value = float("-inf")
-                for action in self.actions:
+                for action in safe_actions:
                     current_q_value = self.getQ(state, action)
                     if current_q_value > max_q_value:
                         new_action = action
                         max_q_value = current_q_value                
         else:
             max_q_value = float("-inf")
-            for action in self.actions:
+            for action in safe_actions:
                 current_q_value = self.getQ(state, action)
                 if current_q_value > max_q_value:
                     new_action = action
