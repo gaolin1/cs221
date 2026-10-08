@@ -33,6 +33,8 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1a
 \begin{answer}
   % ### START CODE HERE ###
+  $\text{Rain} \rightarrow \text{WetGrass}$ and $\text{Sprinkler} \rightarrow \text{WetGrass}$. There
+  is no edge between Rain and Sprinkler, since neither one causes the other.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1a
@@ -44,6 +46,11 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1b
 \begin{answer}
   % ### START CODE HERE ###
+  The joint is the product of each variable's local conditional probability given its parents:
+  \[
+    \mathbb{P}(\text{Rain} = r, \text{Sprinkler} = s, \text{WetGrass} = w)
+      = p(r)\, p(s)\, p(w \mid r, s) .
+  \]
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1b
@@ -55,6 +62,11 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1c
 \begin{answer}
   % ### START CODE HERE ###
+  Sum the joint over both values of Rain and both values of Sprinkler:
+  \[
+    \mathbb{P}(\text{WetGrass} = w)
+      = \sum_{r} \sum_{s} p(r)\, p(s)\, p(w \mid r, s) .
+  \]
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1c
@@ -66,6 +78,15 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1d
 \begin{answer}
   % ### START CODE HERE ###
+  The grass is wet with probability 0.9 when it rained and the sprinklers were on, so it stays dry
+  with probability $1 - 0.9 = 0.1$:
+  \[
+    \begin{aligned}
+      \mathbb{P}(\text{Rain} = 1, \text{Sprinkler} = 1, \text{WetGrass} = 0)
+        &= p(\text{Rain} = 1)\, p(\text{Sprinkler} = 1)\, p(\text{WetGrass} = 0 \mid \text{Rain} = 1, \text{Sprinkler} = 1) \\
+        &= 0.2 \times 0.5 \times 0.1 = 0.01 .
+    \end{aligned}
+  \]
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1d
@@ -77,6 +98,18 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1e
 \begin{answer}
   % ### START CODE HERE ###
+  % Working for (c), kept for reference, not rendered:
+  %   P(Rain, Wet)            = 0.2*0.5*0.9 + 0.2*0.5*0.8 = 0.09 + 0.08 = 0.17
+  %   P(Wet)                  = 0.17 + 0.8*0.5*0.7 + 0.8*0.5*0.0 = 0.45
+  %   P(Rain | Wet)           = 0.17 / 0.45 = 0.378
+  %   P(Rain, Sprinkler, Wet) = 0.09
+  %   P(Sprinkler, Wet)       = 0.09 + 0.28 = 0.37
+  %   P(Rain | Wet, Sprinkler)= 0.09 / 0.37 = 0.243
+  \begin{enumerate}[label=(\alph*)]
+    \item True.
+    \item False.
+    \item True.
+  \end{enumerate}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1e
