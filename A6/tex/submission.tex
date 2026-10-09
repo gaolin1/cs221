@@ -122,6 +122,22 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_2d
 \begin{answer}
   % ### START CODE HERE ###
+  One run of \texttt{forward\_sampling} with \texttt{mutation\_rate = 0.1} and \texttt{genome\_length = 10}:
+
+  \begin{center}
+  \lstDeleteShortInline|
+  \begin{tabular}{|l|l|}
+  \hline
+  \textbf{Species} & \textbf{Genome} \\
+  \hline
+  Thomas bayus & \texttt{TTCCATTCCC} \\
+  Humblus studentus & \texttt{TGCCATTCCT} \\
+  Aryamus bayus & \texttt{TTCCATTCCC} \\
+  Kenius bayus & \texttt{TTCCATTCCC} \\
+  \hline
+  \end{tabular}
+  \lstMakeShortInline|
+  \end{center}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2d
@@ -133,6 +149,24 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_2g
 \begin{answer}
   % ### START CODE HERE ###
+  Estimates of $\mathbb{P}(\text{ThomasBayus} = \text{AAAC} \mid \text{KeniusBayus} = \text{AAAA})$,
+  from \texttt{test\_gibbs\_vs\_rejection} with \texttt{mutation\_rate = 0.1}, \texttt{genome\_length = 4}, seed 0:
+
+  \begin{center}
+  \lstDeleteShortInline|
+  \begin{tabular}{|l|c|l|}
+  \hline
+  \textbf{Method} & \textbf{Steps/Iterations} & \textbf{Estimated Posterior} \\
+  \hline
+  Rejection sampling & 100 & 0.0000 \\
+  Rejection sampling & 10,000 & 0.0667 \\
+  Gibbs sampling & 100 & 0.0900 \\
+  Gibbs sampling & 10,000 & 0.0332 \\
+  Exact & --- & 0.0335 \\
+  \hline
+  \end{tabular}
+  \lstMakeShortInline|
+  \end{center}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_2g
@@ -145,6 +179,9 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3a
 \begin{answer}
   % ### START CODE HERE ###
+  $Y \rightarrow A_1$, $Y \rightarrow A_2$ and $Y \rightarrow A_3$. The true label $Y$ is what each
+  annotator's claimed label depends on, and the annotators do not influence one another, so there are
+  no edges between them.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3a
@@ -156,6 +193,20 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3b
 \begin{answer}
   % ### START CODE HERE ###
+  A perfect annotator always gives the true label.
+
+  \begin{center}
+  \lstDeleteShortInline|
+  \begin{tabular}{|c|c|c|}
+  \hline
+  $Y$ & $p(A_1 = \text{good} \mid Y)$ & $p(A_1 = \text{bad} \mid Y)$ \\
+  \hline
+  $\text{good}$ & 1 & 0 \\
+  $\text{bad}$ & 0 & 1 \\
+  \hline
+  \end{tabular}
+  \lstMakeShortInline|
+  \end{center}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3b
@@ -167,6 +218,20 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3c
 \begin{answer}
   % ### START CODE HERE ###
+  A random annotator ignores the true label, so both rows are the same.
+
+  \begin{center}
+  \lstDeleteShortInline|
+  \begin{tabular}{|c|c|c|}
+  \hline
+  $Y$ & $p(A_1 = \text{good} \mid Y)$ & $p(A_1 = \text{bad} \mid Y)$ \\
+  \hline
+  $\text{good}$ & 0.5 & 0.5 \\
+  $\text{bad}$ & 0.5 & 0.5 \\
+  \hline
+  \end{tabular}
+  \lstMakeShortInline|
+  \end{center}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3c
@@ -178,6 +243,14 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3g
 \begin{answer}
   % ### START CODE HERE ###
+  \begin{center}
+    \includegraphics[width=\textwidth]{images/3g-annotator-cpts.png}
+  \end{center}
+
+  A\_2 is the least trustworthy. Its answers are close to a coin flip whichever the true label is:
+  when the conversation is good it says good about 62\% of the time, and when it is bad it only says
+  bad about 53\% of the time, so its table looks much more like the random annotator from 3c than the
+  perfect one from 3b. A\_0 and A\_1 both get the label right around 85 to 90\% of the time either way.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3g

@@ -141,6 +141,9 @@ def test_forward_sampling():
     random.seed(123)
     pass
     # ### START CODE HERE ###
+    test_network = initialize_phylogenetic_tree(mutation_rate=0.1, genome_length=10)
+    sample = forward_sampling(network=test_network)
+    joint_probability = compute_joint_probability(network=test_network, assignment=sample)
     # ### END CODE HERE ###
     print(sample)
     print(f"{joint_probability:.10%}")
@@ -171,8 +174,32 @@ def rejection_sampling(
     Returns:
         A dictionary mapping outcomes to their likelihoods, conditioned on the given assignments.
     """
-    pass
+    
     # ### START CODE HERE ###
+    reject_sample = {}
+    final_sample = {}
+    on_condition_samples_count = 0
+    for sample_idx in range(num_samples):
+        true_sample = False
+        sample = forward_sampling(network=network)
+        for conditional_variable in conditioned_on_assignments.keys():
+            sample_on_condition = sample[conditional_variable]
+            if sample_on_condition == conditioned_on_assignments[conditional_variable]:
+                true_sample = True
+            else:
+                true_sample = False
+                break
+        if true_sample:
+            target_assignment = tuple(sample[target_variable])
+            if target_assignment in reject_sample:
+                reject_sample[target_assignment] += 1
+            else:
+                reject_sample[target_assignment] = 1
+            on_condition_samples_count += 1
+    for target in reject_sample.keys():
+        target_probability = reject_sample[target]/on_condition_samples_count
+        final_sample[target] = target_probability
+    return final_sample
     # ### END CODE HERE ###
 
 ############################################################
@@ -203,8 +230,27 @@ def gibbs_sampling(
     counts = defaultdict(int)
 
     for _ in range(num_iterations):
-        pass
         # ### START CODE HERE ###
+        for resample_node in resample_nodes:
+            choices = resample_node.domain
+            resample_node_name = resample_node.name
+            for idx in range(network.batch_size):
+                choice_probabilities = []
+                for choice in choices:
+                    sample_state = state
+                    sample_state[resample_node_name][idx] = choice
+                    choice_probability = compute_joint_probability(network=network, assignment=sample_state)
+                    choice_probabilities.append(choice_probability)
+                # normalize to 1
+                choice_probability_total = sum(choice_probabilities)
+                resample_probability = choice_probabilities/choice_probability_total
+                new_choice = np.random.choice(choices,p=resample_probability)
+                state[resample_node_name][idx] = new_choice
+        target_value = tuple(state[target_variable])
+        if target_value in counts:
+            counts[target_value] += 1
+        else:
+            counts[target_value] = 1
         # ### END CODE HERE ###
     total_samples = sum(counts.values())
     return {val: counts[val] / total_samples for val in counts.keys()}
@@ -240,8 +286,8 @@ def test_gibbs_vs_rejection(
     print(f"{'Exact':>10} {exact_inference():.4f}")
 
 # Uncomment to test Gibbs vs. rejection sampling
-# test_gibbs_vs_rejection(num_steps=100, mutation_rate=0.1, genome_length=4)
-# test_gibbs_vs_rejection(num_steps=10000, mutation_rate=0.1, genome_length=4)
+#test_gibbs_vs_rejection(num_steps=100, mutation_rate=0.1, genome_length=4)
+#test_gibbs_vs_rejection(num_steps=10000, mutation_rate=0.1, genome_length=4)
 
 ############################################################
 # Problem 3d: Bayesian network for annotators
@@ -250,8 +296,20 @@ def bayesian_network_for_annotators(num_annotators: int, dataset_size: int=1) ->
     """
     Return the Bayesian network for the annotators.
     """
-    pass
     # ### START CODE HERE ###
+    outcome_domain = ["good", "bad"]
+    domain_length = len(outcome_domain)
+    data_node = BayesianNode("Y", outcome_domain, None, None)
+    annotator_original_table = np.full(shape=(domain_length, domain_length), fill_value=0.4)
+    np.fill_diagonal(annotator_original_table, val=0.6)
+    nodes_list = [data_node]
+    for annotator_index in range(num_annotators):
+        annotator_name = "A_" + str(annotator_index)
+        annotator_table = annotator_original_table.copy()
+        annotator_node = BayesianNode(annotator_name, outcome_domain, [data_node], annotator_table)
+        nodes_list.append(annotator_node)
+    network = BayesianNetwork(nodes_list, batch_size=dataset_size)
+    return network
     # ### END CODE HERE ###
 
 ############################################################
@@ -273,8 +331,15 @@ def accumulate_assignment(
         idx = batch_indices[i] if batch_indices is not None else i
         assignment_i = {k: v[i] for k, v in assignment.items()}
         for node in network.nodes:
-            pass
             # ### START CODE HERE ###
+            node_name = node.name
+            node_value = assignment_i[node_name]
+            node_index = node.domain.index(node_value)
+            if not node.parents:
+                counts[node_name][idx][node_index] += weight
+            else:
+                node_parent_index = node.parent_assignment_indices(assignment_i)
+                counts[node_name][node_parent_index][node_index] += weight
             # ### END CODE HERE ###
 
 
@@ -282,8 +347,18 @@ def mle_estimation(network: BayesianNetwork, data: List[Dict[str, List[str]]], l
     """
     Return the Bayesian network with the parameters estimated by MLE.
     """
-    pass
+    
     # ### START CODE HERE ###
+    for assignment_idx, assignment in enumerate(data):
+        if assignment_idx == 0:
+            current_count = init_zero_conditional_probability_tables(network=network)
+        accumulate_assignment(counts=current_count, network=network, assignment=assignment)
+    lambda_count = {}
+    for parameter, parameter_value in current_count.items():
+        new_value = parameter_value + lambda_param
+        lambda_count[parameter] = new_value
+    normalize_counts(network=network, counts=lambda_count)
+    return network
     # ### END CODE HERE ###
 
 ############################################################
@@ -293,8 +368,20 @@ def mle_estimation_for_annotators(data: List[Dict[str, List[str]]]) -> BayesianN
     """
     Return the Bayesian network with the parameters estimated by MLE for the annotators.
     """
-    pass
+    
     # ### START CODE HERE ###
+    num_annotators = 0
+    data_point = data[0]
+    data_point_keys = list(data_point.keys())
+    total_labels = len(data_point_keys)
+    if "Y" in data_point_keys:
+        num_annotators = total_labels - 1
+    else:
+        num_annotators = total_labels
+    dataset_size = len(data_point[data_point_keys[0]])
+    annotator_network = bayesian_network_for_annotators(num_annotators=num_annotators, dataset_size=dataset_size)
+    mle_estimation(network=annotator_network, data=data)
+    return annotator_network
     # ### END CODE HERE ###
 
 def test_mle_estimation_for_annotators():
@@ -302,7 +389,7 @@ def test_mle_estimation_for_annotators():
     trained = mle_estimation_for_annotators(data)
     plot_annotator_cpts(trained, "plots/annotators.png")
 
-# test_mle_estimation_for_annotators()
+test_mle_estimation_for_annotators()
 
 ############################################################
 # Problem 4a: Expectation step
