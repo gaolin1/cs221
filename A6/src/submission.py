@@ -110,9 +110,11 @@ def compute_joint_probability(
     # ### START CODE HERE ###
     joint_probability = 1
     if batch_indices is None:
-        batch_indices = list(range(max(1, network.batch_size)))
+        running_indices = list(range(max(1, network.batch_size)))
+    else:
+        running_indices = batch_indices
     
-    for indice in batch_indices:
+    for indice in running_indices:
         for node in network.order:
             node_name = node.name 
             assignment_value = assignment[node_name][indice]
