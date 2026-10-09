@@ -412,7 +412,18 @@ def betterEvaluationFunction(currentGameState):
   """
     Your extreme, unstoppable evaluation function (problem 4).
 
-    DESCRIPTION: <write something here so we know what you did>
+    DESCRIPTION: the new score attempts to combine the previous score
+    and to optimize the agent's behavour to play for the maximum points
+    which includes collecting all food while been able to eat both ghosts
+    on the two available dots (when the ghosts are scared) while not 
+    hovering to avoid time penalty.
+    I used a 'function approximation' approach for linear weights for
+    food, catch ghost and capsule awards with adjustments for food and capsules.
+    I also ring search to find out if there are available food nearby to 
+    optimize running time.
+    Other failed attempts: favor collecting remaining capsule when game can
+    be ended (no more food). Also danger penalty to avoid been to closed to
+    the ghost (found to be harmful to the score)
   """
   
   # ### START CODE HERE ###

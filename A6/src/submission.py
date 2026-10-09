@@ -26,6 +26,17 @@ def initialize_phylogenetic_tree(mutation_rate: float, genome_length: int=1) -> 
         raise ValueError("mutation_rate must be in [0, 1].")
     pass
     # ### START CODE HERE ###
+    # initializes dna sequence
+    dna_domain = ["A", "C", "T", "G"]
+    domain_length = len(dna_domain)
+    thomas_bayus = BayesianNode("Thomas bayus", dna_domain, None, None)
+    # fills the table with 0.333
+    mutate_table = np.full(shape=(domain_length, domain_length), fill_value=mutation_rate/3)
+    # then fill in the diagonal e.g. "C-C" with 0.9 so the sum of P is 1
+    np.fill_diagonal(mutate_table, 1 - mutation_rate)
+    humblus_studentus = BayesianNode("Humblus studentus", dna_domain, [thomas_bayus], mutate_table)
+    aryamus_bayus = BayesianNode("Aryamus bayus", dna_domain, [thomas_bayus], mutate_table)
+    kenius_bayus = BayesianNode("Kenius bayus", dna_domain, [aryamus_bayus], mutate_table)
     # ### END CODE HERE ###
     network = BayesianNetwork([aryamus_bayus, humblus_studentus, thomas_bayus, kenius_bayus], batch_size=genome_length)
     return network
@@ -51,8 +62,26 @@ def forward_sampling(network: BayesianNetwork) -> Dict[str, str]:
 
     for idx in range(network.batch_size):
         assignment: Dict[str, str] = {}
-        pass
         # ### START CODE HERE ###
+        # the ouput looks something like [[node_name as key, [idx_one, idx_two]]]
+        for node in network.order:
+            node_name = node.name
+            choices = node.domain
+            probabilty = []
+            for choice in choices:
+                if not node.parents:
+                    choice_probability = node.get_probability(value=choice)[idx]
+                else:
+                    parents = node.parents
+                    parent_dict = {}
+                    for parent in parents:
+                        parent_name = parent.name
+                        parent_dict[parent_name] = assignment[parent_name]
+                    choice_probability = node.get_probability(value=choice, parent_values=parent_dict)
+                probabilty.append(choice_probability)
+            node_choice = np.random.choice(choices, p=probabilty)
+            assignment[node_name] = node_choice
+            samples[node_name].append(node_choice)
         # ### END CODE HERE ###
 
     return samples
@@ -77,8 +106,29 @@ def compute_joint_probability(
     Returns:
         The joint probability as a float
     """
-    pass
+    
     # ### START CODE HERE ###
+    joint_probability = 1
+    if batch_indices is None:
+        batch_indices = list(range(max(1, network.batch_size)))
+    
+    for indice in batch_indices:
+        for node in network.order:
+            node_name = node.name 
+            assignment_value = assignment[node_name][indice]
+            # parents are empty if parent
+            if not node.parents:
+                assignemnt_probability = node.get_probability(value=assignment_value)[indice]
+            else:
+                parents = node.parents
+                parents_dict = {}
+                for parent in parents:
+                    parent_name = parent.name
+                    parent_value = assignment[parent_name][indice]
+                    parents_dict[parent_name] = parent_value
+                assignemnt_probability = node.get_probability(value=assignment_value, parent_values=parents_dict)
+            joint_probability = joint_probability * assignemnt_probability
+    return joint_probability
     # ### END CODE HERE ###
 
 # ############################################################
