@@ -489,4 +489,4 @@ def test_em_learn():
     plot_label_cpt(trained, "plots/labels_em.png")
 
 # Uncomment to test EM learning
-test_em_learn()
+#test_em_learn()
