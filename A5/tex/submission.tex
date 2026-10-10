@@ -101,6 +101,12 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5a
 \begin{answer}
   % ### START CODE HERE ###
+  Minimax assumes the ghosts play optimally against Pac-Man, actively coming for it to minimize its
+  score, so in \texttt{trappedClassic} it believes it is doomed to lose whatever it does, and the best
+  it can do is cut the time penalty by dying as fast as possible, which means running into the
+  closest ghost. Expectimax instead assumes the ghosts move uniformly at random, so they are not
+  actively pursuing Pac-Man and there is a real chance they wander off, which makes going for the
+  pellets worth more in expectation than a certain early death.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5a
@@ -113,6 +119,13 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5b
 \begin{answer}
   % ### START CODE HERE ###
+  Change how the score is computed so that it rewards each move Pac-Man stays alive instead of
+  penalizing it, while keeping pellets worth more than the survival reward so it still goes after
+  them rather than hiding. A flat penalty for being eaten would not help here, since minimax believes
+  it gets eaten in every line of play and so every option pays the same penalty; what differs is how
+  soon it happens, and with a reward for surviving, dying later scores higher than dying sooner, so
+  minimax runs from the ghosts and buys time instead of charging the closest one, giving the real,
+  random ghosts a chance to wander off as expectimax expects.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5b
@@ -125,6 +138,12 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5c
 \begin{answer}
   % ### START CODE HERE ###
+  A racing game agent is rewarded for reaching the finish line in the minimum time, on a circuit where
+  the start line is also the finish line. Instead of driving the lap, the agent turns around and
+  crosses the line backwards straight away, which reaches the finish line faster than any real lap
+  could. This is reward hacking: the agent fully satisfies the objective as written, since it does
+  reach the finish line in minimal time, but not the designer's actual goal of completing the course,
+  because the objective only checks that the line was crossed and not that the lap was driven.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5c
@@ -137,6 +156,18 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_6a
 \begin{answer}
   % ### START CODE HERE ###
+  Claude Code's data page (\href{https://code.claude.com/docs/en/data-usage}{code.claude.com/docs/en/data-usage})
+  says consumer accounts (Free, Pro and Max) are used for training when the model improvement setting
+  is on, with data kept for five years instead of 30 days, while commercial accounts are not trained
+  on, and usage metrics and error reports go to third-party services but never include code or
+  prompts. The page is easy to follow, but it only turns up if you search for Claude Code's policy
+  specifically, since the general privacy and usage pages do not point to it. What concerns me is
+  that none of Anthropic's official pages say whether training is on by default, so whether a user's
+  sessions are kept for 30 days or five years and used to train future models depends on a setting
+  whose starting state is never stated. Upstream, the Opus 5 system card only says the model was
+  trained on a ``proprietary mix'' of public internet data, public and private datasets and synthetic
+  data, with no list of what those are and no mention of user data, even though the data page says
+  consumer sessions do feed training when the setting is on.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_6a
@@ -148,6 +179,20 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_6b
 \begin{answer}
   % ### START CODE HERE ###
+  Some things clearly aim to build trust: the Claude Code data page gives exact retention periods
+  and an environment variable to switch off each kind of telemetry, the training setting can be
+  changed at any time, and the October 2026 usage policy update
+  (\href{https://www.anthropic.com/news/2026-usage-policy-update}{anthropic.com/news/2026-usage-policy-update})
+  is written in plain language and explains why each rule changed. What undermines it is the
+  training default never being stated, turning the setting off only excluding new sessions so
+  anything already trained on stays in existing models, and the data page only turning up if you
+  search for Claude Code specifically. A simple fix would be to show the current training setting,
+  and what it means for retention, the first time Claude Code is launched, so the choice is visible
+  rather than buried in settings. On the openness spectrum Claude Code sits at the closed end, with no
+  released weights or training data, but Anthropic does publish a system card for each model, its
+  usage policy and regular threat intelligence reports. That documentation lets outsiders check some
+  of the safety claims, but because the weights and data are closed, the rest still has to be taken
+  on trust, which limits how accountable the company can really be held.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_6b
@@ -159,6 +204,17 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_6c
 \begin{answer}
   % ### START CODE HERE ###
+  \begin{itemize}
+    \item \textbf{Fairness} (demographic parity). Each system card runs a demographic bias benchmark
+    (BBQ) and a political even-handedness test, but only on the chat model, nothing for Claude Code,
+    and it admits output quality varies by language without saying by how much. They could publish
+    Claude Code results per language.
+    \item \textbf{Transparency} (publishing model cards). Anthropic publishes one for every model,
+    but it gives few details on the model itself and only calls the data a ``proprietary mix''.
+    \item \textbf{Accountability} (users can report and contest outputs). There is \texttt{/bug},
+    \texttt{/feedback} and support, but it is private and asynchronous, with no public record of what
+    was reported or fixed. A public log of reported issues and their outcomes would help.
+  \end{itemize}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_6c
@@ -170,6 +226,14 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_6d
 \begin{answer}
   % ### START CODE HERE ###
+  Users can export their data (Settings, Privacy, Export data), switch model training on or off,
+  delete individual cloud sessions, turn off each kind of telemetry with an environment variable,
+  and report problems through \texttt{/bug} and \texttt{/feedback}. But reporting has a cost:
+  transcripts sent through \texttt{/feedback}, \texttt{/bug} or \texttt{/share}, including code, are
+  kept for five years, even for a user who has training switched off and would otherwise get 30 days.
+  A useful addition would be a per-session view showing whether each session was kept for training
+  and when it will be deleted, so users can check the privacy promises themselves instead of relying
+  on a setting whose default is not stated.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_6d
@@ -181,6 +245,15 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_6e
 \begin{answer}
   % ### START CODE HERE ###
+  Anthropic paid \$1.5 billion to settle \textit{Bartz v. Anthropic}, approved in July 2026, over
+  training on pirated books, though the settlement only covers past conduct and not Claude's
+  outputs. Music publishers are also suing over song lyrics in Claude's training and outputs,
+  including a 2026 suit over more than 20,000 songs allegedly torrented from pirate libraries. Under
+  the commercial terms, customers own their outputs and Anthropic will defend them against
+  third-party IP claims, but under the consumer terms covering Free, Pro and Max, users own their
+  outputs with no indemnity at all and must instead indemnify Anthropic. So if Claude Code reproduced
+  someone else's licensed code in a personal project, a paying business would be protected while an
+  individual user would carry the risk themselves.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_6e
