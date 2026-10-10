@@ -263,6 +263,17 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_4d
 \begin{answer}
   % ### START CODE HERE ###
+  Annotator tables after 100 iterations of EM on the unlabelled annotations:
+
+  \begin{center}
+    \includegraphics[width=\textwidth]{images/4d-annotators-em.png}
+  \end{center}
+
+  Estimated $P(\text{good})$ for each data point, split by its true label:
+
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{images/4d-labels-em.png}
+  \end{center}
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_4d
@@ -274,6 +285,14 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_4e
 \begin{answer}
   % ### START CODE HERE ###
+  % Checked against the labelled file: EM right 90/100, A_0 right 90/100,
+  % EM agrees with A_0 on 100/100.
+  Only partly. About 90 of the 100 data points end up on the right side: most of the truly good ones
+  get an estimated $P(\text{good})$ near 1 and most of the truly bad ones near 0, with a handful on
+  the wrong side in each. But the annotator plot shows EM has turned A\_0 into a perfect annotator,
+  so what it really learned is A\_0's labels, treated as the truth. That works reasonably well here
+  because A\_0 was the most accurate annotator, right about 90\% of the time when trained with the
+  true labels in 3g, and the data points EM gets wrong are the ones A\_0 got wrong.
   % ### END CODE HERE ###
   \end{answer}
 % <SCPD_SUBMISSION_TAG>_4e
