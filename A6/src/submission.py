@@ -114,13 +114,14 @@ def compute_joint_probability(
     else:
         running_indices = batch_indices
     
-    for indice in running_indices:
+    for indice in range(len(running_indices)):
+        idx = running_indices[indice]
         for node in network.order:
             node_name = node.name 
             assignment_value = assignment[node_name][indice]
             # parents are empty if parent
             if not node.parents:
-                assignemnt_probability = node.get_probability(value=assignment_value)[indice]
+                assignemnt_probability = node.get_probability(value=assignment_value)[idx]
             else:
                 parents = node.parents
                 parents_dict = {}
@@ -389,7 +390,7 @@ def test_mle_estimation_for_annotators():
     trained = mle_estimation_for_annotators(data)
     plot_annotator_cpts(trained, "plots/annotators.png")
 
-test_mle_estimation_for_annotators()
+#test_mle_estimation_for_annotators()
 
 ############################################################
 # Problem 4a: Expectation step
@@ -400,8 +401,43 @@ def e_step(
     """
     Create the dataset of fully-observed weighted observations given some hidden variables, for the EM algorithm.
     """
-    pass
     # ### START CODE HERE ###
+    completed_list = []
+    q_weights_list = []
+    position_list = []
+    for data_point in data:
+        data_lines = []
+        data_point_keys = data_point.keys()
+        data_point_keys_list = list(data_point_keys)
+        data_point_size = len(data_point[data_point_keys_list[0]])
+        # build data lines down on positions
+        for position_index in range(data_point_size):
+            position_data_point = {}
+            for data_key in data_point_keys_list:
+                position_data_point[data_key] = [data_point[data_key][position_index]]
+            data_lines.append(position_data_point)
+        # loop over individual data lines
+        for data_line_index, data_line in enumerate(data_lines):
+            missing_nodes = {}
+            for node in network.nodes:
+                node_name = node.name
+                if node_name not in data_line.keys():
+                    choices = node.domain
+                    missing_nodes[node_name] = choices
+            missing_choices = product(*missing_nodes.values())
+            missing_probabilities = []
+            for missing_choice_result in missing_choices:
+                sample_copy = data_line.copy()
+                for missing_choice_index, missing_choice in enumerate(missing_choice_result):
+                    missing_node = list(missing_nodes.keys())[missing_choice_index]
+                    sample_copy[missing_node] = [missing_choice]
+                completed_list.append(sample_copy)
+                position_list.append([data_line_index])
+                probability = compute_joint_probability(network=network, assignment=sample_copy, batch_indices=[data_line_index])
+                missing_probabilities.append(probability)
+            missing_sum = sum(missing_probabilities)
+            q_weights_list.extend(missing_probabilities / missing_sum)
+    return [completed_list, q_weights_list, position_list]
     # ### END CODE HERE ###
 
 ############################################################
@@ -417,8 +453,17 @@ def m_step(
     """
     Update the CPTs of the Bayesian network using expected counts.
     """
-    pass
+    
     # ### START CODE HERE ###
+    initial_counts = init_zero_conditional_probability_tables(network=network)
+    for data_index, completed_data in enumerate(all_completions):
+        if data_index == 0:
+            current_counts = initial_counts
+        current_weight = all_weights[data_index]
+        current_indice = all_indices[data_index]
+        accumulate_assignment(counts=current_counts, network=network, assignment=completed_data, weight=current_weight, batch_indices=current_indice)
+    normalize_counts(network=network, counts=current_counts)
+    return network
     # ### END CODE HERE ###
 
 
@@ -429,8 +474,11 @@ def em_learn(network: BayesianNetwork, data: List[Dict[str, str]], num_iteration
     """
     Run the EM algorithm for a given number of iterations.
     """
-    pass
     # ### START CODE HERE ###
+    for _ in range(num_iterations):
+        all_completed, all_weights, all_indices = e_step(network=network, data=data)
+        network = m_step(network=network, all_completions=all_completed, all_weights=all_weights, all_indices=all_indices)
+    return network
     # ### END CODE HERE ###
 
 def test_em_learn():
