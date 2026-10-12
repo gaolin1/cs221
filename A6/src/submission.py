@@ -406,37 +406,47 @@ def e_step(
     q_weights_list = []
     position_list = []
     for data_point in data:
-        data_lines = []
-        data_point_keys = data_point.keys()
-        data_point_keys_list = list(data_point_keys)
-        data_point_size = len(data_point[data_point_keys_list[0]])
-        # build data lines down on positions
-        for position_index in range(data_point_size):
-            position_data_point = {}
-            for data_key in data_point_keys_list:
-                position_data_point[data_key] = [data_point[data_key][position_index]]
-            data_lines.append(position_data_point)
-        # loop over individual data lines
-        for data_line_index, data_line in enumerate(data_lines):
-            missing_nodes = {}
-            for node in network.nodes:
-                node_name = node.name
-                if node_name not in data_line.keys():
-                    choices = node.domain
-                    missing_nodes[node_name] = choices
-            missing_choices = product(*missing_nodes.values())
-            missing_probabilities = []
-            for missing_choice_result in missing_choices:
-                sample_copy = data_line.copy()
-                for missing_choice_index, missing_choice in enumerate(missing_choice_result):
-                    missing_node = list(missing_nodes.keys())[missing_choice_index]
-                    sample_copy[missing_node] = [missing_choice]
-                completed_list.append(sample_copy)
-                position_list.append([data_line_index])
-                probability = compute_joint_probability(network=network, assignment=sample_copy, batch_indices=[data_line_index])
-                missing_probabilities.append(probability)
-            missing_sum = sum(missing_probabilities)
-            q_weights_list.extend(missing_probabilities / missing_sum)
+        # removed previous processing of data lines and use data points directly as dict
+        data_point_length_list = []
+        for data_value in data_point.values():
+            data_point_length_list.append(len(data_value))
+        max_data_point_length = max(data_point_length_list)
+        data_point_length = list(range(max_data_point_length))
+        missing_nodes = {}
+        for node in network.nodes:
+            node_name = node.name
+            if node_name not in data_point.keys():
+                choices = node.domain
+                missing_nodes[node_name] = choices
+        if missing_nodes:
+            # if we need to fill in the missing data
+            data_lines = []
+            data_point_keys_list = list(data_point.keys())
+            # build data lines based on positions down per column
+            for position in range(max_data_point_length):
+                position_data_point = {}
+                for data_key in data_point_keys_list:
+                    position_data_point[data_key] = [data_point[data_key][position]]
+                data_lines.append(position_data_point)
+            for data_line_index, data_line in enumerate(data_lines):
+                missing_probabilities = []
+                missing_choices = product(*missing_nodes.values())
+                for missing_choice_result in missing_choices:
+                    sample_copy = data_line.copy()
+                    for missing_choice_index, missing_choice in enumerate(missing_choice_result):
+                        missing_node = list(missing_nodes.keys())[missing_choice_index]
+                        sample_copy[missing_node] = [missing_choice]
+                    completed_list.append(sample_copy)
+                    position_list.append([data_line_index])
+                    probability = compute_joint_probability(network=network, assignment=sample_copy, batch_indices=[data_line_index])
+                    missing_probabilities.append(probability)
+                missing_sum = sum(missing_probabilities)
+                q_weights_list.extend(missing_probabilities / missing_sum)
+        else:
+            # complete data path
+            completed_list.append(data_point)
+            position_list.append(data_point_length)
+            q_weights_list.append(1.0)
     return [completed_list, q_weights_list, position_list]
     # ### END CODE HERE ###
 

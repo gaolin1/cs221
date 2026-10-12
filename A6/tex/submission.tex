@@ -33,8 +33,11 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1a
 \begin{answer}
   % ### START CODE HERE ###
-  $\text{Rain} \rightarrow \text{WetGrass}$ and $\text{Sprinkler} \rightarrow \text{WetGrass}$. There
-  is no edge between Rain and Sprinkler, since neither one causes the other.
+  \begin{center}
+    \includegraphics[width=0.45\textwidth]{images/1a-dag.png}
+  \end{center}
+
+  $\text{Rain} \rightarrow \text{WetGrass}$ and $\text{Sprinkler} \rightarrow \text{WetGrass}$.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_1a
@@ -62,7 +65,7 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_1c
 \begin{answer}
   % ### START CODE HERE ###
-  Sum the joint over both values of Rain and both values of Sprinkler:
+  The sum the joint over both values of Rain and both values of Sprinkler:
   \[
     \mathbb{P}(\text{WetGrass} = w)
       = \sum_{r} \sum_{s} p(r)\, p(s)\, p(w \mid r, s) .
@@ -179,9 +182,12 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3a
 \begin{answer}
   % ### START CODE HERE ###
-  $Y \rightarrow A_1$, $Y \rightarrow A_2$ and $Y \rightarrow A_3$. The true label $Y$ is what each
-  annotator's claimed label depends on, and the annotators do not influence one another, so there are
-  no edges between them.
+  \begin{center}
+    \includegraphics[width=0.45\textwidth]{images/3a-dag.png}
+  \end{center}
+
+  $Y \rightarrow A_1$, $Y \rightarrow A_2$ and $Y \rightarrow A_3$. Each annotator's label depends on
+  the true label.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3a
@@ -193,7 +199,7 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3b
 \begin{answer}
   % ### START CODE HERE ###
-  A perfect annotator always gives the true label.
+  A perfect annotator gives the true label.
 
   \begin{center}
   \lstDeleteShortInline|
@@ -218,7 +224,7 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_3c
 \begin{answer}
   % ### START CODE HERE ###
-  A random annotator ignores the true label, so both rows are the same.
+  A random annotator gives exactly a random result.
 
   \begin{center}
   \lstDeleteShortInline|
@@ -247,10 +253,8 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
     \includegraphics[width=\textwidth]{images/3g-annotator-cpts.png}
   \end{center}
 
-  A\_2 is the least trustworthy. Its answers are close to a coin flip whichever the true label is:
-  when the conversation is good it says good about 62\% of the time, and when it is bad it only says
-  bad about 53\% of the time, so its table looks much more like the random annotator from 3c than the
-  perfect one from 3b. A\_0 and A\_1 both get the label right around 85 to 90\% of the time either way.
+  A\_2 is the least trustworthy. It is the least accurate been right about 62\% of the time when the label is good and 53\% for the label bad, so it is close to the random annotator. A\_0 and
+  A\_1 are right around 85 to 90\% of the time.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_3g
@@ -287,12 +291,8 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
   % ### START CODE HERE ###
   % Checked against the labelled file: EM right 90/100, A_0 right 90/100,
   % EM agrees with A_0 on 100/100.
-  Only partly. About 90 of the 100 data points end up on the right side: most of the truly good ones
-  get an estimated $P(\text{good})$ near 1 and most of the truly bad ones near 0, with a handful on
-  the wrong side in each. But the annotator plot shows EM has turned A\_0 into a perfect annotator,
-  so what it really learned is A\_0's labels, treated as the truth. That works reasonably well here
-  because A\_0 was the most accurate annotator, right about 90\% of the time when trained with the
-  true labels in 3g, and the data points EM gets wrong are the ones A\_0 got wrong.
+  The EM algorithm only recovered the true labels partly. About 90 of the 100 points end up on the right side. But the annotator plot shows EM turned A\_0 into a perfect annotator, so it really just learned A\_0's labels. That works here because A\_0 was the most accurate annotator in 3g, and the points EM
+  gets wrong are the ones A\_0 got wrong.
   % ### END CODE HERE ###
   \end{answer}
 % <SCPD_SUBMISSION_TAG>_4e
@@ -307,18 +307,14 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5a
 \begin{answer}
   % ### START CODE HERE ###
-  Claude Code is built for writing code, mostly automating programming tasks like adding features,
-  writing tests and building small applications, so it matters most for software developers,
-  especially front-end and web developers. Anthropic's own study of coding conversations found that
-  79\% of Claude Code conversations were automation rather than augmentation, against 49\% on
-  Claude.ai, with building user interfaces the most common use, and it suggested that jobs centred on
-  simple applications and user interfaces may face disruption sooner than backend work
+  Claude Code is mostly used to automate programming tasks like adding features, writing tests and
+  building small apps, so it matters most for software developers, especially front-end and web
+  developers. Anthropic's own study found 79\% of Claude Code conversations were automation, against
+  49\% on Claude.ai, with building user interfaces the most common use
   (\href{https://www.anthropic.com/research/impact-software-development}{Anthropic Economic Index,
-  April 2025}). Startups were the main early adopters, with enterprises lagging behind. Upstream, the
-  product also depends on human labour that is easy to miss: the paid crowd workers who rate
-  responses and test the model for safety, described in the Opus 5 system card, and the developers
-  and writers whose code and text make up the training data, which is what the copyright suits over
-  training data are about.
+  April 2025}). Startups adopted it first, with enterprises behind. Upstream it also depends on crowd
+  workers who rate and safety-test the model, and on the developers and writers whose code and text
+  are in the training data.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5a
@@ -330,17 +326,14 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5b
 \begin{answer}
   % ### START CODE HERE ###
-  Claude Code is more likely to replace entry-level work and augment experienced developers than to
-  replace developers outright. Stanford's \textit{Canaries in the Coal Mine} study finds employment
-  for 22 to 25 year olds in AI-exposed jobs, software development included, is now 19\% below where
-  it should be while experienced workers show no gap, and the losses are concentrated in jobs where AI
-  automates rather than assists, which fits Claude Code being used mostly for automation
+  Claude Code is more likely to replace entry-level work and help experienced developers than to
+  replace developers outright. Stanford's \textit{Canaries in the Coal Mine} study found employment
+  for 22 to 25 year olds in AI-exposed jobs, software included, is 19\% below where it should be, while
+  experienced workers show no gap
   (\href{https://digitaleconomy.stanford.edu/news/canariesaug26/}{Stanford Digital Economy Lab}). For
-  workers the risk is that if companies stop hiring juniors, there is no route to becoming a senior,
-  so the pipeline of experienced developers dries up. For employers the risk is code that nobody
-  fully understands, since code can pass its tests while still being subtly wrong, which I ran into
-  several times in this course. Layoffs blamed on AI are real, but those are companies' stated
-  reasons, so it is hard to tell how many jobs were actually replaced.
+  workers the risk is that if companies stop hiring juniors, nobody becomes a senior later. For
+  employers the risk is code nobody fully understands, since it can pass tests and still be wrong,
+  which I ran into several times in this course.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5b
@@ -352,16 +345,12 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5c
 \begin{answer}
   % ### START CODE HERE ###
-  Claude Code favours English-speaking, higher-income users. Plans run from about \$17 a month for
-  Pro to \$100--200 for Max, so wealthier users and companies get the stronger models and higher
-  usage limits, and the usage policy cuts off access entirely in unsupported regions, so lower-income
-  users and countries benefit least. Performance differs too, not just access: the Opus 5 system card
-  admits output quality varies by language, but its multilingual results give only a single average
-  across 42 languages (92.5\%) with no per-language breakdown, and nothing for coding, so a developer
-  prompting in a language other than English may get worse code from the same subscription without
-  anyone being able to see it, which widens the gap even when access is equal. To monitor this,
-  Anthropic could publish Claude Code's task success and error rates broken down by prompt language
-  and by plan tier.
+  Claude Code eappars to favour English-speaking, higher-income users. Because plans go from about \$17 a month to
+  \$100--200 for Max, so richer users get stronger models and higher limits, and some regions can't
+  use it at all. The Opus 5 system card says quality varies by language but only gives one average
+  across 42 languages (92.5\%), and nothing for coding, so someone prompting in another language may
+  get worse code without anyone seeing it. To improve transparency, Anthropic could publish Claude Code's success and error
+  rates by prompt language and plan tier.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5c
@@ -373,15 +362,12 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_5d
 \begin{answer}
   % ### START CODE HERE ###
-  Instead of giving everyone full automation up front, companies could scale how much Claude Code
-  does with how experienced the developer is. Juniors would get a low level of automation, with
-  Claude Code set up to explain and help them understand rather than write finished code, and high
-  human oversight, approving each action and having their changes reviewed. As they gain experience,
-  oversight would drop and automation would rise, until they work the way senior developers do now.
-  Claude Code already supports this, since its permission modes range from asking before every action
-  to working on its own. This keeps companies hiring juniors, since a junior with Claude Code is still
-  productive, while making sure they actually learn, so the pipeline from 5b does not dry up and there
-  are still people who understand the code being shipped.
+  My proposed solution is companies could scale how much Claude Code does with how experienced the developer is. Juniors get
+  low automation access, with Claude Code explaining instead of writing finished code, and high oversight,
+  approving each action and getting their changes reviewed. As they gain experience oversight drops
+  and automation goes up. Companies can continue to hire
+  juniors developers since they are still productive with oversight, and they actually learn, so the pipeline from 5b doesn't
+  dry up.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_5d
@@ -394,36 +380,22 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_6a
 \begin{answer}
   % ### START CODE HERE ###
-  Claude Code is Anthropic's agentic coding tool. It runs in the terminal or an IDE, reads a codebase,
-  edits files, runs commands and makes commits and pull requests, working towards a goal on its own
-  and asking for approval according to its permission mode. Its strengths showed in my own use: it
-  added a feature and unit tests to an existing investment backtester, built an application from
-  scratch, and worked as a tutor through this course. Anthropic markets it mostly through developer
-  channels rather than hype, and publishes a system card for each model, a plain-language usage
-  policy and regular threat intelligence reports. Its weaknesses are mostly about what users cannot
-  see or control. The training default for consumer accounts is never stated, the Claude Code data
-  page is hard to find, and anything sent through \texttt{/feedback} is kept for five years. Individual
-  users get no copyright indemnity while businesses do, and support is private and asynchronous with
-  no public record of what was reported or fixed. Its fairness testing covers only the chat model,
-  with multilingual results reported as a single average. And because it is used mostly for
-  automation, it puts entry-level developers at the most risk, while its code can pass tests and
-  still be subtly wrong.
+  Claude Code is Anthropic's coding agent. It runs in the terminal or an IDE, reads a codebase, edits
+  files, runs commands and makes commits. In my own
+  use it added a feature and tests to an investment backtester, built an app from scratch. Anthropic publishes a system card for each model, a plain usage policy
+  and threat reports. Its weaknesses are its closed form position on its model and data settings. The training default
+  isn't stated, the data page is hard to find, and \texttt{/feedback} reports are kept for five years.
+  Individual users get no copyright indemnity while businesses do, support is private, fairness
+  testing only covers the chat model, and it puts entry-level developers most at risk.
 
-  On privacy and accountability, I would state the training default plainly and show the current
-  setting, and what it means for retention, the first time Claude Code is launched. I would add a
-  per-session view showing whether each session was kept for training and when it will be deleted,
-  and tie the retention of \texttt{/feedback} reports to the user's training setting rather than a
-  flat five years. I would also make reported issues public, with what Anthropic did about each one
-  and a way for users to vote on what gets fixed first, so users have real influence over the
-  product.
+  For privacy and accountability, I would state the training default and show it the first time
+  Claude Code launches, add a per-session view of what was kept for training and when it gets
+  deleted, and make reported issues public with a way for users to vote on fixes.
 
-  On fairness and jobs, I would publish Claude Code's own task success and error rates broken down by
-  prompt language and plan tier, so performance gaps can actually be seen and tracked. For junior
-  developers, I would offer a mode that starts with low automation and high oversight, explaining
-  rather than writing finished code and asking before each action, and gradually hands over more
-  automation as the developer gains experience. Finally, I would extend copyright protection to
-  individual users, or at least flag outputs that closely match known licensed code, so the risk is
-  not left entirely on the people least able to carry it.
+  For fairness and jobs, I would publish Claude Code's success and error rates by language and plan
+  tier, offer a mode for juniors that starts with low automation and hands over more as they gain
+  experience, and give individual users copyright protection or at least flag outputs that match
+  licensed code.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_6a
@@ -435,17 +407,13 @@ instructions to regenerate this handout with your typeset \LaTeX{} solutions.
 % <SCPD_SUBMISSION_TAG>_6b
 \begin{answer}
   % ### START CODE HERE ###
-  Right now Anthropic decides how Claude Code changes, with its engineers building it and its
-  executives deciding what ships, and the only outside groups with real power are courts and paying
-  businesses: in the music publishers' case Anthropic agreed to keep its copyright guardrails in place
-  while the case continues, and the commercial terms give businesses protections that individual
-  users do not get. Individual users can report problems through \texttt{/bug} and the GitHub
-  tracker, but that path is private and slow, with over 5,000 open issues, so in practice they have
-  almost no say. I think users should have real influence too, since they are the ones whose code,
-  data and jobs are affected, and they are the first to see its problems. One way to shift that would
-  be a public record of reported issues and what Anthropic did about them, with users able to vote on
-  what gets fixed first, so their feedback has visible weight instead of disappearing into a private
-  queue.
+  Right now Anthropic decides how Claude Code changes, and the only outside groups with real leverages are
+  courts and paying businesses. In the music publishers' case Anthropic agreed to keep its copyright
+  guardrails while the case goes on, and businesses get protections individual users don't.
+  Individual users can report through \texttt{/bug} and GitHub, but there are over 5,000 open issues,
+  so they have almost no say. I think users should have real influence since their code, data and jobs
+  are affected and they see the problems first. A public list of reported issues and what Anthropic
+  did about them, with users voting on what gets fixed first, would give that feedback real weight.
   % ### END CODE HERE ###
 \end{answer}
 % <SCPD_SUBMISSION_TAG>_6b
